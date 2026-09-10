@@ -1524,8 +1524,14 @@ function insideMedia(clothFill,texture){
 }
 function trouserMedia(clothFill,texture){
   const c=PHOTO_CLOTH[state.cloth];
-  const plain=state.pleats==='Flat front'&&state.hem==='Plain hem'&&state.waistband==='Belt loops';
-  if(c&&plain) return `<img class="preview-photo" src="suit-images/trouser-${c}-${FIT_KEY[state.legfit]}.jpg" alt="Trousers — ${state.legfit}" onerror="pvImgFail(this,'trouser')">`;
+  if(c&&state.waistband==='Belt loops'){
+    const cuffed=state.hem.startsWith('Cuffed');
+    let suf=null;
+    if(state.pleats==='Flat front') suf=cuffed?'-cuff':'';
+    else if(state.pleats==='Single pleat') suf=cuffed?'-pleat1-cuff':'-pleat1';
+    else if(state.pleats==='Double pleat') suf=cuffed?'-pleat2-cuff':'-pleat2';
+    if(suf!==null) return `<img class="preview-photo" src="suit-images/trouser-${c}-${FIT_KEY[state.legfit]}${suf}.jpg" alt="Trousers — ${state.legfit}, ${state.pleats}, ${state.hem}" onerror="pvImgFail(this,'trouser')">`;
+  }
   return trouserDrawing(clothFill,texture);
 }
 function modelSVG(){
@@ -1568,8 +1574,9 @@ function viewSVG(){
     return `<img class="preview-photo" src="${src}" alt="Your suit — ${state.cloth}, ${state.lapel} lapel, ${state.frontbtn}" onerror="pvImgFail(this)">`;
   }
   if(v==='model'){
-    const src=`suit-images/${MODEL_PHOTO[state.cloth]||'loved-firstsuit.jpg'}`;
-    return `<img class="preview-photo" src="${src}" alt="Your cloth on a model" onerror="pvImgFail(this,'model')">`;
+    const c=PHOTO_CLOTH[state.cloth];
+    const src=c?`suit-images/model-${c}-${state.lapel.toLowerCase()}.jpg`:`suit-images/${MODEL_PHOTO[state.cloth]||'loved-firstsuit.jpg'}`;
+    return `<img class="preview-photo" src="${src}" alt="Your suit on a model — ${state.cloth}, ${state.lapel} lapel" onerror="pvImgFail(this,'model')">`;
   }
   if(v==='front') return jacketSVG({lapel:state.lapel,buttons:btnCount(),roll:isRoll(),db:isDB(),
     pockets:state.pockets,clothFill,texture,btnColor,liningFill:LININGS[state.lining]||null});
