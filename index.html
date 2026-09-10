@@ -334,7 +334,12 @@ header.top .top-inner{padding-left:max(6px,env(safe-area-inset-left))}
 .review .gverified{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--ink-soft)}
 .review .gverified svg{width:12px;height:12px}
 /* social — Isaiah's Suits on the feed (Mr Bins-style focus carousel) */
-#social{background:var(--ink);padding:56px 0 64px;text-align:center;overflow:hidden}
+#social{background:
+  radial-gradient(120% 85% at 50% 0%,rgba(214,178,94,.09),transparent 55%),
+  repeating-linear-gradient(45deg,rgba(255,255,255,.025) 0 2px,transparent 2px 5px),
+  repeating-linear-gradient(-45deg,rgba(0,0,0,.06) 0 2px,transparent 2px 5px),
+  linear-gradient(180deg,#153428 0%,#0f2519 100%);
+  background-color:#122b1f;padding:56px 0 64px;text-align:center;overflow:hidden}
 #social .k{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--thread);font-weight:600}
 #social h2{color:var(--chalk);font-size:clamp(1.8rem,4.5vw,2.8rem);margin-top:8px}
 #social h2 em{font-style:italic;color:var(--thread)}
@@ -754,6 +759,8 @@ html,body{width:100%;min-width:0}
   #design-cta .cloth-strip img{aspect-ratio:3/4;max-height:146px;border-radius:3px}
   #design-cta .btn{margin-top:18px!important}
 }
+/* hero CTA: content-width, centered — never a full-width slab */
+.hero-plate .btn{align-self:center;width:auto;min-width:230px;max-width:88%;padding-left:40px;padding-right:40px}
 </style>
 </head>
 <body>
