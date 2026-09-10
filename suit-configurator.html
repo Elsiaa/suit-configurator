@@ -1305,7 +1305,7 @@ function trouserPhotoFor(fit,pleats,hem,waistband){
   else if(pleats==='Single pleat') suf=cuffed?'-pleat1-cuff':'-pleat1';
   else if(pleats==='Double pleat') suf=cuffed?'-pleat2-cuff':'-pleat2';
   if(suf===null) return null;
-  return `suit-images/trouser-${c}-${FIT_KEY[fit]}${suf}.jpg?v=2`;
+  return `suit-images/trs2-${c}-${FIT_KEY[fit]}${suf}.jpg`;
 }
 const thumbFit = f=>thumbPhoto(trouserPhotoFor(f,state.pleats,state.hem,state.waistband))||trouserSVG({fit:f,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),accent:{fit:1}});
 const thumbPleat = p=>thumbPhoto(trouserPhotoFor(state.legfit,p,state.hem,state.waistband))||trouserSVG({fit:state.legfit,pleats:p,cuff:state.hem.startsWith('Cuffed'),accent:{pleats:1}});
@@ -1574,7 +1574,7 @@ function trouserMedia(clothFill,texture){
     if(state.pleats==='Flat front') suf=cuffed?'-cuff':'';
     else if(state.pleats==='Single pleat') suf=cuffed?'-pleat1-cuff':'-pleat1';
     else if(state.pleats==='Double pleat') suf=cuffed?'-pleat2-cuff':'-pleat2';
-    if(suf!==null) return `<img class="preview-photo" src="suit-images/trouser-${c}-${FIT_KEY[state.legfit]}${suf}.jpg?v=2" alt="Trousers — ${state.legfit}, ${state.pleats}, ${state.hem}" onerror="pvImgFail(this,'trouser')">`;
+    if(suf!==null) return `<img class="preview-photo" src="suit-images/trs2-${c}-${FIT_KEY[state.legfit]}${suf}.jpg" alt="Trousers — ${state.legfit}, ${state.pleats}, ${state.hem}" onerror="pvImgFail(this,'trouser')">`;
   }
   return trouserDrawing(clothFill,texture);
 }
