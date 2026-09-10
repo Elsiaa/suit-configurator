@@ -761,6 +761,12 @@ html,body{width:100%;min-width:0}
 }
 /* hero CTA: content-width, centered — never a full-width slab */
 .hero-plate .btn{align-self:center;width:auto;min-width:230px;max-width:88%;padding-left:40px;padding-right:40px}
+/* desktop fold: the image owns the fold — man and car always fully framed */
+@media(min-width:641px){
+  .fold .hero-bleed{flex:2.8 1 0;min-height:460px;background-position:center 40%}
+  .fold .hero-plate{flex:1 0 auto;padding-top:12px;padding-bottom:16px}
+  .hero-plate .hero-facts{margin:12px auto 14px}
+}
 /* ================================================================
    LUXURY GROUNDS — every base color gets depth, no flat paint.
    ivory · porcelain · greige · charcoal · black (green lives on #social)
