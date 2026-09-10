@@ -142,6 +142,38 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .suitcard .stage img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
 .preview-photo{width:100%;max-width:250px;border-radius:var(--r);display:block;margin:0 auto}
 .mob-preview .preview-photo{max-width:220px}
+/* 360 preview viewer */
+.pv{position:relative;touch-action:pan-y;user-select:none}
+.pv-stage{animation:pvturn .32s ease}
+.pv-stage svg{max-width:250px;width:100%}
+.mob-preview .pv-stage svg{max-width:210px}
+@keyframes pvturn{from{transform:perspective(600px) rotateY(26deg);opacity:.35}to{transform:none;opacity:1}}
+.pv-arr{position:absolute;top:40%;z-index:4;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(27,42,65,.14)}
+.pv-arr:hover{border-color:var(--ink)}
+.pv-l{left:0}.pv-r{right:0}
+.pv-dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.pv-dot{font:inherit;font-size:.68rem;font-weight:600;padding:6px 11px;border-radius:13px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.pv-dot.on{background:var(--ink);color:var(--chalk);border-color:var(--ink)}
+.pv-note{font-size:.66rem;color:var(--ink-soft);margin-top:5px;text-align:center}
+/* conversion layer */
+.prog{margin:14px 0 4px}
+.prog-track{height:5px;background:var(--line);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--thread);border-radius:3px;transition:width .4s ease}
+.prog-lbl{display:flex;justify-content:space-between;font-size:.7rem;color:var(--ink-soft);margin-top:5px}
+.optcard .pop{position:absolute;top:8px;left:8px;font-size:.6rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--thread);color:#fff;padding:3px 7px;border-radius:4px}
+.bbar .anchor{display:block;font-size:.68rem;color:var(--ink-soft)}
+.bbar .anchor s{color:var(--warn)}
+.value-box{border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:16px 18px;margin:18px 0}
+.value-box .vrow{display:flex;justify-content:space-between;font-size:.85rem;padding:5px 0}
+.value-box .vrow.big{border-top:1px solid var(--line);margin-top:6px;padding-top:10px;font-weight:600}
+.value-box .vrow.big .save{color:var(--good)}
+.guarantees{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0;font-size:.76rem;color:var(--ink-soft)}
+.guarantees span{display:flex;align-items:center;gap:6px}
+.guarantees b{color:var(--ink)}
+.queue-line{font-size:.8rem;color:var(--warn);font-weight:600;margin:10px 0}
+.quick-add{border:1px dashed var(--thread);background:var(--thread-soft);border-radius:var(--r);padding:14px 16px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:.85rem}
+.trust-strip{display:flex;gap:16px;flex-wrap:wrap;font-size:.72rem;color:var(--ink-soft);margin:12px 0 4px;align-items:center}
+.trust-strip .gs{color:#fbbc05}
 .suitcard .info{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
 .suitcard .info h3{font-size:1.25rem}
 .suitcard .info p{font-size:.8rem;color:var(--ink-soft);flex:1}
@@ -335,6 +367,8 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 
 <div class="shell workspace hidden" id="workspace">
   <main id="main-col">
+    <div class="prog"><div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+      <div class="prog-lbl"><span id="prog-step"></span><span>Saves automatically — leave and come back any time</span></div></div>
     <div class="mob-preview" id="mob-preview"></div>
     <div class="subtabs" id="subtabs"></div>
     <div id="content"></div>
@@ -361,7 +395,8 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 
 <div class="bbar hidden" id="bbar">
   <div class="bbar-inner">
-    <div class="sum">Ready to send — the rest is our standard<strong id="bb-total">$250</strong></div>
+    <div class="sum">Your suit, so far<strong id="bb-total">$300</strong>
+      <span class="anchor">comparable made-to-measure: <s>$1,200+</s> — you finish it at your tailor instead</span></div>
     <div class="actions">
       <button class="leave-link" onclick="leaveStyling()">Leave the styling to us</button>
       <button class="btn ghost" id="bb-back" onclick="navBack()">Back</button>
@@ -378,21 +413,24 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 ================================================================ */
 const S = {ink:'#2a3444', red:'#c0392b', lw:1.6};
 
+/* unique-id cloth texture patterns, shared by every garment view */
+let _pidc=0;
+function clothPattern(flat,texture){
+  if(!texture) return {defs:'',fill:flat};
+  const pid='ctp'+(++_pidc);
+  let defs;
+  if(texture==='herringbone') defs=`<defs><pattern id="${pid}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="${flat}"/><line x1="1" y1="0" x2="1" y2="6" stroke="rgba(255,255,255,.13)" stroke-width="1"/></pattern></defs>`;
+  else if(texture==='sharkskin') defs=`<defs><pattern id="${pid}" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="${flat}"/><rect width="2" height="2" fill="rgba(255,255,255,.09)"/><rect x="2" y="2" width="2" height="2" fill="rgba(255,255,255,.09)"/></pattern></defs>`;
+  else return {defs:'',fill:flat};
+  return {defs,fill:`url(#${pid})`};
+}
+
 function jacketSVG(o){
   // o: {lapel, buttons, db, pockets, vent(front hem hint ignored), accent, clothFill, w}
   const a = o.accent||{}; // {lapel:1,buttons:1,pockets:1}
   const flat = o.clothFill || '#ffffff';
-  // cloth texture: fine diagonal hatch (herringbone) / two-tone weave (sharkskin)
-  let defs='', fill=flat;
-  if(o.clothFill && o.texture){
-    const pid='ctp'+(jacketSVG._n=(jacketSVG._n||0)+1);
-    if(o.texture==='herringbone'){
-      defs=`<defs><pattern id="${pid}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="${flat}"/><line x1="1" y1="0" x2="1" y2="6" stroke="rgba(255,255,255,.13)" stroke-width="1"/></pattern></defs>`;
-    } else if(o.texture==='sharkskin'){
-      defs=`<defs><pattern id="${pid}" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="${flat}"/><rect width="2" height="2" fill="rgba(255,255,255,.09)"/><rect x="2" y="2" width="2" height="2" fill="rgba(255,255,255,.09)"/></pattern></defs>`;
-    }
-    if(defs) fill=`url(#${pid})`;
-  }
+  const cp=clothPattern(flat,o.clothFill?o.texture:null);
+  const defs=cp.defs, fill=cp.fill;
   const detFill = o.clothFill ? fill : '#fff'; // lapels/pockets match cloth in preview, stay white in thumbnails
   const inkL = c=>`stroke="${S.ink}" stroke-width="${S.lw}" fill="none" stroke-linecap="round" stroke-linejoin="round"`;
   const acc = k => a[k] ? S.red : S.ink;
@@ -415,7 +453,7 @@ function jacketSVG(o){
 
   // buttons
   let btns='';
-  const bc = a['buttons'] ? S.red : (o.clothFill ? '#cfc9ba' : S.ink); // visible on dark cloth
+  const bc = a['buttons'] ? S.red : (o.clothFill ? (o.btnColor||'#cfc9ba') : S.ink); // real button material color in preview
   if(o.db){
     // double breasted: two columns
     const pts = o.buttons===6 ? [[86,108],[114,108],[86,128],[114,128],[86,148],[114,148]] : [[86,124],[114,124],[86,144],[114,144]];
@@ -453,7 +491,7 @@ function jacketSVG(o){
   const lining = o.liningFill ? `<path d="M92,120 L88,200 L112,200 L108,120 C104,127 96,127 92,120 Z" fill="${o.liningFill}"/>` : '';
 
   // sleeve buttons
-  const sc = o.clothFill ? '#cfc9ba' : S.ink;
+  const sc = o.clothFill ? (o.btnColor||'#cfc9ba') : S.ink;
   const cuffL=`<g fill="${sc}"><circle cx="34" cy="176" r="1.6"/><circle cx="34" cy="181" r="1.6"/><circle cx="34" cy="186" r="1.6"/><circle cx="34" cy="191" r="1.6"/></g>`;
   const cuffR=`<g fill="${sc}"><circle cx="166" cy="176" r="1.6"/><circle cx="166" cy="181" r="1.6"/><circle cx="166" cy="186" r="1.6"/><circle cx="166" cy="191" r="1.6"/></g>`;
 
@@ -481,8 +519,11 @@ function jacketSVG(o){
 }
 
 function backSVG(o){
-  // vents on the back view
-  const a=o.accent? S.red : S.ink;
+  // vents on the back view; cloth-filled when clothFill is given (live preview)
+  const cp=clothPattern(o.clothFill||'#fff',o.clothFill?o.texture:null);
+  const fill=cp.fill;
+  const seam=o.clothFill?'rgba(255,255,255,.45)':S.ink;
+  const a=o.accent? S.red : (o.clothFill?'rgba(255,255,255,.6)':S.ink);
   let vents='';
   if(o.vent==='Double vent'){
     vents=`<line x1="72" y1="160" x2="70" y2="200" stroke="${a}" stroke-width="2"/>
@@ -490,21 +531,63 @@ function backSVG(o){
   } else if(o.vent==='Single vent'){
     vents=`<line x1="100" y1="152" x2="100" y2="200" stroke="${a}" stroke-width="2"/>`;
   }
-  return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jacket back">
+  return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jacket back — ${o.vent||'no vent'}">
+  ${cp.defs}
   <path d="M62,40 C74,32 84,30 100,30 C116,30 126,32 138,40 L152,52 C158,60 160,72 160,84 L158,170 C158,176 156,182 152,186 L148,200 L52,200 L48,186 C44,182 42,176 42,170 L40,84 C40,72 42,60 48,52 Z"
-        fill="#fff" stroke="${S.ink}" stroke-width="${S.lw}" stroke-linejoin="round"/>
-  <path d="M48,52 C36,62 30,84 28,110 L26,168 C26,176 30,182 38,182 L46,180 L48,120" fill="#fff" stroke="${S.ink}" stroke-width="${S.lw}" stroke-linejoin="round"/>
-  <path d="M152,52 C164,62 170,84 172,110 L174,168 C174,176 170,182 162,182 L154,180 L152,120" fill="#fff" stroke="${S.ink}" stroke-width="${S.lw}" stroke-linejoin="round"/>
-  <path d="M100,30 L100,60" stroke="${S.ink}" stroke-width="1.3"/>
-  <path d="M84,34 C92,42 108,42 116,34" stroke="${S.ink}" stroke-width="1.3" fill="none"/>
+        fill="${fill}" stroke="${S.ink}" stroke-width="${S.lw}" stroke-linejoin="round"/>
+  <path d="M48,52 C36,62 30,84 28,110 L26,168 C26,176 30,182 38,182 L46,180 L48,120" fill="${fill}" stroke="${S.ink}" stroke-width="${S.lw}" stroke-linejoin="round"/>
+  <path d="M152,52 C164,62 170,84 172,110 L174,168 C174,176 170,182 162,182 L154,180 L152,120" fill="${fill}" stroke="${S.ink}" stroke-width="${S.lw}" stroke-linejoin="round"/>
+  <path d="M100,30 L100,60" stroke="${seam}" stroke-width="1.3"/>
+  <path d="M84,34 C92,42 108,42 116,34" stroke="${seam}" stroke-width="1.3" fill="none"/>
+  <path d="M100,60 L100,152" stroke="${seam}" stroke-width="1" stroke-dasharray="1 3"/>
   ${vents}
 </svg>`;
 }
 
+function insideSVG(o){
+  // the jacket held open: lining, monogram verbatim, collar name, photo lining
+  const lin=o.liningFill||'#5c1a24';
+  let defs='',linFill=lin;
+  if((o.liningName||'').toLowerCase().includes('paisley')){
+    const pid='lnp'+(++_pidc);
+    defs=`<defs><pattern id="${pid}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${lin}"/><path d="M4,3 q3,0 3,3 q0,3 -3,3 q-2,0 -2,-2 q0,-2 2,-2 q1,0 1,1" fill="none" stroke="rgba(255,255,255,.4)" stroke-width=".8"/><circle cx="9.5" cy="9.5" r=".9" fill="rgba(255,255,255,.35)"/></pattern></defs>`;
+    linFill=`url(#${pid})`;
+  }
+  const cp=clothPattern(o.clothFill||'#243b55',o.texture);
+  const shell=cp.fill;
+  const threadC={'Gold':'#d9b64e','Silver':'#c8cdd6','Burgundy':'#a04652','Royal blue':'#5b8ae0','Tone-on-tone':'rgba(255,255,255,.8)'}[o.monoThread]||'#d9b64e';
+  const mono=o.monoStyle&&o.monoStyle!=='None'
+    ?`<text x="138" y="168" text-anchor="middle" fill="${threadC}" style="font:${o.monoStyle==='Script monogram'?'italic 600 11px \'Cormorant Garamond\',serif':'700 9px Inter,sans-serif'};letter-spacing:${o.monoStyle==='Block monogram'?'2px':'0'}">${(o.monoText||'A.B.').slice(0,14)}</text>`:'';
+  const collar=o.collarText!=null
+    ?`<rect x="76" y="30" width="48" height="13" rx="3" fill="#221f1c"/><text x="100" y="39.5" text-anchor="middle" fill="#d9b64e" style="font:600 7px Inter,sans-serif;letter-spacing:2px">${o.collarText.toUpperCase().slice(0,12)}</text>`
+    :`<rect x="76" y="30" width="48" height="13" rx="3" fill="#221f1c"/>`;
+  const photo=o.photo
+    ?`<rect x="72" y="84" width="56" height="40" rx="2" fill="#fbfaf6" stroke="rgba(255,255,255,.7)" stroke-width="1.4"/>
+      <path d="M76,116 l14,-14 10,9 8,-7 14,12" fill="none" stroke="#8898ad" stroke-width="1.6"/>
+      <circle cx="86" cy="93" r="3.4" fill="#d9b64e"/>
+      <text x="100" y="132" text-anchor="middle" fill="rgba(255,255,255,.75)" style="font:500 6px Inter,sans-serif;letter-spacing:1px">YOUR PHOTO, PRINTED</text>`:'';
+  return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jacket interior">
+  ${defs}${cp.defs}
+  <!-- body opened flat: lining panel -->
+  <path d="M58,42 C72,32 84,30 100,30 C116,30 128,32 142,42 L154,56 C158,64 160,74 160,86 L158,172 C158,180 154,188 148,192 L52,192 C46,188 42,180 42,172 L40,86 C40,74 42,64 46,56 Z"
+        fill="${linFill}" stroke="${S.ink}" stroke-width="${S.lw}" stroke-linejoin="round"/>
+  <!-- cloth facings swung open at the edges -->
+  <path d="M58,42 L70,50 L66,188 L52,192 C46,188 42,180 42,172 L40,86 C40,74 42,64 46,56 Z" fill="${shell}" stroke="${S.ink}" stroke-width="1.2"/>
+  <path d="M142,42 L130,50 L134,188 L148,192 C154,188 158,180 158,172 L160,86 C160,74 158,64 154,56 Z" fill="${shell}" stroke="${S.ink}" stroke-width="1.2"/>
+  <!-- inner chest pocket -->
+  <path d="M78,72 h30" stroke="rgba(255,255,255,.8)" stroke-width="2"/>
+  <path d="M78,72 l4,5 h22 l4,-5" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1"/>
+  ${collar}${photo}${mono}
+</svg>`;
+}
+
 function trouserSVG(o){
-  // o: {fit, pleats, cuff, accent:{fit,pleats,cuff}}
+  // o: {fit, pleats, cuff, side, clothFill, texture, accent:{fit,pleats,cuff,band}}
   const a=o.accent||{};
-  const acc=k=>a[k]?S.red:S.ink;
+  const cp=clothPattern(o.clothFill||'#fff',o.clothFill?o.texture:null);
+  const white=o.clothFill?cp.fill:'#fff';
+  const det=o.clothFill?'rgba(255,255,255,.55)':null; // crease/detail color on dark cloth
+  const acc=k=>a[k]?S.red:(det||S.ink);
   let legs;
   if(o.fit==='Slim') legs=`M70,50 L74,200 L92,200 L96,52 M104,52 L108,200 L126,200 L130,50`;
   else if(o.fit==='Straight') legs=`M66,50 L66,200 L92,200 L97,52 M103,52 L108,200 L134,200 L134,50`;
@@ -513,11 +596,13 @@ function trouserSVG(o){
   if(o.pleats==='Single pleat') pleats=`<line x1="84" y1="52" x2="86" y2="86" stroke="${acc('pleats')}" stroke-width="1.5"/><line x1="116" y1="52" x2="114" y2="86" stroke="${acc('pleats')}" stroke-width="1.5"/>`;
   if(o.pleats==='Double pleat') pleats=`<line x1="80" y1="52" x2="82" y2="82" stroke="${acc('pleats')}" stroke-width="1.5"/><line x1="88" y1="52" x2="89" y2="88" stroke="${acc('pleats')}" stroke-width="1.5"/><line x1="120" y1="52" x2="118" y2="82" stroke="${acc('pleats')}" stroke-width="1.5"/><line x1="112" y1="52" x2="111" y2="88" stroke="${acc('pleats')}" stroke-width="1.5"/>`;
   let cuff='';
-  if(o.cuff) cuff=`<rect x="71" y="188" width="24" height="10" fill="#fff" stroke="${acc('cuff')}" stroke-width="1.5"/><rect x="105" y="188" width="24" height="10" fill="#fff" stroke="${acc('cuff')}" stroke-width="1.5"/>`;
-  const band = o.side?`<rect x="64" y="40" width="72" height="12" rx="2" fill="#fff" stroke="${acc('band')||S.ink}" stroke-width="1.5"/><path d="M64,46 l-8,0 M136,46 l8,0" stroke="${acc('band')}" stroke-width="2"/>`
-                     :`<rect x="64" y="40" width="72" height="12" rx="2" fill="#fff" stroke="${acc('band')||S.ink}" stroke-width="1.5"/><rect x="72" y="38" width="5" height="6" fill="${a.band?S.red:S.ink}"/><rect x="97" y="38" width="5" height="6" fill="${a.band?S.red:S.ink}"/><rect x="122" y="38" width="5" height="6" fill="${a.band?S.red:S.ink}"/>`;
+  if(o.cuff) cuff=`<rect x="71" y="188" width="24" height="10" fill="${white}" stroke="${acc('cuff')}" stroke-width="1.5"/><rect x="105" y="188" width="24" height="10" fill="${white}" stroke="${acc('cuff')}" stroke-width="1.5"/>`;
+  const loopC=a.band?S.red:(det||S.ink);
+  const band = o.side?`<rect x="64" y="40" width="72" height="12" rx="2" fill="${white}" stroke="${a.band?S.red:S.ink}" stroke-width="1.5"/><path d="M64,46 l-8,0 M136,46 l8,0" stroke="${loopC}" stroke-width="2"/>`
+                     :`<rect x="64" y="40" width="72" height="12" rx="2" fill="${white}" stroke="${a.band?S.red:S.ink}" stroke-width="1.5"/><rect x="72" y="38" width="5" height="6" fill="${loopC}"/><rect x="97" y="38" width="5" height="6" fill="${loopC}"/><rect x="122" y="38" width="5" height="6" fill="${loopC}"/>`;
   return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Trouser illustration">
-  <path d="${legs}" fill="#fff" stroke="${acc('fit')}" stroke-width="${S.lw}" stroke-linejoin="round"/>
+  ${cp.defs}
+  <path d="${legs}" fill="${white}" stroke="${a.fit?S.red:S.ink}" stroke-width="${S.lw}" stroke-linejoin="round"/>
   ${band}${pleats}${cuff}
 </svg>`;
 }
@@ -537,7 +622,7 @@ const state={
 };
 const DEFAULTS={...state};
 const PRICES={
-  'Charcoal herringbone':20,'Midnight blue sharkskin':35,
+  'Charcoal herringbone':20,'Midnight blue sharkskin':35,'Forest green wool':25,
   'Peak':15,'Shawl':25,'Horn (polished)':12,'Mother-of-pearl':22,
   '1 button':10,'3 buttons (roll to 2nd)':8,'Double-breasted 2x1':40,'Double-breasted 6x2':55,
   'Side adjusters':18,'Double pleat':10,'Cuffed hem (1.75\")':8,
@@ -547,7 +632,9 @@ const PRICES={
 const CLOTHS={
   'Navy wool blend':'#243b55','Charcoal herringbone':'#3a3f45',
   'Black twill':'#17181c','Midnight blue sharkskin':'#1c2f52',
+  'Forest green wool':'#2e4a3a',
 };
+const BTNCOLORS={'Corozo (matte)':'#8a7b64','Horn (polished)':'#4a3826','Mother-of-pearl':'#e8e4dc'};
 const LININGS={
   'Deep burgundy':'#5c1a24','Forest green':'#1f3b2c','Royal purple':'#3c2a56',
   'Gold paisley':'#a2803a','Sky blue':'#7da7c9','Tone-on-tone':'#2c3e55','Contrast piping lining':'#8c2f39',
@@ -616,10 +703,10 @@ const OPTGROUPS={
  ]},
  lapel:{key:'lapel',title:'Lapel',opts:[
    {n:'Notch',std:'our standard',svg:()=>thumbLapel('Notch')},
-   {n:'Peak',svg:()=>thumbLapel('Peak')},
+   {n:'Peak',pop:'Customer favorite',svg:()=>thumbLapel('Peak')},
    {n:'Shawl',svg:()=>thumbLapel('Shawl')},
  ]},
- cloth:{key:'cloth',title:'Cloth',opts:Object.keys(CLOTHS).map(n=>({n,dot:CLOTHS[n],std:n==='Navy wool blend'?'our standard':''}))},
+ cloth:{key:'cloth',title:'Cloth',opts:Object.keys(CLOTHS).map(n=>({n,dot:CLOTHS[n],std:n==='Navy wool blend'?'our standard':'',pop:n==='Midnight blue sharkskin'?'Customer favorite':''}))},
  vents:{key:'vents',title:'Vents',opts:[
    {n:'Double vent',std:'our standard',svg:()=>thumbVent('Double vent')},
    {n:'Single vent',svg:()=>thumbVent('Single vent')},
@@ -688,6 +775,7 @@ function optGrid(group){
     const sel=state[g.key]===o.n;
     const p=PRICES[o.n];
     h+=`<button class="optcard${sel?' sel':''}" data-g="${group}" data-n="${o.n.replace(/"/g,'&quot;')}">
+      ${o.pop?`<span class="pop">${o.pop}</span>`:''}
       ${o.svg?o.svg():o.dot?`<div class="swatch" style="background:${o.dot}"></div>`:''}
       <div class="nm">${o.n}</div>
       ${o.std?`<div class="std">${o.std}</div>`:''}
@@ -709,36 +797,97 @@ function renderContent(){
     b.onclick=()=>{state[b.dataset.g==='mono'?'monostyle':OPTGROUPS[b.dataset.g].key]=b.dataset.n;renderAll();};
   });
 }
-/* photorealistic preview: keyed on the two most visible choices (cloth + lapel);
-   every other pick stays in the spec list. SVG line drawing is the fallback. */
-const PHOTO_CLOTH={'Navy wool blend':'navy','Charcoal herringbone':'herringbone','Black twill':'black','Midnight blue sharkskin':'sharkskin'};
-window._noPhoto={};
-function previewPhotoSrc(){
-  const c=PHOTO_CLOTH[state.cloth];
-  if(!c) return null;
-  const src='suit-images/'+c+'-'+state.lapel.toLowerCase()+'.png';
-  return window._noPhoto[src]?null:src;
+const PHOTO_CLOTH={'Navy wool blend':'navy','Charcoal herringbone':'herringbone','Black twill':'black','Midnight blue sharkskin':'sharkskin','Forest green wool':'green'};
+const MODEL_PHOTO={'Navy wool blend':'loved-firstsuit.png','Charcoal herringbone':'model-charcoal.png','Black twill':'model-black.png','Midnight blue sharkskin':'loved-eveningblue.png','Forest green wool':'model-green.png'};
+
+/* ---- 360 viewer: photoreal front + on-model, exact drawings for the rest ---- */
+const VIEWS=[{id:'photo',label:'Photo'},{id:'model',label:'On model'},{id:'back',label:'Back'},{id:'inside',label:'Inside'},{id:'trousers',label:'Trousers'}];
+let curView=0;
+function prevView(){curView=(curView+VIEWS.length-1)%VIEWS.length;renderPreview();}
+function nextView(){curView=(curView+1)%VIEWS.length;renderPreview();}
+function setView(i){curView=i;renderPreview();}
+let _swx=null;
+function pvDown(e){_swx=(e.touches?e.touches[0]:e).clientX;}
+function pvUp(e){
+  if(_swx==null)return;
+  const x=(e.changedTouches?e.changedTouches[0]:e).clientX;
+  if(x-_swx>40)prevView(); else if(_swx-x>40)nextView();
+  _swx=null;
 }
-function photoFailed(el){window._noPhoto[el.getAttribute('src')]=1;renderPreview();}
-function renderPreview(){
-  const clothName=state.cloth.toLowerCase();
-  const opts = {
-    lapel:state.lapel, buttons:btnCount(), roll:isRoll(), db:isDB(),
-    pockets:state.pockets,
-    clothFill:CLOTHS[state.cloth]||'#ffffff',
-    texture:clothName.includes('herringbone')?'herringbone':clothName.includes('sharkskin')?'sharkskin':null,
-    liningFill:LININGS[state.lining]||null,
-  };
-  const photo=previewPhotoSrc();
-  if(photo){
-    const img=`<img class="preview-photo" src="${photo}" alt="Your suit — ${state.cloth}, ${state.lapel} lapel" onerror="photoFailed(this)">`;
-    document.getElementById('live-preview').innerHTML=img;
-    const mp=document.getElementById('mob-preview'); if(mp) mp.innerHTML=img;
-  } else {
-    // build each copy separately so the texture <pattern> ids stay unique per SVG
-    document.getElementById('live-preview').innerHTML=jacketSVG(opts);
-    const mp=document.getElementById('mob-preview'); if(mp) mp.innerHTML=jacketSVG(opts);
+function clothTexture(){
+  const n=state.cloth.toLowerCase();
+  return n.includes('herringbone')?'herringbone':n.includes('sharkskin')?'sharkskin':null;
+}
+function pvImgFail(el,kind){
+  // no photo for this combination: fall back to the exact drawing
+  el.outerHTML = kind==='model' ? modelSVG()
+    : jacketSVG({lapel:state.lapel,buttons:btnCount(),roll:isRoll(),db:isDB(),pockets:state.pockets,
+      clothFill:CLOTHS[state.cloth]||'#243b55',texture:clothTexture(),btnColor:BTNCOLORS[state.btnmat],
+      liningFill:LININGS[state.lining]||null});
+}
+function modelSVG(){
+  const clothFill=CLOTHS[state.cloth]||'#243b55';
+  const texture=clothTexture();
+  const btnColor=BTNCOLORS[state.btnmat];
+  // the exact same parametric garments, dressed on a figure
+  const jacket=jacketSVG({lapel:state.lapel,buttons:btnCount(),roll:isRoll(),db:isDB(),
+    pockets:state.pockets,clothFill,texture,btnColor,liningFill:LININGS[state.lining]||null})
+    .replace('<svg ','<svg x="0" y="42" width="200" height="220" ');
+  const trous=trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),
+    side:state.waistband==='Side adjusters',clothFill,texture})
+    .replace('<svg ','<svg x="0" y="205" width="200" height="215" ');
+  return `<svg viewBox="0 0 200 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Your suit on a model">
+  <ellipse cx="100" cy="420" rx="62" ry="6" fill="rgba(27,42,65,.08)"/>
+  <!-- trousers first so the jacket hem covers the waistband -->
+  ${trous}
+  <!-- shoes -->
+  <path d="M70,402 h24 v10 q0,6 -8,6 h-20 q-6,0 -4,-6 Z" fill="#17181c" stroke="#2a3444" stroke-width="1"/>
+  <path d="M130,402 h-24 v10 q0,6 8,6 h20 q6,0 4,-6 Z" fill="#17181c" stroke="#2a3444" stroke-width="1"/>
+  <!-- head + neck -->
+  <rect x="93" y="30" width="14" height="14" rx="3" fill="#e9cfb5" stroke="#2a3444" stroke-width="1"/>
+  <circle cx="100" cy="21" r="15" fill="#e9cfb5" stroke="#2a3444" stroke-width="1.2"/>
+  <path d="M85,18 a15,15 0 0 1 30,0 q1,-9 -6,-13 q-9,-6 -18,0 q-7,4 -6,13 Z" fill="#3a2f28"/>
+  ${jacket}
+  <!-- hands at the cuffs -->
+  <circle cx="32" cy="230" r="5.5" fill="#e9cfb5" stroke="#2a3444" stroke-width="1"/>
+  <circle cx="168" cy="230" r="5.5" fill="#e9cfb5" stroke="#2a3444" stroke-width="1"/>
+</svg>`;
+}
+function viewSVG(){
+  const clothFill=CLOTHS[state.cloth]||'#243b55';
+  const texture=clothTexture();
+  const btnColor=BTNCOLORS[state.btnmat];
+  const v=VIEWS[curView].id;
+  if(v==='photo'){
+    const src=`suit-images/${PHOTO_CLOTH[state.cloth]||'navy'}-${state.lapel.toLowerCase()}.png`;
+    return `<img class="preview-photo" src="${src}" alt="Your suit — ${state.cloth}, ${state.lapel} lapel" onerror="pvImgFail(this)">`;
   }
+  if(v==='model'){
+    const src=`suit-images/${MODEL_PHOTO[state.cloth]||'loved-firstsuit.png'}`;
+    return `<img class="preview-photo" src="${src}" alt="Your cloth on a model" onerror="pvImgFail(this,'model')">`;
+  }
+  if(v==='front') return jacketSVG({lapel:state.lapel,buttons:btnCount(),roll:isRoll(),db:isDB(),
+    pockets:state.pockets,clothFill,texture,btnColor,liningFill:LININGS[state.lining]||null});
+  if(v==='back') return backSVG({vent:state.vents,clothFill,texture});
+  if(v==='inside') return insideSVG({clothFill,texture,liningFill:LININGS[state.lining],liningName:state.lining,
+    monoStyle:state.monostyle,monoText:state.monoText,monoThread:state.monoThread,
+    collarText:state.collar!=='None'?(state.collarText||'YOUR NAME'):null,photo:state.photo!=='None'});
+  return trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),
+    side:state.waistband==='Side adjusters',clothFill,texture});
+}
+function viewerHTML(){
+  return `<div class="pv" onpointerdown="pvDown(event)" onpointerup="pvUp(event)">
+    <button class="pv-arr pv-l" onclick="prevView()" aria-label="Turn left">‹</button>
+    <div class="pv-stage">${viewSVG()}</div>
+    <button class="pv-arr pv-r" onclick="nextView()" aria-label="Turn right">›</button>
+    <div class="pv-dots">${VIEWS.map((v,i)=>`<button class="pv-dot${i===curView?' on':''}" onclick="setView(${i})">${v.label}</button>`).join('')}</div>
+    <div class="pv-note">Swipe or use the arrows to turn your suit</div>
+  </div>`;
+}
+function renderPreview(){
+  // build each copy separately so texture <pattern> ids stay unique per SVG
+  document.getElementById('live-preview').innerHTML=viewerHTML();
+  const mp=document.getElementById('mob-preview'); if(mp) mp.innerHTML=viewerHTML();
   const lines=[
     ['Cloth',state.cloth],['Lapel',state.lapel],['Front',state.frontbtn],
     ['Vents',state.vents],['Pockets',state.pockets],
@@ -760,6 +909,12 @@ function renderAll(){
   document.getElementById('bb-total').textContent='$'+currentTotal();
   document.getElementById('bb-back').style.visibility=(cur.cat===0&&cur.sub===0)?'hidden':'visible';
   document.getElementById('bb-next').textContent=NAV[cur.cat].id==='review'?'Place order':'Continue';
+  // completion momentum: fit already counts, so the bar never starts at zero
+  const pct=Math.round(((cur.cat+1)/NAV.length)*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-step').textContent=NAV[cur.cat].id==='review'
+    ?'Your suit is ready — one step left'
+    :`Step ${cur.cat+1} of ${NAV.length} · about ${Math.max(1,NAV.length-1-cur.cat)} min to go`;
   saveDraft();
   window.scrollTo({top:0});
 }
@@ -881,8 +1036,26 @@ function reviewHTML(){
     ['Photo lining',state.photo==='None'?'—':(state.photoName||'awaiting upload')],
     ['Total','$'+currentTotal()],
   ];
+  const total=currentTotal();
+  const monoUpsell=state.monostyle==='None'?`<div class="quick-add">
+    <span><b>Make it unmistakably yours.</b> A stitched monogram is the single most-added detail — initials, a name, a date.</span>
+    <button class="btn" onclick="state.monostyle='Script monogram';cur={cat:7,sub:1};renderAll()">Add monogram · +$15</button>
+  </div>`:'';
   return `
   <h2 style="font-size:1.8rem;margin-top:14px">Your suit, on paper</h2>
+  <div class="value-box">
+    <div class="vrow"><span>Your suit, exactly as you built it</span><span>$${total}</span></div>
+    <div class="vrow"><span>Typical alterations at your local tailor</span><span>$40–90</span></div>
+    <div class="vrow"><span>A comparable made-to-measure suit</span><span>$1,200+</span></div>
+    <div class="vrow big"><span>What stays in your pocket</span><span class="save">$${1200-total-90}+</span></div>
+  </div>
+  <div class="queue-line">Orders placed today go into this week's cutting run — later orders wait for the next one.</div>
+  <div class="guarantees">
+    <span>✓ <b>Free remake</b> if your tailor says it can't be fitted</span>
+    <span>✓ <b>$20 credit</b> for logging your alterations</span>
+    <span>✓ <b>Secure checkout</b>, powered by Stripe at launch</span>
+  </div>
+  ${monoUpsell}
   <div class="disclosure"><strong>How the fit works — read this once</strong>
   We cut your suit close to your numbers, with deliberate extra allowance in the waist, seat, and sleeve. It arrives wearable, not finished. Take it to any local tailor for final alterations — typically $40–90 — and it becomes <em>your</em> suit. We don't do the tailoring; that's the whole reason the price is what it is.</div>
   <table class="review-table">${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>
@@ -1214,7 +1387,9 @@ function openCheckout(){
     <div class="field"><label for="pay-cvc">CVC</label><input type="text" id="pay-cvc" placeholder="•••" disabled></div>
   </div>
   <div class="pay-note">Preview build: payment fields are disabled. At launch this is a secure Stripe checkout — no card details ever touch our servers.</div>
-  <button class="btn" style="margin-top:14px;width:100%" onclick="confirmOrder()">Place order — $${spec.order.total}</button>`);
+  <div class="trust-strip"><span><span class="gs">★</span> 4.9 on Google</span><span>✓ Free remake promise</span><span>✓ Your tailor finishes it — typically $40–90</span></div>
+  <button class="btn" style="margin-top:10px;width:100%" onclick="confirmOrder()">Place order — $${spec.order.total}</button>
+  <p style="font-size:.72rem;color:var(--ink-soft);text-align:center;margin-top:8px">Nothing is charged in this preview. Your suit stays saved either way.</p>`);
 }
 function confirmOrder(){
   const nm=document.getElementById('sh-name').value.trim(), ad=document.getElementById('sh-addr').value.trim();
