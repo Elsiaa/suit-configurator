@@ -478,15 +478,15 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
   .subtabs{margin-top:22px}
 }
 #social h2::after{content:'';display:block;width:56px;border-top:1px dashed var(--thread-soft);margin:14px auto 0;opacity:.6}
-/* hero v3: pure image, melting into a white plate that carries the name */
-.hero-bleed{min-height:min(72svh,700px);cursor:pointer}
-.hero-bleed::before{background:linear-gradient(180deg,rgba(12,19,32,.1) 0%,rgba(12,19,32,0) 35%,rgba(255,255,255,0) 72%,#fff 100%)}
-.hero-plate{background:#fff;text-align:center;padding:44px 18px 54px}
-.hero-plate h1{font-size:clamp(2.1rem,6vw,3.6rem);line-height:1.06;color:var(--ink)}
+/* hero v3: image + nameplate fit one screen exactly */
+.hero-bleed{min-height:0;height:calc(100svh - 328px);min-height:300px;cursor:pointer;background-position:center 16%}
+.hero-bleed::before{background:linear-gradient(180deg,rgba(12,19,32,.08) 0%,rgba(12,19,32,0) 30%,rgba(255,255,255,0) 86%,#fff 100%)}
+.hero-plate{background:#fff;text-align:center;padding:26px 14px 30px}
+.hero-plate h1{font-size:clamp(1.9rem,5.6vw,3.4rem);line-height:1.06;color:var(--ink)}
 .hero-plate h1 em{font-style:italic;color:var(--thread)}
-.hero-plate .hero-facts{justify-content:center;border-top:none;margin:26px auto 28px;padding:0;gap:clamp(22px,6vw,64px);max-width:900px}
-.hero-plate .hero-facts div{color:var(--ink-soft);text-transform:uppercase;letter-spacing:.12em;font-size:.6rem}
-.hero-plate .hero-facts strong{color:var(--ink);font-size:1.6rem;text-shadow:none;text-transform:none;letter-spacing:0}
+.hero-plate .hero-facts{justify-content:center;border-top:none;margin:20px auto 22px;padding:0;gap:clamp(16px,5vw,64px);max-width:900px;flex-wrap:nowrap}
+.hero-plate .hero-facts div{color:var(--ink-soft);text-transform:uppercase;letter-spacing:.1em;font-size:.54rem;white-space:nowrap}
+.hero-plate .hero-facts strong{color:var(--ink);font-size:clamp(1.15rem,4vw,1.6rem);text-shadow:none;text-transform:none;letter-spacing:0}
 .hero-plate>*{opacity:0;transform:translateY(14px);animation:heroin .7s cubic-bezier(.2,.8,.2,1) forwards}
 .hero-plate>*:nth-child(1){animation-delay:.08s}
 .hero-plate>*:nth-child(2){animation-delay:.2s}
