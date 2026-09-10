@@ -818,6 +818,18 @@ function clothTexture(){
   const n=state.cloth.toLowerCase();
   return n.includes('herringbone')?'herringbone':n.includes('sharkskin')?'sharkskin':null;
 }
+/* exact photo for cloth × lapel × buttons, or null when only the drawing is exact:
+   base {cloth}-{lapel}.png = 2 buttons (shawl base = 1 button); -1btn / -db variants;
+   3-button, 5-button, and roll fronts have no photo — the drawing renders them exactly */
+function photoSrc(){
+  const c=PHOTO_CLOTH[state.cloth]; if(!c) return null;
+  const lap=state.lapel.toLowerCase(), b=state.frontbtn;
+  if(lap==='shawl') return b==='1 button'?`suit-images/${c}-shawl.png`:null;
+  if(b==='2 buttons') return `suit-images/${c}-${lap}.png`;
+  if(b==='1 button') return `suit-images/${c}-${lap}-1btn.png`;
+  if(b.startsWith('Double')) return `suit-images/${c}-${lap}-db.png`;
+  return null;
+}
 function pvImgFail(el,kind){
   // no photo for this combination: fall back to the exact drawing
   el.outerHTML = kind==='model' ? modelSVG()
@@ -859,8 +871,10 @@ function viewSVG(){
   const btnColor=BTNCOLORS[state.btnmat];
   const v=VIEWS[curView].id;
   if(v==='photo'){
-    const src=`suit-images/${PHOTO_CLOTH[state.cloth]||'navy'}-${state.lapel.toLowerCase()}.png`;
-    return `<img class="preview-photo" src="${src}" alt="Your suit — ${state.cloth}, ${state.lapel} lapel" onerror="pvImgFail(this)">`;
+    const src=photoSrc();
+    if(!src) return jacketSVG({lapel:state.lapel,buttons:btnCount(),roll:isRoll(),db:isDB(),
+      pockets:state.pockets,clothFill,texture,btnColor,liningFill:LININGS[state.lining]||null});
+    return `<img class="preview-photo" src="${src}" alt="Your suit — ${state.cloth}, ${state.lapel} lapel, ${state.frontbtn}" onerror="pvImgFail(this)">`;
   }
   if(v==='model'){
     const src=`suit-images/${MODEL_PHOTO[state.cloth]||'loved-firstsuit.png'}`;
