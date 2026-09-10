@@ -699,6 +699,19 @@ body{min-height:100svh}
 /* page one is immune to any viewport weirdness */
 html,body{width:100%;min-width:0}
 #landing,.hero-bleed,.hero-plate{width:100%;max-width:none}
+/* mobile: most-loved section, compact cut */
+@media(max-width:640px){
+  #loved{padding-top:26px;padding-bottom:26px}
+  #loved h2{font-size:1.4rem}
+  #loved h2::after{margin-top:8px}
+  .suitcard{flex:0 0 58vw}
+  .suitcard .info{padding:9px 11px 11px;gap:3px}
+  .suitcard .info h3{font-size:1.02rem}
+  .suitcard .info p{font-size:.68rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .suitcard .pricing{font-size:.76rem}
+  .suitcard .btn{padding:9px 6px;font-size:.56rem;letter-spacing:.1em}
+  .suitcard .tagpill{font-size:.54rem}
+}
 </style>
 </head>
 <body>
