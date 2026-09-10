@@ -451,7 +451,7 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
 /* stitched dividers under section headings + editorial numbering */
 .sec h2::after{content:'';display:block;width:56px;border-top:1px dashed var(--thread);margin-top:12px;opacity:.7}
 #landing{counter-reset:sec}
-#landing .sec h2::before,#social h2::before{counter-increment:sec;content:counter(sec,decimal-leading-zero);display:block;font-family:'Spectral',serif;font-size:.66rem;font-weight:600;letter-spacing:.3em;color:var(--thread);margin-bottom:10px}
+#landing .sec h2::before,#social h2::before{counter-increment:sec;content:counter(sec);display:block;font-family:'Spectral',serif;font-size:.66rem;font-weight:600;letter-spacing:.3em;color:var(--thread);margin-bottom:10px}
 #social{counter-increment:none}
 /* craft manifesto band */
 .craft{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -633,6 +633,35 @@ footer.site .navlink:hover{color:var(--thread-soft)}
 .foot-mail{color:#d9b64e}
 .foot-social a{color:rgba(251,250,246,.85);border-color:rgba(251,250,246,.25)}
 .foot-social a:hover{color:#d9b64e;border-color:#d9b64e}
+
+/* ---- finishing lacquer ---- */
+::selection{background:var(--thread-soft);color:var(--ink)}
+html{scrollbar-width:thin;scrollbar-color:var(--ink-soft) transparent}
+body::-webkit-scrollbar{width:9px}
+body::-webkit-scrollbar-thumb{background:rgba(20,31,51,.28);border-radius:5px;border:2px solid transparent;background-clip:content-box}
+body::-webkit-scrollbar-thumb:hover{background:rgba(20,31,51,.5);background-clip:content-box;border:2px solid transparent}
+/* hero content rises on load */
+.hero-inner>*{opacity:0;transform:translateY(14px);animation:heroin .7s cubic-bezier(.2,.8,.2,1) forwards}
+.hero-inner>*:nth-child(1){animation-delay:.05s}
+.hero-inner>*:nth-child(2){animation-delay:.15s}
+.hero-inner>*:nth-child(3){animation-delay:.25s}
+.hero-inner>*:nth-child(4){animation-delay:.35s}
+.hero-inner>*:nth-child(5){animation-delay:.45s}
+@keyframes heroin{to{opacity:1;transform:none}}
+/* selected option: gold seal instead of a bare tick */
+.optcard.sel::after{content:"✓";top:9px;right:9px;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--thread-soft);font-size:.7rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(20,31,51,.25)}
+/* the total breathes when it changes */
+#bb-total.tick{animation:pricepulse .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes pricepulse{0%{transform:scale(1)}35%{transform:scale(1.12);color:var(--thread)}100%{transform:scale(1)}}
+#bb-total{display:inline-block}
+/* modal headings carry the stitch */
+.modal h2::after{content:'';display:block;width:44px;border-top:1px dashed var(--thread);margin-top:9px;opacity:.65}
+/* roomier editorial rhythm on desktop */
+@media(min-width:961px){.sec{padding:76px 0}.craft{padding:84px 0}}
+@media (prefers-reduced-motion: reduce){
+  .hero-inner>*{animation:none;opacity:1;transform:none}
+  #bb-total.tick{animation:none}
+}
 </style>
 </head>
 <body>
@@ -1417,7 +1446,8 @@ function currentTotal(){
 }
 function renderAll(){
   renderCats();renderSubtabs();renderContent();renderPreview();
-  document.getElementById('bb-total').textContent='$'+currentTotal();
+  const tEl=document.getElementById('bb-total'), tNew='$'+currentTotal();
+  if(tEl.textContent!==tNew){tEl.textContent=tNew;tEl.classList.remove('tick');void tEl.offsetWidth;tEl.classList.add('tick');}
   document.getElementById('bb-back').style.visibility=(cur.cat===0&&cur.sub===0)?'hidden':'visible';
   document.getElementById('bb-next').textContent=NAV[cur.cat].id==='review'?'Place order':'Continue';
   document.getElementById('prog-fill').style.width=Math.round(((cur.cat+1)/NAV.length)*100)+'%';
