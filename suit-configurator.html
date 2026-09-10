@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Josh’s Suits</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23141f33'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='30' font-style='italic' fill='%23dcb964'%3EJS%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#1b2a41; --ink-soft:#3d4f66;
@@ -17,7 +18,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:var(--chalk);color:var(--ink);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;padding-bottom:84px}
+body{font-family:'Spectral',Georgia,serif;background:var(--chalk);color:var(--ink);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;padding-bottom:84px}
 h1,h2,h3{font-family:'Cormorant Garamond',serif;font-weight:600}
 
 .shell{max-width:1200px;margin:0 auto;padding:0 18px}
@@ -50,7 +51,7 @@ header.top{border-bottom:1px solid var(--line);background:var(--chalk);position:
 @media(max-width:960px){.workspace{grid-template-columns:1fr}.preview-col{display:none}.mob-preview{display:block}}
 .mob-preview svg{max-width:220px}
 
-.group-title{font-size:1.05rem;font-weight:600;margin:20px 0 12px;font-family:'Inter',sans-serif}
+.group-title{font-size:1.05rem;font-weight:600;margin:20px 0 12px;font-family:'Spectral',Georgia,serif;letter-spacing:.02em}
 .opt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:12px}
 .optcard{border:1px solid var(--line);border-radius:var(--r);background:#fff;padding:14px 10px 12px;cursor:pointer;text-align:center;font:inherit;color:var(--ink);position:relative;transition:border-color .1s}
 .optcard:hover{border-color:var(--ink-soft)}
@@ -385,6 +386,71 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 .status-line span.on{background:var(--good)}
 .pay-note{font-size:.75rem;color:var(--ink-soft);border:1px dashed var(--line);padding:10px 12px;border-radius:var(--r);margin-top:12px}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+
+/* ================================================================
+   PREMIUM LAYER — the house look. Editorial serif, aged gold,
+   woven-paper ground, letter-spaced microtype, sharp corners.
+================================================================ */
+:root{
+  --ink:#141f33; --ink-soft:#43506a;
+  --chalk:#faf7f0; --paper:#f2ecdf;
+  --thread:#a2761c; --thread-soft:#ecdfc0;
+  --line:#ded5c2; --r:2px;
+}
+body{
+  font-size:15.5px;line-height:1.62;
+  background-color:var(--chalk);
+  background-image:
+    repeating-linear-gradient(0deg,rgba(20,31,51,.014) 0 1px,transparent 1px 4px),
+    repeating-linear-gradient(90deg,rgba(20,31,51,.010) 0 1px,transparent 1px 4px);
+}
+h1,h2,h3{letter-spacing:.005em}
+/* microtype: every control speaks in tailor's-ticket caps */
+.btn,.leave-link,.add-ref{text-transform:uppercase;letter-spacing:.13em;font-size:.7rem;font-weight:600;padding:13px 24px}
+.btn.ghost{border-color:var(--ink)}
+.subtab,.pv-dot{text-transform:uppercase;letter-spacing:.09em;font-size:.62rem;font-weight:600;border-radius:2px}
+.cat{text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;font-weight:600}
+.cat .stepn{font-size:.62rem}
+.navlink{text-transform:uppercase;letter-spacing:.1em;font-size:.68rem;font-weight:600}
+.tagpill{letter-spacing:.24em;font-size:.6rem}
+.optcard .std{font-style:italic}
+.optcard .pr{letter-spacing:.04em}
+footer.site b{text-transform:uppercase;letter-spacing:.14em;font-size:.66rem;color:var(--ink)}
+/* surfaces */
+input[type=text],input[type=number],input[type=email],select,textarea{background:#fffdf7}
+.modal{border-top:2px solid var(--thread)}
+.bbar{background:var(--chalk);box-shadow:0 -1px 0 var(--line),0 -2px 0 rgba(162,118,28,.18)}
+.bbar-inner{background:none}
+.preview{background:var(--paper)}
+/* stitched dividers under section headings */
+.sec h2::after{content:'';display:block;width:56px;border-top:1px dashed var(--thread);margin-top:12px;opacity:.7}
+#social h2::after{content:'';display:block;width:56px;border-top:1px dashed var(--thread-soft);margin:14px auto 0;opacity:.6}
+/* hero: cinematic scrim, no bleed, jewel-lit type */
+.hero-bleed::before{background:linear-gradient(180deg,rgba(12,19,32,.22) 0%,rgba(12,19,32,.34) 42%,rgba(9,14,25,.9) 100%)}
+.hero-inner .tagpill{display:inline-block;color:#eee4c8;border:1px solid rgba(238,228,200,.4);padding:6px 11px;font-size:.56rem;letter-spacing:.2em;background:rgba(12,19,32,.32);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.hero-inner h1{color:#fdfcf6;text-shadow:0 2px 28px rgba(0,0,0,.45);margin-top:14px}
+.hero-inner h1 em{color:#dcb964}
+.hero-inner p{color:rgba(250,247,240,.94);font-weight:300;text-shadow:0 1px 18px rgba(0,0,0,.5);font-size:1.02rem}
+.hero-cta{background:#f4edda;border-color:#f4edda;color:#141f33}
+.hero-cta:hover{background:#fff;border-color:#fff;color:#141f33}
+.hero-facts{border-top:1px solid rgba(238,228,200,.28);padding-top:18px;margin-top:28px}
+.hero-facts div{text-transform:uppercase;letter-spacing:.12em;font-size:.6rem;color:rgba(238,228,200,.75)}
+.hero-facts strong{color:#f7f2e4;font-size:1.5rem;letter-spacing:0;text-transform:none;text-shadow:0 1px 14px rgba(0,0,0,.4)}
+/* interaction physics: everything answers the finger */
+.btn,.btn.ghost,.leave-link,.subtab,.pv-dot,.optcard,.suitcard,.soc-btn,.navlink,.method,.cat,.car-btn,.pv-arr,.hnav{transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease,background-color .15s ease,border-color .15s ease,color .15s ease}
+.btn:active,.subtab:active,.pv-dot:active,.optcard:active,.method:active{transform:scale(.97)}
+.btn:hover{transform:translateY(-1px)}
+.optcard:hover{box-shadow:0 6px 20px rgba(20,31,51,.08)}
+.optcard.sel{box-shadow:inset 0 0 0 1.5px var(--ink),0 8px 22px rgba(20,31,51,.1)}
+.suitcard:hover{box-shadow:0 10px 30px rgba(20,31,51,.1);transform:translateY(-2px)}
+/* scroll-reveal: sections and cards rise into place */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.rv.inview{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){
+  .rv{opacity:1;transform:none;transition:none}
+  .btn,.optcard,.suitcard{transition:none}
+  .pv-stage{animation:none}
+}
 </style>
 </head>
 <body>
@@ -688,15 +754,15 @@ function insideSVG(o){
   const shell=cp.fill;
   const threadC={'Gold':'#d9b64e','Silver':'#c8cdd6','Burgundy':'#a04652','Royal blue':'#5b8ae0','Tone-on-tone':'rgba(255,255,255,.8)'}[o.monoThread]||'#d9b64e';
   const mono=o.monoStyle&&o.monoStyle!=='None'
-    ?`<text x="138" y="168" text-anchor="middle" fill="${threadC}" style="font:${o.monoStyle==='Script monogram'?'italic 600 11px \'Cormorant Garamond\',serif':'700 9px Inter,sans-serif'};letter-spacing:${o.monoStyle==='Block monogram'?'2px':'0'}">${(o.monoText||'A.B.').slice(0,14)}</text>`:'';
+    ?`<text x="138" y="168" text-anchor="middle" fill="${threadC}" style="font:${o.monoStyle==='Script monogram'?'italic 600 11px \'Cormorant Garamond\',serif':'700 9px Spectral,serif'};letter-spacing:${o.monoStyle==='Block monogram'?'2px':'0'}">${(o.monoText||'A.B.').slice(0,14)}</text>`:'';
   const collar=o.collarText!=null
-    ?`<rect x="76" y="30" width="48" height="13" rx="3" fill="#221f1c"/><text x="100" y="39.5" text-anchor="middle" fill="#d9b64e" style="font:600 7px Inter,sans-serif;letter-spacing:2px">${o.collarText.toUpperCase().slice(0,12)}</text>`
+    ?`<rect x="76" y="30" width="48" height="13" rx="3" fill="#221f1c"/><text x="100" y="39.5" text-anchor="middle" fill="#d9b64e" style="font:600 7px Spectral,serif;letter-spacing:2px">${o.collarText.toUpperCase().slice(0,12)}</text>`
     :`<rect x="76" y="30" width="48" height="13" rx="3" fill="#221f1c"/>`;
   const photo=o.photo
     ?`<rect x="72" y="84" width="56" height="40" rx="2" fill="#fbfaf6" stroke="rgba(255,255,255,.7)" stroke-width="1.4"/>
       <path d="M76,116 l14,-14 10,9 8,-7 14,12" fill="none" stroke="#8898ad" stroke-width="1.6"/>
       <circle cx="86" cy="93" r="3.4" fill="#d9b64e"/>
-      <text x="100" y="132" text-anchor="middle" fill="rgba(255,255,255,.75)" style="font:500 6px Inter,sans-serif;letter-spacing:1px">YOUR PHOTO, PRINTED</text>`:'';
+      <text x="100" y="132" text-anchor="middle" fill="rgba(255,255,255,.75)" style="font:500 6px Spectral,serif;letter-spacing:1px">YOUR PHOTO, PRINTED</text>`:'';
   return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jacket interior">
   ${defs}${cp.defs}
   <!-- body opened flat: lining panel -->
@@ -1196,7 +1262,7 @@ function monoHTML(){return `
   <div class="opt-grid" style="margin-bottom:18px">
     ${['None','Script monogram','Block monogram'].map(n=>`
       <button class="optcard${state.monostyle===n?' sel':''}" onclick="state.monostyle='${n}';renderAll()">
-        <div style="font-family:${n==='Script monogram'?"'Cormorant Garamond',serif;font-style:italic":n==='Block monogram'?"'Inter',sans-serif;letter-spacing:.1em":'inherit'};font-size:1.6rem;padding:14px 0;color:${n==='None'?'var(--ink-soft)':'var(--thread)'}">${n==='None'?'—':'Y.K.'}</div>
+        <div style="font-family:${n==='Script monogram'?"'Cormorant Garamond',serif;font-style:italic":n==='Block monogram'?"'Spectral',serif;letter-spacing:.14em;text-transform:uppercase":'inherit'};font-size:1.6rem;padding:14px 0;color:${n==='None'?'var(--ink-soft)':'var(--thread)'}">${n==='None'?'—':'Y.K.'}</div>
         <div class="nm">${n}</div>${PRICES[n]?`<div class="pr">+ $${PRICES[n]}</div>`:''}
       </button>`).join('')}
   </div>
@@ -2003,6 +2069,15 @@ if(KIOSK){
 }
 window.addEventListener('online',flushOrderQueue);
 flushOrderQueue();
+
+/* scroll-reveal on the landing page (skipped when reduced motion is set) */
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('inview');io.unobserve(e.target);}
+  }),{threshold:.12});
+  document.querySelectorAll('#landing .sec, #social .shell, .suitcard, .review, .trust > div, footer.site .cols > div')
+    .forEach((el,i)=>{el.classList.add('rv');el.style.transitionDelay=(Math.min(i%6,4)*60)+'ms';io.observe(el);});
+}
 </script>
 </body>
 </html>
