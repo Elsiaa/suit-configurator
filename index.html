@@ -712,6 +712,17 @@ html,body{width:100%;min-width:0}
   .suitcard .btn{padding:9px 6px;font-size:.56rem;letter-spacing:.1em}
   .suitcard .tagpill{font-size:.54rem}
 }
+/* mobile: section headings centered, off the edge */
+@media(max-width:640px){
+  .shell{padding-left:20px;padding-right:20px}
+  #landing .sec h2,#reviews h2,#how h2{text-align:center}
+  #landing .sec h2::before{text-align:center}
+  #landing .sec h2::after,#reviews h2::after,#how h2::after{margin-left:auto;margin-right:auto}
+  .greviews-head{justify-content:center;text-align:left}
+  .craft-txt{text-align:center}
+  .craft-txt p{margin-left:auto;margin-right:auto}
+  .craft-img{margin:0 auto}
+}
 </style>
 </head>
 <body>
