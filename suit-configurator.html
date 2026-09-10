@@ -243,8 +243,11 @@ details.terms li{margin:5px 0}
   .workspace{padding-top:0}
   .subtabs{gap:8px;margin:12px 0 4px}
   .subtab{padding:8px 14px;font-size:.8rem}
-  .opt-grid{grid-template-columns:1fr 1fr;gap:10px}
-  .optcard{padding:10px 8px 10px}
+  /* options are a swipeable carousel on mobile, not a stacked deck */
+  .opt-grid{display:flex;overflow-x:auto;gap:10px;scroll-snap-type:x mandatory;padding-bottom:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .opt-grid::-webkit-scrollbar{display:none}
+  .optcard{flex:0 0 56vw;scroll-snap-align:center;padding:10px 8px 10px}
+  .optcard:has(.swatch){flex-basis:38vw}
   .optcard .nm{font-size:.78rem}
   .optcard .std{font-size:.66rem}
   .optcard .pr{font-size:.7rem}
@@ -946,6 +949,11 @@ function renderContent(){
   c.querySelectorAll('.optcard').forEach(b=>{
     b.onclick=()=>{state[b.dataset.g==='mono'?'monostyle':OPTGROUPS[b.dataset.g].key]=b.dataset.n;renderAll();};
   });
+  // mobile carousel: keep the selected card centered
+  const g=c.querySelector('.opt-grid'), selc=g&&g.querySelector('.optcard.sel');
+  if(g&&selc&&window.matchMedia('(max-width:640px)').matches){
+    g.scrollLeft=selc.offsetLeft-g.offsetLeft-g.clientWidth/2+selc.offsetWidth/2;
+  }
 }
 const PHOTO_CLOTH={'Navy wool blend':'navy','Charcoal herringbone':'herringbone','Black twill':'black','Midnight blue sharkskin':'sharkskin','Forest green wool':'green'};
 const MODEL_PHOTO={'Navy wool blend':'loved-firstsuit.jpg','Charcoal herringbone':'model-charcoal.jpg','Black twill':'model-black.jpg','Midnight blue sharkskin':'loved-eveningblue.jpg','Forest green wool':'model-green.jpg'};
