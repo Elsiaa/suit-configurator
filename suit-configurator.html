@@ -6,10 +6,10 @@
 <title>Isaiah’s Suits — custom suits, finished by your tailor</title>
 <meta name="description" content="Design a custom suit in five minutes — cloth, lapel, buttons, lining, your name under the collar. Cut with deliberate allowance, from $300, finished by your own tailor.">
 <meta name="theme-color" content="#141f33">
-<link rel="preload" as="image" href="suit-images/hero-wide.jpg">
+<link rel="preload" as="image" href="suit-images/hero-wide-v2.jpg">
 <meta property="og:title" content="Isaiah’s Suits — custom suits, finished by your tailor">
 <meta property="og:description" content="Design a custom suit in five minutes. Cut with deliberate allowance, from $300, finished by your own tailor.">
-<meta property="og:image" content="https://elsiaa.github.io/suit-configurator/suit-images/hero-wide.jpg">
+<meta property="og:image" content="https://elsiaa.github.io/suit-configurator/suit-images/hero-wide-v2.jpg">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23141f33'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='30' font-style='italic' fill='%23dcb964'%3EIS%3C/text%3E%3C/svg%3E">
@@ -123,7 +123,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .alt-link{background:none;border:none;font:inherit;font-size:.8rem;color:var(--ink-soft);text-decoration:underline;cursor:pointer}
 .badge-good{color:var(--good);font-weight:600;font-size:.8rem}
 /* full-bleed photographic hero */
-.hero-bleed{position:relative;min-height:min(92svh,860px);display:flex;align-items:flex-end;background:#8f9294 url('suit-images/hero-wide.jpg') center 30%/cover no-repeat}
+.hero-bleed{position:relative;min-height:min(92svh,860px);display:flex;align-items:flex-end;background:#8f9294 url('suit-images/hero-wide-v2.jpg') center 42%/cover no-repeat}
 .hero-bleed::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,42,65,.1) 30%,rgba(20,30,48,.82) 88%)}
 .hero-facts{display:flex;gap:28px;margin-top:26px;flex-wrap:wrap}
 .hero-facts div{font-size:.8rem;color:rgba(251,250,246,.75)}
@@ -654,7 +654,7 @@ body::-webkit-scrollbar-thumb:hover{background:rgba(20,31,51,.5);background-clip
 }
 /* mobile hero: the FULL frame — whole car, true aspect, no crop (must win the cascade) */
 @media(max-width:640px){
-  .hero-bleed{height:auto;min-height:0;aspect-ratio:1600/914;background:url('suit-images/hero-wide.jpg') center/cover no-repeat}
+  .hero-bleed{height:auto;min-height:0;aspect-ratio:2688/1152;background:url('suit-images/hero-wide-v2.jpg') center/cover no-repeat}
   .hero-plate{padding-top:16px}
 }
 /* the opening fold measures the browser and fills it exactly */
@@ -787,6 +787,22 @@ footer.site{background:
 .optcard{background:linear-gradient(180deg,#ffffff 0%,#fdfcf9 100%)}
 .optcard.sel{background:linear-gradient(180deg,#f2efe7 0%,#ece8df 100%)}
 #design-cta{text-align:center}
+/* ================================================================
+   BRAND POLISH — quiet luxury: warm gradients, gold hairlines.
+================================================================ */
+header.top{background:linear-gradient(180deg,#fcfbf8 0%,#f5f3ee 100%);border-bottom:1px solid rgba(162,118,28,.20)}
+.wordmark{letter-spacing:.012em}
+.wordmark em{text-shadow:0 1px 6px rgba(162,118,28,.18)}
+#design-cta,#loved{background:
+  radial-gradient(110% 90% at 50% 0%,rgba(255,255,255,.5),transparent 60%),
+  repeating-linear-gradient(45deg,rgba(20,31,51,.012) 0 2px,transparent 2px 6px),
+  linear-gradient(180deg,#f4f2ec 0%,#efece5 100%)}
+#design-cta{border-top:1px solid rgba(162,118,28,.13);border-bottom:1px solid rgba(162,118,28,.10)}
+#reviews{background:linear-gradient(180deg,#faf9f5 0%,#f3f1ea 100%)}
+.hero-plate{position:relative}
+.hero-plate::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:120px;border-top:1px solid rgba(162,118,28,.35)}
+.modal{background:linear-gradient(180deg,#fdfcfa 0%,#f7f5f0 100%)}
+.bbar{box-shadow:0 -1px 0 var(--line),0 -2px 0 rgba(162,118,28,.28)}
 /* ================================================================
    MOBILE CONFIGURATOR — compact v2: smaller pieces, more air.
 ================================================================ */
@@ -1267,12 +1283,24 @@ const thumbPhoto = src => src?`<img class="thumb-photo" src="${src}" alt="" load
 const thumbBtnPhoto = name => thumbPhoto(photoFor(state.cloth,state.lapel,name));
 const thumbLapelPhoto = l => thumbPhoto(photoFor(state.cloth,l,state.frontbtn)||photoFor(state.cloth,l,'2 buttons'));
 const thumbClothPhoto = c => thumbPhoto(photoFor(c,state.lapel,state.frontbtn)||photoFor(c,state.lapel,'2 buttons'));
-const thumbPocket = p=>jacketSVG({lapel:state.lapel,buttons:btnCount(),db:isDB(),pockets:p,accent:{pockets:1}});
+const POCKET_PHOTO={'Straight flap':'pocket-straight.jpg','Slanted flap':'pocket-slanted.jpg','Jetted (no flap)':'pocket-jetted.jpg','Patch':'pocket-patch.jpg'};
+const thumbPocket = p=>thumbPhoto(POCKET_PHOTO[p]?`suit-images/${POCKET_PHOTO[p]}`:null)||jacketSVG({lapel:state.lapel,buttons:btnCount(),db:isDB(),pockets:p,accent:{pockets:1}});
 const thumbVent = v=>backSVG({vent:v,accent:true});
-const thumbFit = f=>trouserSVG({fit:f,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),accent:{fit:1}});
-const thumbPleat = p=>trouserSVG({fit:state.legfit,pleats:p,cuff:state.hem.startsWith('Cuffed'),accent:{pleats:1}});
-const thumbHem = c=>trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:c,accent:{cuff:1}});
-const thumbBand = s=>trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),side:s,accent:{band:1}});
+/* real trouser photos exist for every belt-loop combo — thumbnails use them, drawings only when no photo can be exact */
+function trouserPhotoFor(fit,pleats,hem,waistband){
+  const c=PHOTO_CLOTH[state.cloth]; if(!c||waistband!=='Belt loops') return null;
+  const cuffed=hem.startsWith('Cuffed');
+  let suf=null;
+  if(pleats==='Flat front') suf=cuffed?'-cuff':'';
+  else if(pleats==='Single pleat') suf=cuffed?'-pleat1-cuff':'-pleat1';
+  else if(pleats==='Double pleat') suf=cuffed?'-pleat2-cuff':'-pleat2';
+  if(suf===null) return null;
+  return `suit-images/trouser-${c}-${FIT_KEY[fit]}${suf}.jpg?v=2`;
+}
+const thumbFit = f=>thumbPhoto(trouserPhotoFor(f,state.pleats,state.hem,state.waistband))||trouserSVG({fit:f,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),accent:{fit:1}});
+const thumbPleat = p=>thumbPhoto(trouserPhotoFor(state.legfit,p,state.hem,state.waistband))||trouserSVG({fit:state.legfit,pleats:p,cuff:state.hem.startsWith('Cuffed'),accent:{pleats:1}});
+const thumbHem = c=>thumbPhoto(trouserPhotoFor(state.legfit,state.pleats,c?'Cuffed hem (1.75")':'Plain hem',state.waistband))||trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:c,accent:{cuff:1}});
+const thumbBand = s=>s?trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),side:true,accent:{band:1}}):(thumbPhoto(trouserPhotoFor(state.legfit,state.pleats,state.hem,'Belt loops'))||trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),side:false,accent:{band:1}}));
 
 function btnCount(){
   const m={'1 button':1,'2 buttons':2,'3 buttons':3,'3 buttons (roll to 2nd)':3,'5 buttons':5};
@@ -1536,7 +1564,7 @@ function trouserMedia(clothFill,texture){
     if(state.pleats==='Flat front') suf=cuffed?'-cuff':'';
     else if(state.pleats==='Single pleat') suf=cuffed?'-pleat1-cuff':'-pleat1';
     else if(state.pleats==='Double pleat') suf=cuffed?'-pleat2-cuff':'-pleat2';
-    if(suf!==null) return `<img class="preview-photo" src="suit-images/trouser-${c}-${FIT_KEY[state.legfit]}${suf}.jpg" alt="Trousers — ${state.legfit}, ${state.pleats}, ${state.hem}" onerror="pvImgFail(this,'trouser')">`;
+    if(suf!==null) return `<img class="preview-photo" src="suit-images/trouser-${c}-${FIT_KEY[state.legfit]}${suf}.jpg?v=2" alt="Trousers — ${state.legfit}, ${state.pleats}, ${state.hem}" onerror="pvImgFail(this,'trouser')">`;
   }
   return trouserDrawing(clothFill,texture);
 }
