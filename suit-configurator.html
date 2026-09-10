@@ -440,6 +440,15 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
 .seen-on{display:flex;gap:16px;align-items:center;justify-content:center;color:#eee4c8;margin-bottom:4px}
 .seen-on span{text-transform:uppercase;letter-spacing:.24em;font-size:.62rem;font-weight:600;color:var(--thread-soft)}
 .seen-on svg{width:21px;height:21px;opacity:.85}
+/* design-your-own cloth strip */
+.cloth-strip{display:flex;gap:8px;margin-top:18px;cursor:pointer}
+.cloth-strip img{flex:1;min-width:0;aspect-ratio:3/5;object-fit:cover;border-radius:var(--r);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s ease}
+.cloth-strip:hover img{transform:translateY(-3px)}
+.cloth-strip img:nth-child(2){transition-delay:.03s}
+.cloth-strip img:nth-child(3){transition-delay:.06s}
+.cloth-strip img:nth-child(4){transition-delay:.09s}
+.cloth-strip img:nth-child(5){transition-delay:.12s}
+@media(max-width:640px){.cloth-strip img:nth-child(n+4){display:none}.cloth-strip{gap:6px}}
 /* interaction physics: everything answers the finger */
 .btn,.btn.ghost,.leave-link,.subtab,.pv-dot,.optcard,.suitcard,.soc-btn,.navlink,.method,.cat,.car-btn,.pv-arr,.hnav{transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease,background-color .15s ease,border-color .15s ease,color .15s ease}
 .btn:active,.subtab:active,.pv-dot:active,.optcard:active,.method:active{transform:scale(.97)}
@@ -497,9 +506,16 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
   </div>
 </section>
 
-<section class="shell sec" style="background:none">
+<section class="shell sec" id="design-cta">
   <h2>Or design your own — from $300</h2>
-  <button class="btn" style="margin-top:8px" onclick="startConfig()">Start designing</button>
+  <div class="cloth-strip" onclick="startConfig()" role="button" aria-label="Start designing">
+    <img src="suit-images/navy-notch.jpg" alt="Navy wool">
+    <img src="suit-images/herringbone-peak.jpg" alt="Charcoal herringbone">
+    <img src="suit-images/black-shawl.jpg" alt="Black twill">
+    <img src="suit-images/sharkskin-peak.jpg" alt="Midnight sharkskin">
+    <img src="suit-images/green-notch.jpg" alt="Forest green">
+  </div>
+  <button class="btn" style="margin-top:16px" onclick="startConfig()">Start designing</button>
 </section>
 
 <section id="social">
@@ -1364,7 +1380,7 @@ function reviewHTML(){
       ${['Trouser waist','Seat','Trouser length','Sleeve length','Jacket waist'].map((l,i)=>`<div class="field"><label for="a-${i}">${l} (in)</label><input type="number" id="a-${i}" step="0.25" placeholder="-1"></div>`).join('')}
     </div>
     <div class="field"><label for="a-notes">Anything else your tailor said</label><textarea id="a-notes" rows="3" placeholder="Shoulders were spot on, sleeves ran long..."></textarea></div>
-    <button class="btn" onclick="openModal('<h2>Logged — thank you</h2><p style=&quot;font-size:.9rem&quot;>Your $20 credit code: <b>JOSH20</b>. It applies at checkout on your next order.</p>')">Submit — claim $20 credit</button>
+    <button class="btn" onclick="logAlterations()">Submit — claim $20 credit</button>
   </div>`;}
 function altView(){document.getElementById('alt-form').classList.toggle('hidden');}
 
@@ -1758,13 +1774,72 @@ function inspectViewsHTML(){
   ];
   return `<div class="inspect-row">${views.map(v=>`<div class="iv"><div class="ivbox">${v[1]}</div>${v[0]}</div>`).join('')}</div>`;
 }
+/* alterations feedback → predicted-vs-actual pairs: the bias-correction dataset */
+function logAlterations(){
+  const num=(document.getElementById('a-order').value||'').trim();
+  const cost=parseFloat(document.getElementById('a-cost').value);
+  const deltas={};
+  ['Trouser waist','Seat','Trouser length','Sleeve length','Jacket waist'].forEach((l,i)=>{
+    const v=document.getElementById('a-'+i).value;
+    if(v!=='')deltas[l]=parseFloat(v);
+  });
+  const notes=(document.getElementById('a-notes').value||'').trim();
+  const orders=getOrders();
+  const o=orders.find(x=>x.number.toLowerCase()===num.toLowerCase());
+  if(o){
+    o.alterations={at:new Date().toISOString(),cost:isNaN(cost)?null:cost,deltas,notes};
+    const est=o.spec&&o.spec.fit&&o.spec.fit.closetReferences&&o.spec.fit.closetReferences.estimate;
+    if(est)o.biasSample={predicted:est,alterationDeltas:deltas}; // sizing-engine training pair
+    localStorage.setItem(LS_ORDERS,JSON.stringify(orders));
+  }
+  openModal(`<h2>Logged — thank you</h2><p style="font-size:.9rem">${o?`Recorded against order <b>${o.number}</b>. `:''}Your $20 credit code: <b>JOSH20</b>. It applies at checkout on your next order.</p>`);
+}
+
+/* ---- sizing engine v0 (Phase 5) ----
+   Closet references → estimated measurements: flat garment × 2 for
+   circumferences, ±0.75" for the fit verdict, height-scaled sanity bounds.
+   The customer confirms the estimate before the order goes anywhere. */
+function estimateFromCloset(){
+  if(state.method!=='closet'||!state.refs.length) return null;
+  const H=parseFloat(state.height)||null;
+  const adj=v=>v==='Slightly snug'?0.75:v==='Slightly loose'?-0.75:0;
+  const upper=[],lower=[];
+  state.refs.forEach(r=>{(r.garment==='Trousers / chinos'?lower:upper).push(r);});
+  const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null;
+  const n=x=>parseFloat(x);
+  const chest=avg(upper.filter(r=>n(r.pitpit)).map(r=>n(r.pitpit)*2+adj(r.verdict)));
+  const shoulder=avg(upper.filter(r=>n(r.shoulder)).map(r=>n(r.shoulder)+adj(r.verdict)*0.25));
+  const sleeve=avg(upper.filter(r=>n(r.sleeve)).map(r=>n(r.sleeve)));
+  const waist=avg(lower.filter(r=>n(r.pitpit)).map(r=>n(r.pitpit)*2+adj(r.verdict)));
+  const inseam=avg(lower.filter(r=>n(r.sleeve)).map(r=>n(r.sleeve)));
+  const out={};
+  const put=(k,v,lo,hi)=>{if(v!=null&&!isNaN(v))out[k]=Math.round(Math.min(hi,Math.max(lo,v))*4)/4;};
+  put('Chest',chest,32,60);
+  put('Shoulder',shoulder,15,23);
+  put('Sleeve',sleeve,H?H*0.32:22,H?H*0.40:27);
+  put('Waist',waist,26,50);
+  put('Inseam',inseam,H?H*0.40:26,H?H*0.50:34);
+  return Object.keys(out).length?out:null;
+}
+function estimateRowsHTML(est){
+  return Object.keys(est).map(k=>`<tr><td>${k}</td><td>${est[k]}"</td></tr>`).join('');
+}
 function inspectGate(){
-  const a=document.getElementById('ins-happy'), b=document.getElementById('ins-terms');
-  document.getElementById('ins-continue').disabled=!(a.checked&&b.checked);
+  const a=document.getElementById('ins-happy'), b=document.getElementById('ins-terms'), c=document.getElementById('ins-est');
+  document.getElementById('ins-continue').disabled=!(a.checked&&b.checked&&(!c||c.checked));
 }
 function openInspect(){
   const spec=buildSpec();
   window._pendingSpec=spec;
+  const est=estimateFromCloset();
+  const estBlock=est?`
+  <div class="value-box" style="margin:10px 0 4px">
+    <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">Your estimated measurements</div>
+    <table class="review-table" style="margin:0">${estimateRowsHTML(est)}</table>
+    <p style="font-size:.72rem;color:var(--ink-soft);margin-top:6px">Read from your closet references. Not right? <button class="alt-link" onclick="closeModal();cur={cat:7,sub:0};renderAll()">Adjust your fit</button></p>
+  </div>
+  <label class="agree"><input type="checkbox" id="ins-est" onchange="inspectGate()">
+    <span>These estimated measurements look right to me.</span></label>`:'';
   openModal(`<h2>Inspect your suit</h2>
   <p style="font-size:.85rem;color:var(--ink-soft)">Every angle, exactly as it will be made. Look closely — this is what our cutters receive.</p>
   ${inspectViewsHTML()}
@@ -1776,6 +1851,7 @@ function openInspect(){
     ${state.collar!=='None'?`<tr><td>Collar name</td><td>"${(state.collarText||'')}"</td></tr>`:''}
     <tr><td><b>Total</b></td><td><b>$${spec.order.total}</b></td></tr>
   </table>
+  ${estBlock}
   <label class="agree"><input type="checkbox" id="ins-happy" onchange="inspectGate()">
     <span>I've inspected every detail above. This is exactly the suit I want made.</span></label>
   <details class="terms">
@@ -1791,7 +1867,7 @@ function openInspect(){
   </details>
   <label class="agree"><input type="checkbox" id="ins-terms" onchange="inspectGate()">
     <span>I've read and accept the Order Agreement. I understand this suit <b>requires tailoring at my own cost</b> before it's finished.</span></label>
-  <button class="btn" id="ins-continue" style="width:100%;margin-top:6px" disabled onclick="window._pendingSpec.agreement={version:AGREEMENT_VERSION,acceptedAt:new Date().toISOString(),inspected:true};openCheckout()">Continue to checkout</button>
+  <button class="btn" id="ins-continue" style="width:100%;margin-top:6px" disabled onclick="window._pendingSpec.agreement={version:AGREEMENT_VERSION,acceptedAt:new Date().toISOString(),inspected:true};if(window._pendingSpec.fit.closetReferences)window._pendingSpec.fit.closetReferences.estimateConfirmedAt=new Date().toISOString();openCheckout()">Continue to checkout</button>
   <p style="font-size:.72rem;color:var(--ink-soft);text-align:center;margin-top:8px"><button class="alt-link" onclick="closeModal()">Go back and change something</button></p>`);
 }
 
@@ -1955,6 +2031,7 @@ function buildSpec(){
       method:state.method,
       measurementsInches:state.method==='tailor'?measurements:null,
       closetReferences:state.method==='closet'?{
+        estimate:estimateFromCloset(),
         heightIn:state.height?parseFloat(state.height):null,
         weightLb:state.weight?parseFloat(state.weight):null,
         garments:state.refs.map(r=>({garment:r.garment, brandAndSize:r.brandsize,
