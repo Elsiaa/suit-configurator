@@ -1352,7 +1352,7 @@ const thumbPocket = p=>thumbPhoto(POCKET_PHOTO[p]?`suit-images/${POCKET_PHOTO[p]
 const thumbVent = v=>backSVG({vent:v,accent:true});
 /* real trouser photos exist for every belt-loop combo — thumbnails use them, drawings only when no photo can be exact */
 function trouserPhotoFor(fit,pleats,hem,waistband){
-  const c=PHOTO_CLOTH[state.cloth]; if(!c||waistband!=='Belt loops') return null;
+  const c=PHOTO_CLOTH[state.cloth]; if(!c) return null; // waistband is a spec-level detail, like pocket style on the jacket photo
   const cuffed=hem.startsWith('Cuffed');
   let suf=null;
   if(pleats==='Flat front') suf=cuffed?'-cuff':'';
@@ -1364,7 +1364,7 @@ function trouserPhotoFor(fit,pleats,hem,waistband){
 const thumbFit = f=>thumbPhoto(trouserPhotoFor(f,state.pleats,state.hem,state.waistband))||trouserSVG({fit:f,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),accent:{fit:1}});
 const thumbPleat = p=>thumbPhoto(trouserPhotoFor(state.legfit,p,state.hem,state.waistband))||trouserSVG({fit:state.legfit,pleats:p,cuff:state.hem.startsWith('Cuffed'),accent:{pleats:1}});
 const thumbHem = c=>thumbPhoto(trouserPhotoFor(state.legfit,state.pleats,c?'Cuffed hem (1.75")':'Plain hem',state.waistband))||trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:c,accent:{cuff:1}});
-const thumbBand = s=>s?trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),side:true,accent:{band:1}}):(thumbPhoto(trouserPhotoFor(state.legfit,state.pleats,state.hem,'Belt loops'))||trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),side:false,accent:{band:1}}));
+const thumbBand = s=>trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),side:s,accent:{band:1}});
 
 function btnCount(){
   const m={'1 button':1,'2 buttons':2,'3 buttons':3,'3 buttons (roll to 2nd)':3,'5 buttons':5};
@@ -1640,7 +1640,7 @@ function insideMedia(clothFill,texture){
 }
 function trouserMedia(clothFill,texture){
   const c=PHOTO_CLOTH[state.cloth];
-  if(c&&state.waistband==='Belt loops'){
+  if(c){
     const cuffed=state.hem.startsWith('Cuffed');
     let suf=null;
     if(state.pleats==='Flat front') suf=cuffed?'-cuff':'';
