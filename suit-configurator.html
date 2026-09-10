@@ -478,8 +478,20 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
   .subtabs{margin-top:22px}
 }
 #social h2::after{content:'';display:block;width:56px;border-top:1px dashed var(--thread-soft);margin:14px auto 0;opacity:.6}
-/* hero: cinematic scrim, no bleed, jewel-lit type */
-.hero-bleed::before{background:linear-gradient(180deg,rgba(12,19,32,.22) 0%,rgba(12,19,32,.34) 42%,rgba(9,14,25,.9) 100%)}
+/* hero v3: pure image, melting into a white plate that carries the name */
+.hero-bleed{min-height:min(72svh,700px);cursor:pointer}
+.hero-bleed::before{background:linear-gradient(180deg,rgba(12,19,32,.1) 0%,rgba(12,19,32,0) 35%,rgba(255,255,255,0) 72%,#fff 100%)}
+.hero-plate{background:#fff;text-align:center;padding:44px 18px 54px}
+.hero-plate h1{font-size:clamp(2.1rem,6vw,3.6rem);line-height:1.06;color:var(--ink)}
+.hero-plate h1 em{font-style:italic;color:var(--thread)}
+.hero-plate .hero-facts{justify-content:center;border-top:none;margin:26px auto 28px;padding:0;gap:clamp(22px,6vw,64px);max-width:900px}
+.hero-plate .hero-facts div{color:var(--ink-soft);text-transform:uppercase;letter-spacing:.12em;font-size:.6rem}
+.hero-plate .hero-facts strong{color:var(--ink);font-size:1.6rem;text-shadow:none;text-transform:none;letter-spacing:0}
+.hero-plate>*{opacity:0;transform:translateY(14px);animation:heroin .7s cubic-bezier(.2,.8,.2,1) forwards}
+.hero-plate>*:nth-child(1){animation-delay:.08s}
+.hero-plate>*:nth-child(2){animation-delay:.2s}
+.hero-plate>*:nth-child(3){animation-delay:.32s}
+@media (prefers-reduced-motion: reduce){.hero-plate>*{animation:none;opacity:1;transform:none}}
 .hero-inner .tagpill{display:inline-block;color:#eee4c8;border:1px solid rgba(238,228,200,.4);padding:6px 11px;font-size:.56rem;letter-spacing:.2em;background:rgba(12,19,32,.32);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 .hero-inner h1{color:#fdfcf6;text-shadow:0 2px 28px rgba(0,0,0,.45);margin-top:14px}
 .hero-inner h1 em{color:#dcb964}
@@ -684,18 +696,15 @@ body::-webkit-scrollbar-thumb:hover{background:rgba(20,31,51,.5);background-clip
 </header>
 
 <div id="landing">
-<section class="hero-bleed" id="hero">
-  <div class="shell hero-inner">
-    <p class="tagpill">Welcome to Josh&rsquo;s Suits</p>
-    <h1>Build your suit in five minutes. <em>Finish it</em> at your tailor.</h1>
-    <p>Every detail is yours — lapel, buttons, lining, your name under the collar, a photo inside the jacket. Cut with deliberate allowance, shipped to your door, finished by your own tailor.</p>
-    <button class="btn hero-cta" onclick="startConfig()">Design my own suit — from $300</button>
-    <div class="hero-facts">
-      <div><strong>$300</strong>base suit, delivered</div>
-      <div><strong>5 min</strong>to assemble</div>
-      <div><strong>Your tailor</strong>does the finishing</div>
-    </div>
+<section class="hero-bleed" id="hero" onclick="startConfig()" role="img" aria-label="Josh’s Custom Suits"></section>
+<section class="hero-plate">
+  <h1>Josh&rsquo;s <em>Custom Suits</em></h1>
+  <div class="hero-facts">
+    <div><strong>$300</strong>base suit, delivered</div>
+    <div><strong>5 min</strong>to assemble</div>
+    <div><strong>Your tailor</strong>does the finishing</div>
   </div>
+  <button class="btn" onclick="startConfig()">Design my own suit</button>
 </section>
 
 <section class="shell sec" id="design-cta">
