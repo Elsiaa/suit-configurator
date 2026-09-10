@@ -803,6 +803,12 @@ header.top{background:linear-gradient(180deg,#fcfbf8 0%,#f5f3ee 100%);border-bot
 .hero-plate::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:120px;border-top:1px solid rgba(162,118,28,.35)}
 .modal{background:linear-gradient(180deg,#fdfcfa 0%,#f7f5f0 100%)}
 .bbar{box-shadow:0 -1px 0 var(--line),0 -2px 0 rgba(162,118,28,.28)}
+/* find-my-size on the landing */
+#findsize{text-align:center;background:linear-gradient(180deg,#faf9f5 0%,#f3f1ea 100%);border-bottom:1px solid rgba(162,118,28,.10)}
+#findsize .lead{max-width:520px;margin:0 auto 20px}
+#findsize .method-pick{max-width:680px;margin:0 auto;text-align:left}
+#findsize .size-onfile{margin-top:16px;font-size:.86rem;color:var(--good);font-weight:600}
+#findsize .size-onfile a{color:var(--thread);font-weight:600}
 /* mobile: dedicated portrait hero fills the screen — full car, full man.
    The headline lives in the studio air above the car; facts and CTA below. */
 @media(max-width:640px){
@@ -895,6 +901,16 @@ header.top{background:linear-gradient(180deg,#fcfbf8 0%,#f5f3ee 100%);border-bot
     <img src="suit-images/green-notch.jpg" alt="Forest green">
   </div>
   <button class="btn" style="margin-top:16px" onclick="startConfig()">Start designing</button>
+</section>
+
+<section class="shell sec" id="findsize">
+  <h2>Find my size</h2>
+  <p class="lead">Do it once — every suit you build here is cut to it. It stays with this session, and lands on your profile when you sign in.</p>
+  <div class="method-pick">
+    <button class="method" onclick="openSizeManual()"><h3>Enter my measurements</h3><p>Numbers from a tailor's fitting — like a prescription from your optometrist.</p></button>
+    <button class="method" onclick="openFindMySize()"><h3>Chat with the sizing assistant</h3><p>Tell it the brands and sizes you already wear. It works out the rest.</p></button>
+  </div>
+  <p class="size-onfile" id="size-onfile"></p>
 </section>
 
 <section class="shell sec" id="loved">
@@ -1435,6 +1451,24 @@ function openFindMySize(){
   state.method='closet';
   cur={cat:7,sub:0};
   renderAll();
+}
+function openSizeManual(){
+  startConfig();
+  state.method='tailor';
+  cur={cat:7,sub:0};
+  renderAll();
+}
+/* size on file: session always, profile when signed in */
+function hasSize(){return Object.values(state.meas||{}).some(v=>v)||!!(state.assistant&&state.assistant.sizeLabel);}
+function syncSizeToProfile(){
+  if(!getUser()||!hasSize())return;
+  updateUser({meas:state.meas,assistant:state.assistant||null,height:state.height,weight:state.weight});
+}
+function sizeBadge(){
+  const el=document.getElementById('size-onfile'); if(!el)return;
+  if(!hasSize()){el.innerHTML='';return;}
+  const lbl=state.assistant&&state.assistant.sizeLabel;
+  el.innerHTML=`✓ Size on file${lbl?': <b>'+lbl+'</b>':''} — every suit you build uses it. <a href="#" onclick="openSizeManual();return false">Review</a>`;
 }
 function goHome(){
   if(typeof KIOSK!=='undefined'&&KIOSK){window.scrollTo({top:0});return;}
@@ -2190,6 +2224,7 @@ function doSignIn(){
   if(!n||!e){alert('Name and email, please.');return;}
   localStorage.setItem(LS_USER,JSON.stringify({name:n,email:e}));
   state.email=state.email||e;
+  syncSizeToProfile();
   refreshAccountNav();closeModal();
 }
 const STAGES=['Received','Cutting','Sewing & QC','Shipped','Delivered'];
@@ -2201,6 +2236,7 @@ function orderStage(o){
 const LS_DRAFT='ct-draft';
 function saveDraft(){
   try{localStorage.setItem(LS_DRAFT,JSON.stringify({state,cur}))}catch(e){}
+  try{syncSizeToProfile();sizeBadge();}catch(e){}
 }
 function restoreDraft(){
   try{
@@ -2851,7 +2887,16 @@ if(_sharedDesign){
   Object.assign(state,_sharedDesign);
 }else{
   restoreDraft();
+  // a signed-in profile with a size on file dresses the session automatically
+  const _u=getUser();
+  if(_u&&_u.meas&&!Object.values(state.meas||{}).some(v=>v)){
+    state.meas={...state.meas,..._u.meas};
+    if(_u.assistant&&!state.assistant)state.assistant=_u.assistant;
+    if(_u.height&&!state.height)state.height=_u.height;
+    if(_u.weight&&!state.weight)state.weight=_u.weight;
+  }
 }
+sizeBadge();
 renderLoved();
 renderReviews();
 initSocial();
