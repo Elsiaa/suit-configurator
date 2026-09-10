@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Josh’s Suits</title>
+<title>Josh’s Suits — custom suits, finished by your tailor</title>
+<meta name="description" content="Design a custom suit in five minutes — cloth, lapel, buttons, lining, your name under the collar. Cut with deliberate allowance, from $300, finished by your own tailor.">
+<meta name="theme-color" content="#141f33">
+<meta property="og:title" content="Josh’s Suits — custom suits, finished by your tailor">
+<meta property="og:description" content="Design a custom suit in five minutes. Cut with deliberate allowance, from $300, finished by your own tailor.">
+<meta property="og:image" content="https://elsiaa.github.io/suit-configurator/suit-images/hero-wide.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23141f33'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='30' font-style='italic' fill='%23dcb964'%3EJS%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
@@ -453,6 +460,19 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
 .preview-photo,.thumb-photo,.suitcard .stage img,.hmedia img,.craft-img img,.cloth-strip img{animation:imgin .45s ease both}
 @keyframes imgin{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion: reduce){.preview-photo,.thumb-photo,.suitcard .stage img,.hmedia img,.craft-img img,.cloth-strip img{animation:none}}
+/* desktop configurator: the atelier view — big suit right, options left */
+@media(min-width:961px){
+  .workspace{grid-template-columns:minmax(0,7fr) minmax(400px,5fr);gap:56px;min-height:calc(100svh - 240px)}
+  .opt-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+  .preview{background:none;border:none;padding:0;top:96px}
+  .preview h3{border:none;padding:0;margin-bottom:12px;font-family:'Spectral',serif;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.24em;color:var(--thread)}
+  .preview .pv-stage{min-height:440px;display:flex;align-items:center;justify-content:center}
+  .preview .pv-stage img.preview-photo{max-width:400px}
+  .preview .pv-stage svg{max-width:340px}
+  .preview .pv-arr{width:42px;height:42px}
+  .spec{max-width:380px;margin:16px auto 0}
+  .subtabs{margin-top:22px}
+}
 #social h2::after{content:'';display:block;width:56px;border-top:1px dashed var(--thread-soft);margin:14px auto 0;opacity:.6}
 /* hero: cinematic scrim, no bleed, jewel-lit type */
 .hero-bleed::before{background:linear-gradient(180deg,rgba(12,19,32,.22) 0%,rgba(12,19,32,.34) 42%,rgba(9,14,25,.9) 100%)}
@@ -966,7 +986,7 @@ const NAV=[
    {id:'legfit',label:'Leg'},{id:'waistband',label:'Waist'},{id:'pleats',label:'Pleats'},{id:'hem',label:'Hem'}]},
  {id:'yours', label:'Details', count:()=>persCount(), subs:[
    {id:'lining',label:'Lining'},{id:'mono',label:'Monogram'},{id:'collarname',label:'Collar'},{id:'photolining',label:'Photo'}]},
- {id:'fit', label:'Fit', count:()=>1, subs:[{id:'fit-main',label:'Sizing'}]},
+ {id:'fit', label:'Fit', count:()=>(Object.values(state.meas).some(v=>v)||state.refs.length)?'✓':'', subs:[{id:'fit-main',label:'Sizing'}]},
  {id:'review', label:'Review', count:()=>'', subs:[{id:'review',label:'Review'}]},
 ];
 function counts(keys){return keys.filter(k=>state[k]!==DEFAULTS[k]).length||'';}
