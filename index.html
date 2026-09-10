@@ -723,6 +723,28 @@ html,body{width:100%;min-width:0}
 .chat-input button svg{width:17px;height:17px}
 .chat-input button:hover{background:var(--ink-soft)}
 @media (prefers-reduced-motion: reduce){.msg{animation:none}.typing i{animation:none}}
+/* ================================================================
+   BUTTON METRICS — one size system, sealed.
+   Primary actions 48px. Circular controls ≥38px. Touch floor 34px.
+================================================================ */
+.btn,.btn.ghost,.leave-link,.greviews-cta,.add-ref{min-height:48px;line-height:1.4}
+.soc-btn{min-height:46px}
+.chat-chips .chip{min-height:36px}
+.subtab,.pv-dot{min-height:34px}
+.modal .x{font-size:1.05rem}
+.car-btn,.hnav{width:46px;height:46px}
+@media(max-width:640px){
+  .pv-arr{width:38px;height:38px;font-size:1.05rem}
+  .pv-dot{padding:7px 10px}
+  .foot-social a{width:40px;height:40px}
+  footer.site .navlink{min-height:34px;padding:6px 0!important}
+  .btn,.btn.ghost{padding-top:14px;padding-bottom:14px}
+  .cart-btn,.hamb{width:46px;height:46px}
+}
+@media(min-width:641px){
+  .cat{padding:14px 17px}
+  .pv-arr{width:42px;height:42px}
+}
 </style>
 </head>
 <body>
