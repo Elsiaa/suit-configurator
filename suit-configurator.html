@@ -437,8 +437,22 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
 .bbar{background:var(--chalk);box-shadow:0 -1px 0 var(--line),0 -2px 0 rgba(162,118,28,.18)}
 .bbar-inner{background:none}
 .preview{background:var(--paper)}
-/* stitched dividers under section headings */
+/* stitched dividers under section headings + editorial numbering */
 .sec h2::after{content:'';display:block;width:56px;border-top:1px dashed var(--thread);margin-top:12px;opacity:.7}
+#landing{counter-reset:sec}
+#landing .sec h2::before,#social h2::before{counter-increment:sec;content:counter(sec,decimal-leading-zero);display:block;font-family:'Spectral',serif;font-size:.66rem;font-weight:600;letter-spacing:.3em;color:var(--thread);margin-bottom:10px}
+#social{counter-increment:none}
+/* craft manifesto band */
+.craft{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.craft-inner{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,5vw,64px);align-items:center}
+.craft-img img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:var(--r);box-shadow:0 24px 60px rgba(20,31,51,.14)}
+.craft-txt h2{font-size:clamp(1.7rem,3.6vw,2.5rem);line-height:1.12}
+.craft-txt p{color:var(--ink-soft);max-width:52ch;margin-top:14px;font-size:.98rem}
+@media(max-width:760px){.craft-inner{grid-template-columns:1fr}.craft-img{max-width:260px}}
+/* imagery settles in rather than popping */
+.preview-photo,.thumb-photo,.suitcard .stage img,.hmedia img,.craft-img img,.cloth-strip img{animation:imgin .45s ease both}
+@keyframes imgin{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){.preview-photo,.thumb-photo,.suitcard .stage img,.hmedia img,.craft-img img,.cloth-strip img{animation:none}}
 #social h2::after{content:'';display:block;width:56px;border-top:1px dashed var(--thread-soft);margin:14px auto 0;opacity:.6}
 /* hero: cinematic scrim, no bleed, jewel-lit type */
 .hero-bleed::before{background:linear-gradient(180deg,rgba(12,19,32,.22) 0%,rgba(12,19,32,.34) 42%,rgba(9,14,25,.9) 100%)}
@@ -578,6 +592,18 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
       <a class="soc-btn" href="#" onclick="return socialStub('Facebook')">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#1877F2"/><path d="M13.4 21v-6.5h2.2l.4-2.6h-2.6v-1.7c0-.75.37-1.3 1.4-1.3h1.3V6.6c-.3-.04-1.2-.13-2.1-.13-2.1 0-3.4 1.24-3.4 3.44v2h-2.3v2.6h2.3V21z" fill="#fff"/></svg>
         Josh&rsquo;s Suits</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec craft" id="craft">
+  <div class="shell craft-inner">
+    <div class="craft-img"><img src="suit-images/herringbone-notch.jpg" alt="Charcoal herringbone jacket"></div>
+    <div class="craft-txt">
+      <h2>Cut with intention.<br>Finished by hand.</h2>
+      <p>Every suit leaves us deliberately unfinished — extra cloth in the waist, the seat, the sleeve. Not because we couldn't finish it, but because the last inch belongs to the tailor who can see you standing in it.</p>
+      <p>That's the whole idea. We do the cutting. Your tailor does the fitting. You keep the difference.</p>
+      <button class="btn ghost" style="margin-top:8px" onclick="openGuide()">How the finishing works</button>
     </div>
   </div>
 </section>
