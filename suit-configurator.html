@@ -33,6 +33,8 @@ header.top{border-bottom:1px solid var(--line);background:var(--chalk);position:
 .cats::-webkit-scrollbar{display:none}
 .cat{flex-shrink:0;padding:12px 16px;border:none;background:none;font:inherit;font-size:.92rem;font-weight:500;color:var(--ink-soft);cursor:pointer;border-bottom:2px solid transparent;display:flex;gap:6px;align-items:baseline}
 .cat .cnt{font-size:.72rem;color:var(--thread);font-weight:600}
+.cat .stepn{font-size:.68rem;font-weight:700;color:var(--thread);margin-right:6px}
+.cat.active .stepn{color:var(--ink)}
 .cat.active{color:var(--ink);font-weight:600;border-bottom-color:var(--ink)}
 .cat:focus-visible{outline:2px solid var(--thread);outline-offset:-2px}
 
@@ -423,8 +425,7 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 
 <div class="shell workspace hidden" id="workspace">
   <main id="main-col">
-    <div class="prog"><div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
-      <div class="prog-lbl"><span id="prog-step"></span><span class="prog-save">Saves automatically</span></div></div>
+    <div class="prog"><div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div></div>
     <div class="mob-preview" id="mob-preview"></div>
     <div class="subtabs" id="subtabs"></div>
     <div id="content"></div>
@@ -811,7 +812,7 @@ function renderCats(){
     const b=document.createElement('button');
     b.className='cat'+(i===cur.cat?' active':'');
     const n=cat.count();
-    b.innerHTML=cat.label+(n?`<span class="cnt">${n}</span>`:'');
+    b.innerHTML=`<span class="stepn">${i+1}</span>`+cat.label+(n?`<span class="cnt">${n}</span>`:'');
     b.onclick=()=>{cur={cat:i,sub:0};renderAll();};
     c.appendChild(b);
   });
@@ -832,7 +833,7 @@ function renderSubtabs(){
 }
 function optGrid(group){
   const g=OPTGROUPS[group];
-  let h=`<div class="group-title">${g.title}</div><div class="opt-grid">`;
+  let h=`<div class="opt-grid">`;
   g.opts.forEach(o=>{
     const sel=state[g.key]===o.n;
     const p=PRICES[o.n];
@@ -896,10 +897,43 @@ function photoFor(cloth,lapel,frontbtn){
 function photoSrc(){return photoFor(state.cloth,state.lapel,state.frontbtn);}
 function pvImgFail(el,kind){
   // no photo for this combination: fall back to the exact drawing
+  const clothFill=CLOTHS[state.cloth]||'#243b55', texture=clothTexture();
   el.outerHTML = kind==='model' ? modelSVG()
+    : kind==='back' ? backSVG({vent:state.vents,clothFill,texture})
+    : kind==='inside' ? insideDrawing(clothFill,texture)
+    : kind==='trouser' ? trouserDrawing(clothFill,texture)
     : jacketSVG({lapel:state.lapel,buttons:btnCount(),roll:isRoll(),db:isDB(),pockets:state.pockets,
-      clothFill:CLOTHS[state.cloth]||'#243b55',texture:clothTexture(),btnColor:BTNCOLORS[state.btnmat],
-      liningFill:LININGS[state.lining]||null});
+      clothFill,texture,btnColor:BTNCOLORS[state.btnmat],liningFill:LININGS[state.lining]||null});
+}
+/* photo when it truly matches the selection; exact drawing otherwise */
+const VENT_KEY={'Double vent':'double','Single vent':'single','No vent':'none'};
+const FIT_KEY={'Tapered':'tapered','Straight':'straight','Slim':'slim'};
+const LINING_KEY={'Deep burgundy':'burgundy','Forest green':'green','Royal purple':'purple','Gold paisley':'paisley','Sky blue':'skyblue','Tone-on-tone':'tone','Contrast piping lining':'piping'};
+function insideDrawing(clothFill,texture){
+  return insideSVG({clothFill,texture,liningFill:LININGS[state.lining],liningName:state.lining,
+    monoStyle:state.monostyle,monoText:state.monoText,monoThread:state.monoThread,
+    collarText:state.collar!=='None'?(state.collarText||'YOUR NAME'):null,photo:state.photo!=='None'});
+}
+function trouserDrawing(clothFill,texture){
+  return trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),
+    side:state.waistband==='Side adjusters',clothFill,texture});
+}
+function backMedia(clothFill,texture){
+  const c=PHOTO_CLOTH[state.cloth];
+  if(c) return `<img class="preview-photo" src="suit-images/back-${c}-${VENT_KEY[state.vents]}.png" alt="Back — ${state.vents}" onerror="pvImgFail(this,'back')">`;
+  return backSVG({vent:state.vents,clothFill,texture});
+}
+function insideMedia(clothFill,texture){
+  const k=LINING_KEY[state.lining];
+  const plain=state.monostyle==='None'&&state.collar==='None'&&state.photo==='None';
+  if(k&&plain) return `<img class="preview-photo" src="suit-images/inside-${k}.png" alt="Lining — ${state.lining}" onerror="pvImgFail(this,'inside')">`;
+  return insideDrawing(clothFill,texture); // the drawing renders monogram / collar name / photo exactly
+}
+function trouserMedia(clothFill,texture){
+  const c=PHOTO_CLOTH[state.cloth];
+  const plain=state.pleats==='Flat front'&&state.hem==='Plain hem'&&state.waistband==='Belt loops';
+  if(c&&plain) return `<img class="preview-photo" src="suit-images/trouser-${c}-${FIT_KEY[state.legfit]}.png" alt="Trousers — ${state.legfit}" onerror="pvImgFail(this,'trouser')">`;
+  return trouserDrawing(clothFill,texture);
 }
 function modelSVG(){
   const clothFill=CLOTHS[state.cloth]||'#243b55';
@@ -946,12 +980,9 @@ function viewSVG(){
   }
   if(v==='front') return jacketSVG({lapel:state.lapel,buttons:btnCount(),roll:isRoll(),db:isDB(),
     pockets:state.pockets,clothFill,texture,btnColor,liningFill:LININGS[state.lining]||null});
-  if(v==='back') return backSVG({vent:state.vents,clothFill,texture});
-  if(v==='inside') return insideSVG({clothFill,texture,liningFill:LININGS[state.lining],liningName:state.lining,
-    monoStyle:state.monostyle,monoText:state.monoText,monoThread:state.monoThread,
-    collarText:state.collar!=='None'?(state.collarText||'YOUR NAME'):null,photo:state.photo!=='None'});
-  return trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),
-    side:state.waistband==='Side adjusters',clothFill,texture});
+  if(v==='back') return backMedia(clothFill,texture);
+  if(v==='inside') return insideMedia(clothFill,texture);
+  return trouserMedia(clothFill,texture);
 }
 function viewerHTML(){
   return `<div class="pv" onpointerdown="pvDown(event)" onpointerup="pvUp(event)">
@@ -959,7 +990,6 @@ function viewerHTML(){
     <div class="pv-stage">${viewSVG()}</div>
     <button class="pv-arr pv-r" onclick="nextView()" aria-label="Turn right">›</button>
     <div class="pv-dots">${VIEWS.map((v,i)=>`<button class="pv-dot${i===curView?' on':''}" onclick="setView(${i})">${v.label}</button>`).join('')}</div>
-    <div class="pv-note">Swipe or use the arrows to turn your suit</div>
   </div>`;
 }
 function renderPreview(){
@@ -987,12 +1017,7 @@ function renderAll(){
   document.getElementById('bb-total').textContent='$'+currentTotal();
   document.getElementById('bb-back').style.visibility=(cur.cat===0&&cur.sub===0)?'hidden':'visible';
   document.getElementById('bb-next').textContent=NAV[cur.cat].id==='review'?'Place order':'Continue';
-  // completion momentum: fit already counts, so the bar never starts at zero
-  const pct=Math.round(((cur.cat+1)/NAV.length)*100);
-  document.getElementById('prog-fill').style.width=pct+'%';
-  document.getElementById('prog-step').textContent=NAV[cur.cat].id==='review'
-    ?'Your suit is ready — one step left'
-    :`Step ${cur.cat+1} of ${NAV.length} · about ${Math.max(1,NAV.length-1-cur.cat)} min to go`;
+  document.getElementById('prog-fill').style.width=Math.round(((cur.cat+1)/NAV.length)*100)+'%';
   saveDraft();
   window.scrollTo({top:0});
 }
@@ -1001,9 +1026,8 @@ function renderAll(){
    FIT / PERSONALIZATION / REVIEW PANES
 ================================================================ */
 function fitHTML(){return `
-  <h2 style="font-size:1.8rem;margin-top:14px">How should we size you?</h2>
-  <p style="color:var(--ink-soft);max-width:56ch;margin:6px 0 4px">A tailor's measurement sheet is most accurate. No sheet? Reference clothes from your own closet that already fit well.</p>
-  <p style="margin:4px 0 0"><button class="alt-link" onclick="openGuide()">First time? Here's exactly what to ask your tailor →</button></p>
+  <h2 style="font-size:1.6rem;margin-top:10px">Your size</h2>
+  <p style="margin:4px 0 0"><button class="alt-link" onclick="openGuide()">First time? What to ask your tailor →</button></p>
   <div class="method-pick" role="radiogroup" aria-label="Sizing method">
     <button class="method ${state.method==='tailor'?'sel':''}" id="m-tailor"><h3>I have my measurements</h3><p>From a tailor's fitting — like a prescription from your optometrist.</p></button>
     <button class="method ${state.method==='closet'?'sel':''}" id="m-closet"><h3>Reference my closet</h3><p>Tell us 2–3 garments that fit well. Our sizing engine estimates from there.</p></button>
@@ -1453,9 +1477,9 @@ function inspectViewsHTML(){
   const front=photoSrc();
   const views=[
     ['Front', front?`<img src="${front}" alt="Front">`:jacketSVG({lapel:state.lapel,buttons:btnCount(),roll:isRoll(),db:isDB(),pockets:state.pockets,clothFill,texture,btnColor,liningFill:LININGS[state.lining]||null})],
-    ['Back', backSVG({vent:state.vents,clothFill,texture})],
-    ['Inside', insideSVG({clothFill,texture,liningFill:LININGS[state.lining],liningName:state.lining,monoStyle:state.monostyle,monoText:state.monoText,monoThread:state.monoThread,collarText:state.collar!=='None'?(state.collarText||'YOUR NAME'):null,photo:state.photo!=='None'})],
-    ['Trousers', trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),side:state.waistband==='Side adjusters',clothFill,texture})],
+    ['Back', backMedia(clothFill,texture)],
+    ['Inside', insideMedia(clothFill,texture)],
+    ['Trousers', trouserMedia(clothFill,texture)],
   ];
   return `<div class="inspect-row">${views.map(v=>`<div class="iv"><div class="ivbox">${v[1]}</div>${v[0]}</div>`).join('')}</div>`;
 }
