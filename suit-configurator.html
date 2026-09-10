@@ -159,7 +159,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 @media(max-width:640px){.car-btn{display:none}}
 .suitcard{flex:0 0 262px;scroll-snap-align:start;border:1px solid var(--line);background:#fff;border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
 @media(max-width:640px){.suitcard{flex-basis:76vw}}
-.suitcard .stage{background:linear-gradient(170deg,var(--paper),#e9e5d9);text-align:center}
+.suitcard .stage{background:linear-gradient(170deg,var(--paper),#e2e0da);text-align:center}
 .suitcard .stage svg{max-width:150px;width:100%;padding:22px 12px 8px}
 .suitcard .stage img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
 .preview-photo{width:100%;max-width:250px;border-radius:var(--r);display:block;margin:0 auto}
@@ -393,9 +393,9 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 ================================================================ */
 :root{
   --ink:#141f33; --ink-soft:#43506a;
-  --chalk:#faf7f0; --paper:#f2ecdf;
+  --chalk:#f2f1ee; --paper:#e9e7e1;
   --thread:#a2761c; --thread-soft:#ecdfc0;
-  --line:#ded5c2; --r:2px;
+  --line:#d7d4cc; --r:2px;
 }
 body{
   font-size:15.5px;line-height:1.62;
@@ -417,7 +417,7 @@ h1,h2,h3{letter-spacing:.005em}
 .optcard .pr{letter-spacing:.04em}
 footer.site b{text-transform:uppercase;letter-spacing:.14em;font-size:.66rem;color:var(--ink)}
 /* surfaces */
-input[type=text],input[type=number],input[type=email],select,textarea{background:#fffdf7}
+input[type=text],input[type=number],input[type=email],select,textarea{background:#fbfbfa}
 .modal{border-top:2px solid var(--thread)}
 .bbar{background:var(--chalk);box-shadow:0 -1px 0 var(--line),0 -2px 0 rgba(162,118,28,.18)}
 .bbar-inner{background:none}
@@ -436,6 +436,10 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
 .hero-facts{border-top:1px solid rgba(238,228,200,.28);padding-top:18px;margin-top:28px}
 .hero-facts div{text-transform:uppercase;letter-spacing:.12em;font-size:.6rem;color:rgba(238,228,200,.75)}
 .hero-facts strong{color:#f7f2e4;font-size:1.5rem;letter-spacing:0;text-transform:none;text-shadow:0 1px 14px rgba(0,0,0,.4)}
+/* as-seen-on trust strip */
+.seen-on{display:flex;gap:16px;align-items:center;justify-content:center;color:#eee4c8;margin-bottom:4px}
+.seen-on span{text-transform:uppercase;letter-spacing:.24em;font-size:.62rem;font-weight:600;color:var(--thread-soft)}
+.seen-on svg{width:21px;height:21px;opacity:.85}
 /* interaction physics: everything answers the finger */
 .btn,.btn.ghost,.leave-link,.subtab,.pv-dot,.optcard,.suitcard,.soc-btn,.navlink,.method,.cat,.car-btn,.pv-arr,.hnav{transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease,background-color .15s ease,border-color .15s ease,color .15s ease}
 .btn:active,.subtab:active,.pv-dot:active,.optcard:active,.method:active{transform:scale(.97)}
@@ -500,9 +504,15 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
 
 <section id="social">
   <div class="shell">
-    <p class="k">On the feed</p>
+    <div class="seen-on">
+      <span>As seen on</span>
+      <svg viewBox="0 0 24 24" aria-label="Instagram"><rect x="2" y="2" width="20" height="20" rx="6" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.3" fill="currentColor"/></svg>
+      <svg viewBox="0 0 24 24" aria-label="TikTok"><path d="M15.05 4c.5 1.6 1.6 2.7 3.2 2.9v2.4c-1.2 0-2.3-.4-3.2-1v5.1c0 2.6-2.1 4.6-4.6 4.6a4.6 4.6 0 0 1-.45-9.17v2.55a2.1 2.1 0 1 0 2.55 2.06V4z" fill="currentColor"/></svg>
+      <svg viewBox="0 0 24 24" aria-label="YouTube"><rect x="1.5" y="5.5" width="21" height="13" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 9.5l4.6 2.5L10 14.5z" fill="currentColor"/></svg>
+      <svg viewBox="0 0 24 24" aria-label="Facebook"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M13.2 20v-6h2l.35-2.4H13.2v-1.5c0-.7.34-1.2 1.3-1.2h1.2V6.7c-.28-.04-1.1-.12-1.95-.12-1.95 0-3.15 1.15-3.15 3.2v1.8H8.5V14h2.1v6z" fill="currentColor"/></svg>
+    </div>
     <h2>The suit everyone's <em>talking about</em></h2>
-    <p class="sub">As seen on Instagram and TikTok — real orders, real tailors, real reveals.</p>
+    <p class="sub">Real orders, real tailors, real reveals.</p>
   </div>
   <div class="hwrap">
     <button class="hnav prev" id="soc-prev" aria-label="Previous clip">‹</button>
