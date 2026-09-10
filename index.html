@@ -680,6 +680,12 @@ body::-webkit-scrollbar-thumb:hover{background:rgba(20,31,51,.5);background-clip
   .hero-bleed{height:auto;min-height:0;aspect-ratio:1600/914;background:url('suit-images/hero-wide.jpg') center/cover no-repeat}
   .hero-plate{padding-top:16px}
 }
+/* the opening fold measures the browser and fills it exactly */
+:root{--hdr:57px}
+@media(max-width:640px){:root{--hdr:44px}}
+.fold{display:flex;flex-direction:column;min-height:calc(100svh - var(--hdr));min-height:calc(100dvh - var(--hdr))}
+.fold .hero-plate{flex:1;display:flex;flex-direction:column;justify-content:center}
+@media(min-width:641px){.fold .hero-bleed{flex:1;height:auto;min-height:320px}}
 /* page one is immune to any viewport weirdness */
 html,body{width:100%;min-width:0}
 #landing,.hero-bleed,.hero-plate{width:100%;max-width:none}
@@ -705,6 +711,7 @@ html,body{width:100%;min-width:0}
 </header>
 
 <div id="landing">
+<div class="fold">
 <section class="hero-bleed" id="hero" onclick="startConfig()" role="img" aria-label="Josh’s Custom Suits"></section>
 <section class="hero-plate">
   <h1>Josh&rsquo;s <em>Custom Suits</em></h1>
@@ -715,6 +722,7 @@ html,body{width:100%;min-width:0}
   </div>
   <button class="btn" onclick="startConfig()">Design my own suit</button>
 </section>
+</div>
 
 <section class="shell sec" id="design-cta">
   <h2>Design your own — from $300</h2>
