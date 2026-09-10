@@ -230,7 +230,33 @@ details.terms li{margin:5px 0}
   #social .soc-btn{justify-content:center;padding:10px 8px;font-size:.76rem}
   #social .soc-stats{gap:20px}
   footer.site{padding:24px 0 96px}
+  /* configurator decrowding */
+  .workspace{padding-top:0}
+  .subtabs{gap:8px;margin:12px 0 4px}
+  .subtab{padding:8px 14px;font-size:.8rem}
+  .opt-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .optcard{padding:10px 8px 10px}
+  .optcard .nm{font-size:.78rem}
+  .optcard .std{font-size:.66rem}
+  .optcard .pr{font-size:.7rem}
+  .optcard .thumb-photo{max-width:100%}
+  .optcard .swatch{width:52px;height:52px}
+  .optcard .pop{font-size:.54rem;padding:2px 6px}
+  .mob-preview{margin:10px 0 6px}
+  .mob-preview .preview-photo{max-width:196px}
+  .mob-preview .pv-stage svg{max-width:190px}
+  .pv-arr{width:34px;height:34px;top:36%}
+  .field{margin-bottom:12px}
+  .grid2,.grid3{gap:10px}
+  .method-pick{gap:10px;margin:12px 0 16px}
+  .method{padding:13px}
+  .disclosure{padding:13px 14px;margin:14px 0;font-size:.8rem}
+  .review-table td{padding:6px 3px;font-size:.8rem}
+  .quick-add{padding:12px 13px;font-size:.8rem}
 }
+/* kiosk: shared iPad — no accounts, no closet */
+body.kiosk #nav-account,body.kiosk .navlink[onclick="openOrders()"]{display:none}
+body.kiosk{-webkit-user-select:none;user-select:none}
 .suitcard .info{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
 .suitcard .info h3{font-size:1.25rem}
 .suitcard .info p{font-size:.8rem;color:var(--ink-soft);flex:1}
@@ -1563,7 +1589,8 @@ function confirmOrder(){
   <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
     <button class="btn ghost" onclick="downloadSpec(window._pendingSpec)">Download spec (JSON)</button>
     <button class="btn ghost" onclick="openPrintView(window._pendingSpec)">Printable spec sheet</button>
-  </div>`);
+  </div>
+  ${KIOSK?'<button class="btn" style="width:100%;margin-top:14px" onclick="kioskReset()">Done — next customer</button>':''}`);
 }
 
 /* ================================================================
@@ -1709,11 +1736,37 @@ function startConfig(){
   renderAll();
 }
 
+/* ================================================================
+   KIOSK MODE (Phase 3) — ?kiosk=1 runs the in-store iPad build:
+   no landing, no accounts, 60s idle auto-reset, nav-away blocked.
+================================================================ */
+const KIOSK=new URLSearchParams(location.search).get('kiosk')==='1';
+let _idleT=null;
+function kioskReset(){
+  closeModal();
+  localStorage.removeItem(LS_DRAFT);
+  Object.assign(state,DEFAULTS,{meas:{},refs:[],height:'',weight:'',email:''});
+  cur={cat:0,sub:0};curView=0;
+  renderAll();
+}
+function kioskKick(){
+  clearTimeout(_idleT);
+  _idleT=setTimeout(kioskReset,60000);
+}
+
 restoreDraft();
 renderLoved();
 renderReviews();
 initSocial();
 refreshAccountNav();
+
+if(KIOSK){
+  document.body.classList.add('kiosk');
+  ['pointerdown','keydown','touchstart','scroll'].forEach(ev=>window.addEventListener(ev,kioskKick,{passive:true}));
+  window.addEventListener('beforeunload',e=>{e.preventDefault();e.returnValue='';});
+  kioskKick();
+  startConfig();
+}
 </script>
 </body>
 </html>
