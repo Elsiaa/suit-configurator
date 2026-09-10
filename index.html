@@ -824,11 +824,12 @@ function clothTexture(){
 function photoSrc(){
   const c=PHOTO_CLOTH[state.cloth]; if(!c) return null;
   const lap=state.lapel.toLowerCase(), b=state.frontbtn;
-  if(lap==='shawl') return b==='1 button'?`suit-images/${c}-shawl.png`:null;
-  if(b==='2 buttons') return `suit-images/${c}-${lap}.png`;
-  if(b==='1 button') return `suit-images/${c}-${lap}-1btn.png`;
-  if(b.startsWith('Double')) return `suit-images/${c}-${lap}-db.png`;
-  return null;
+  // shawl base image is 1-button; notch/peak base is 2-button
+  const suff = lap==='shawl'
+    ? {'1 button':'','2 buttons':'-2btn','3 buttons':'-3btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'}[b]
+    : {'2 buttons':'','1 button':'-1btn','3 buttons':'-3btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'}[b];
+  if(suff===undefined) return null; // 5-button and roll-to-2nd render exactly as drawings
+  return `suit-images/${c}-${lap}${suff}.png`;
 }
 function pvImgFail(el,kind){
   // no photo for this combination: fall back to the exact drawing
