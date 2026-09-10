@@ -803,14 +803,14 @@ header.top{background:linear-gradient(180deg,#fcfbf8 0%,#f5f3ee 100%);border-bot
 .hero-plate::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:120px;border-top:1px solid rgba(162,118,28,.35)}
 .modal{background:linear-gradient(180deg,#fdfcfa 0%,#f7f5f0 100%)}
 .bbar{box-shadow:0 -1px 0 var(--line),0 -2px 0 rgba(162,118,28,.28)}
-/* mobile: dedicated portrait hero fills the screen — full car, full man,
-   plate tucked beneath. One exact fold, no dead space. */
+/* mobile: dedicated portrait hero fills the screen — full car, full man.
+   The headline lives in the studio air above the car; facts and CTA below. */
 @media(max-width:640px){
-  .fold{min-height:calc(100svh - var(--hdr))}
-  .hero-bleed{aspect-ratio:auto;height:auto;flex:1 1 auto;min-height:340px;background:url('suit-images/hero-mobile.jpg') center bottom/cover no-repeat}
-  .fold .hero-plate{flex:0 0 auto;justify-content:flex-start;padding-top:22px;padding-bottom:26px}
-  .fold .hero-plate h1{margin-top:0}
-  .hero-plate .hero-facts{margin:13px auto 15px}
+  .fold{position:relative;min-height:calc(100svh - var(--hdr))}
+  .hero-bleed{height:auto;flex:0 0 auto;min-height:0;aspect-ratio:824/1097;background:url('suit-images/hero-mobile.jpg') center/cover no-repeat}
+  .fold .hero-plate h1{position:absolute;top:clamp(22px,6svh,64px);left:14px;right:14px;z-index:2;margin:0;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+  .fold .hero-plate{position:static;flex:1 1 auto;justify-content:center;padding-top:14px;padding-bottom:20px}
+  .hero-plate .hero-facts{margin:0 auto 15px}
   .hero-plate .btn{min-height:46px}
 }
 /* ================================================================
