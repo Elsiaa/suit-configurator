@@ -1646,7 +1646,18 @@ function currentTotal(){
     .forEach(k=>{const p=PRICES[state[k]];if(p)t+=p;});
   return t;
 }
+/* the preview follows the step: trousers step shows trousers, back shows back, details shows the lining */
+const CAT_VIEW={cloth:'photo',lapel:'photo',style:'photo',pocket:'photo',back:'back',trouser:'trousers',yours:'inside',fit:'model',review:'photo'};
+let _viewCat=null;
+function syncViewToCat(){
+  if(cur.cat===_viewCat) return;
+  _viewCat=cur.cat;
+  const want=CAT_VIEW[NAV[cur.cat].id];
+  const i=VIEWS.findIndex(v=>v.id===want);
+  if(i>=0) curView=i;
+}
 function renderAll(){
+  syncViewToCat();
   renderCats();renderSubtabs();renderContent();renderPreview();
   const tEl=document.getElementById('bb-total'), tNew='$'+currentTotal();
   if(tEl.textContent!==tNew){tEl.textContent=tNew;tEl.classList.remove('tick');void tEl.offsetWidth;tEl.classList.add('tick');}
