@@ -257,6 +257,16 @@ details.terms li{margin:5px 0}
   .mob-preview{margin:10px 0 6px}
   .mob-preview .preview-photo{max-width:196px}
   .mob-preview .pv-stage svg{max-width:190px}
+  /* option steps fill one screen: the suit takes all free height, options swipe under it,
+     Continue is pinned below — no dead space */
+  #workspace.opts-step{display:flex;flex-direction:column;padding:0 0 4px;min-height:calc(100svh - 184px)}
+  #workspace.opts-step #main-col{display:flex;flex-direction:column;flex:1;min-height:0}
+  #workspace.opts-step .mob-preview{flex:1;min-height:180px;display:flex;flex-direction:column;margin:4px 0 6px}
+  #workspace.opts-step .pv{flex:1;display:flex;flex-direction:column;min-height:0}
+  #workspace.opts-step .pv-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+  #workspace.opts-step .pv-stage img.preview-photo{width:auto;max-width:80vw;max-height:100%;margin:0 auto}
+  #workspace.opts-step .pv-stage svg{max-height:100%;width:auto;max-width:60vw}
+  #workspace.opts-step .prog{margin:8px 0 0}
   .pv-arr{width:34px;height:34px;top:36%}
   .field{margin-bottom:12px}
   .grid2,.grid3{gap:10px}
@@ -938,7 +948,11 @@ function optGrid(group){
   return h+'</div>';
 }
 function renderContent(){
+  if(!NAV[cur.cat]){cur={cat:0,sub:0};}
+  if(!NAV[cur.cat].subs[cur.sub]){cur.sub=0;}
   const sub=NAV[cur.cat].subs[cur.sub].id;
+  // on option steps the suit stays pinned up top while options swipe below it
+  document.getElementById('workspace').classList.toggle('opts-step',!['fit-main','review'].includes(sub));
   const c=document.getElementById('content');
   if(sub==='fit-main'){c.innerHTML=fitHTML();wireFit();return;}
   if(sub==='mono'){c.innerHTML=monoHTML();return;}
@@ -1258,7 +1272,8 @@ function reviewHTML(){
   <table class="review-table">${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>
   <div class="field"><label for="o-email">Email for order updates</label><input type="email" id="o-email" placeholder="you@example.com" value="${state.email}" oninput="state.email=this.value"></div>
   <p style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap">
-    <button class="btn ghost" onclick="saveStyleToProfile()">Save this style to my profile</button>
+    <button class="btn ghost" onclick="openSaveDesign()">Save my design</button>
+    <button class="btn ghost" onclick="saveDesignQuickShare()">Share this design</button>
     <button class="btn ghost" onclick="if(confirm('Start over? This clears every choice.'))startOver()">Start over</button>
   </p>
   <p style="margin-top:10px"><button class="alt-link" onclick="altView()">Already received a suit? Log your tailor's alterations for $20 off your next order.</button></p>
@@ -1464,7 +1479,14 @@ function saveDraft(){
 function restoreDraft(){
   try{
     const d=JSON.parse(localStorage.getItem(LS_DRAFT));
-    if(d&&d.state){Object.assign(state,d.state);if(d.cur)cur=d.cur;return true;}
+    if(d&&d.state){
+      Object.assign(state,d.state);
+      if(d.cur)cur=d.cur;
+      // drafts saved under an older step layout can point past today's NAV — clamp, don't crash
+      if(!NAV[cur.cat])cur.cat=0;
+      if(!NAV[cur.cat].subs[cur.sub])cur.sub=0;
+      return true;
+    }
   }catch(e){}
   return false;
 }
@@ -1511,10 +1533,91 @@ function applyOrder(i){
   closeModal();startConfig();
 }
 function printOrderSpec(i){const spec=getOrders()[i].spec;if(spec)openPrintView(spec);}
+/* ---- my designs: save the suit you built, wear it later, share it anywhere ---- */
+const LS_DESIGNS='js-designs';
+function getDesigns(){try{return JSON.parse(localStorage.getItem(LS_DESIGNS))||[]}catch(e){return []}}
+const CLOTH_SHORT={'Navy wool blend':'Navy','Charcoal herringbone':'Charcoal','Black twill':'Black','Midnight blue sharkskin':'Midnight Blue','Forest green wool':'Forest Green'};
+function autoDesignName(){return `${CLOTH_SHORT[state.cloth]||state.cloth} ${state.lapel}`;}
+function designPhoto(d){return photoFor(d.cloth,d.lapel,d.frontbtn)||'suit-images/navy-notch.jpg';}
+/* the design travels inside the link: ?d=<base64url json>, so a shared suit opens exactly as built */
+function encodeDesign(d){
+  return btoa(unescape(encodeURIComponent(JSON.stringify(d)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeDesign(s){
+  try{
+    const d=JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/')))));
+    const out={};
+    STYLE_KEYS.forEach(k=>{if(typeof d[k]==='string'&&d[k].length<80)out[k]=d[k];});
+    return Object.keys(out).length?out:null;
+  }catch(e){return null;}
+}
+function designUrl(d){return location.origin+location.pathname+'?d='+encodeDesign(d);}
+async function saveDesignQuickShare(){
+  // share straight from review without the naming step — saves under the auto name first
+  const design={};STYLE_KEYS.forEach(k=>design[k]=state[k]);
+  const rec={id:Math.random().toString(36).slice(2,10),name:autoDesignName(),createdAt:new Date().toISOString(),total:currentTotal(),design};
+  const list=getDesigns();list.unshift(rec);
+  localStorage.setItem(LS_DESIGNS,JSON.stringify(list));
+  shareDesign(rec.id);
+}
+function openSaveDesign(){
+  openModal(`<h2>Save this design</h2>
+  <div class="field"><label for="dz-name">Name it</label>
+    <input type="text" id="dz-name" maxlength="40" value="${autoDesignName()}"></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn" onclick="saveDesignConfirm(false)">Save to my designs</button>
+    <button class="btn ghost" onclick="saveDesignConfirm(true)">Save &amp; share</button>
+  </div>`);
+}
+function saveDesignConfirm(share){
+  const name=(document.getElementById('dz-name').value.trim()||autoDesignName()).slice(0,40);
+  const design={};STYLE_KEYS.forEach(k=>design[k]=state[k]);
+  const rec={id:Math.random().toString(36).slice(2,10),name,createdAt:new Date().toISOString(),total:currentTotal(),design};
+  const list=getDesigns();list.unshift(rec);
+  localStorage.setItem(LS_DESIGNS,JSON.stringify(list));
+  closeModal();
+  if(share){shareDesign(rec.id);return;}
+  openModal(`<h2>Saved</h2><p style="font-size:.9rem"><b>${name}</b> is in <b>My closet → My designs</b>. Wear it, restyle it, or share it any time.</p>`);
+}
+function deleteDesign(id){
+  localStorage.setItem(LS_DESIGNS,JSON.stringify(getDesigns().filter(d=>d.id!==id)));
+  openOrders();
+}
+function wearDesign(id){
+  const rec=getDesigns().find(d=>d.id===id);if(!rec)return;
+  Object.assign(state,rec.design);
+  closeModal();startConfig();cur={cat:NAV.length-1,sub:0};renderAll();
+}
+async function shareDesign(id){
+  const rec=getDesigns().find(d=>d.id===id);if(!rec)return;
+  const url=designUrl(rec.design);
+  const payload={title:`Josh's Suits — ${rec.name}`,text:`${rec.name} · $${rec.total}. Open it, tweak it, make it yours:`,url};
+  if(navigator.share){
+    try{await navigator.share(payload);}catch(e){/* user closed the sheet */}
+    return;
+  }
+  try{await navigator.clipboard.writeText(`${payload.text} ${url}`);openModal('<h2>Link copied</h2><p style="font-size:.9rem">Paste it anywhere — WhatsApp, Instagram, a text. The suit opens exactly as you built it.</p>');}
+  catch(e){openModal(`<h2>Share this design</h2><p style="font-size:.8rem;word-break:break-all">${url}</p>`);}
+}
+function designsHTML(){
+  const list=getDesigns();
+  if(!list.length)return '';
+  return `<div class="group-title" style="margin-top:4px">My designs</div>`+list.map(d=>`<div class="closet-card">
+    <img src="${designPhoto(d.design)}" alt="${d.name}">
+    <div class="cc-main"><b>${d.name}</b> · $${d.total}<br>
+    <span style="color:var(--ink-soft)">${d.design.cloth} · ${d.design.lapel} lapel · ${d.design.frontbtn}</span>
+    <div class="cc-actions">
+      <button class="btn ghost" onclick="wearDesign('${d.id}')">Wear it</button>
+      <button class="btn ghost" onclick="shareDesign('${d.id}')">Share</button>
+      <button class="btn ghost" onclick="deleteDesign('${d.id}')">Remove</button>
+    </div></div></div>`).join('');
+}
 function openOrders(){
   const u=getUser(), orders=getOrders();
   openModal(`<h2>My closet</h2>
   ${u?`<p style="font-size:.82rem;color:var(--ink-soft);margin-bottom:6px">${u.name} · ${u.email}${u.prefs?` · <button class="alt-link" onclick="applySavedStyle()">apply my saved style</button>`:''}</p>`:`<p style="font-size:.82rem;color:var(--ink-soft);margin-bottom:6px"><button class="alt-link" onclick="openAccount()">Sign in</button> to keep your closet on your profile.</p>`}
+  ${designsHTML()}
+  ${orders.length?'<div class="group-title" style="margin-top:4px">My orders</div>':''}
   `+(orders.length?orders.map((o,i)=>{
     const s=orderStage(o);
     return `<div class="closet-card">
@@ -1870,11 +1973,23 @@ function kioskKick(){
   _idleT=setTimeout(kioskReset,60000);
 }
 
-restoreDraft();
+/* a shared design link (?d=...) opens the exact suit at the review step */
+const _sharedD=new URLSearchParams(location.search).get('d');
+const _sharedDesign=_sharedD?decodeDesign(_sharedD):null;
+if(_sharedDesign){
+  Object.assign(state,_sharedDesign);
+}else{
+  restoreDraft();
+}
 renderLoved();
 renderReviews();
 initSocial();
 refreshAccountNav();
+if(_sharedDesign&&!KIOSK){
+  startConfig();
+  cur={cat:NAV.length-1,sub:0};
+  renderAll();
+}
 document.querySelectorAll('#topnav .navlink').forEach(b=>b.addEventListener('click',()=>document.getElementById('topnav').classList.remove('open')));
 
 if(KIOSK){
