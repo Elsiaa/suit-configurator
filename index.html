@@ -696,6 +696,33 @@ html,body{width:100%;min-width:0}
   .craft-txt p{margin-left:auto;margin-right:auto}
   .craft-img{margin:0 auto}
 }
+/* sizing assistant chat */
+.chatbox{border:1px solid var(--line);border-radius:6px;background:#fdfdfb;overflow:hidden;box-shadow:0 14px 40px rgba(20,31,51,.08);max-width:560px}
+.chat-head{display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1px solid var(--line);background:var(--chalk)}
+.chat-head b{font-size:.9rem;display:block;line-height:1.2}
+.chat-avatar{width:34px;height:34px;border-radius:50%;background:var(--ink);color:#d9b64e;font-style:italic;font-size:.8rem;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;flex-shrink:0}
+.chat-status{font-size:.66rem;color:var(--good);display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.08em}
+.chat-status .dot{width:6px;height:6px;border-radius:50%;background:var(--good)}
+.chat-log{padding:16px 14px 6px;max-height:380px;min-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:9px}
+.msg{max-width:85%;padding:10px 14px;border-radius:14px;font-size:.86rem;line-height:1.5;animation:msgin .25s ease}
+.msg.bot{background:var(--paper);color:var(--ink);border-bottom-left-radius:4px;align-self:flex-start}
+.msg.me{background:var(--ink);color:var(--chalk);border-bottom-right-radius:4px;align-self:flex-end}
+@keyframes msgin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg .verdict{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--thread)}
+.msg .vline{font-size:.8rem}
+.typing{display:inline-flex;gap:4px;padding:3px 2px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--ink-soft);opacity:.4;animation:tp 1s infinite}
+.typing i:nth-child(2){animation-delay:.18s}.typing i:nth-child(3){animation-delay:.36s}
+@keyframes tp{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:.9;transform:translateY(-3px)}}
+.chat-chips{display:flex;gap:8px;flex-wrap:wrap;padding:4px 14px 8px}
+.chat-chips .chip{border:1px solid var(--thread);background:#fff;color:var(--ink);border-radius:15px;padding:7px 14px;font:inherit;font-size:.72rem;font-weight:600;cursor:pointer;letter-spacing:.04em}
+.chat-chips .chip:hover{background:var(--thread-soft)}
+.chat-input{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:var(--chalk)}
+.chat-input input{flex:1;border:1px solid var(--line);border-radius:20px;padding:10px 15px;font:inherit;font-size:.86rem;background:#fff}
+.chat-input button{width:42px;height:42px;border-radius:50%;border:none;background:var(--ink);color:var(--thread-soft);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chat-input button svg{width:17px;height:17px}
+.chat-input button:hover{background:var(--ink-soft)}
+@media (prefers-reduced-motion: reduce){.msg{animation:none}.typing i{animation:none}}
 </style>
 </head>
 <body>
@@ -1492,11 +1519,11 @@ function renderAll(){
    FIT / PERSONALIZATION / REVIEW PANES
 ================================================================ */
 function fitHTML(){return `
-  <h2 style="font-size:1.6rem;margin-top:10px">Your size</h2>
+  <h2 style="font-size:1.6rem;margin-top:10px">Find my size</h2>
   <p style="margin:4px 0 0"><button class="alt-link" onclick="openGuide()">First time? What to ask your tailor →</button></p>
   <div class="method-pick" role="radiogroup" aria-label="Sizing method">
-    <button class="method ${state.method==='tailor'?'sel':''}" id="m-tailor"><h3>I have my measurements</h3><p>From a tailor's fitting — like a prescription from your optometrist.</p></button>
-    <button class="method ${state.method==='closet'?'sel':''}" id="m-closet"><h3>Reference my closet</h3><p>Tell us 2–3 garments that fit well. Our sizing engine estimates from there.</p></button>
+    <button class="method ${state.method==='tailor'?'sel':''}" id="m-tailor"><h3>Enter measurements manually</h3><p>From a tailor's fitting — like a prescription from your optometrist.</p></button>
+    <button class="method ${state.method==='closet'?'sel':''}" id="m-closet"><h3>Based on clothing in my closet</h3><p>Chat with our sizing assistant — just tell it what you wear.</p></button>
   </div>
   <div id="fit-tailor" class="${state.method==='tailor'?'':'hidden'}">
     <div class="group-title">Jacket &amp; trouser measurements (inches)</div>
@@ -1508,21 +1535,195 @@ function fitHTML(){return `
     <p class="hint">Any tailor or dry cleaner with alterations can take these in ten minutes. Bring this list.</p>
   </div>
   <div id="fit-closet" class="${state.method==='closet'?'':'hidden'}">
-    <div class="group-title">Garments that fit you well</div>
-    <p class="hint" style="margin-bottom:12px">Best results: lay the garment flat and measure it. Four numbers beat a size label — brand sizing varies wildly.</p>
-    <div id="ref-list"></div>
-    <button class="add-ref" id="add-ref-btn">+ Add a reference garment</button>
-    <div class="grid2" style="margin-top:16px">
-      <div class="field"><label for="c-height">Your height (in)</label><input type="number" id="c-height" step="0.5" value="${state.height}" oninput="state.height=this.value"></div>
-      <div class="field"><label for="c-weight">Your weight (lb)</label><input type="number" id="c-weight" step="1" value="${state.weight}" oninput="state.weight=this.value"></div>
+    <div class="chatbox" id="chatbox">
+      <div class="chat-head"><span class="chat-avatar">JS</span><div><b>Sizing assistant</b><span class="chat-status"><span class="dot"></span>online</span></div></div>
+      <div class="chat-log" id="chat-log"></div>
+      <div class="chat-chips" id="chat-chips"></div>
+      <form class="chat-input" onsubmit="chatSend();return false">
+        <input type="text" id="chat-field" placeholder="Type here…" autocomplete="off">
+        <button type="submit" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M3 12 21 4l-6 8 6 8Z" fill="currentColor"/></svg></button>
+      </form>
     </div>
   </div>`;}
 function wireFit(){
   document.getElementById('m-tailor').onclick=()=>{state.method='tailor';renderAll();};
   document.getElementById('m-closet').onclick=()=>{state.method='closet';renderAll();};
-  const btn=document.getElementById('add-ref-btn');
-  if(btn)btn.onclick=addRef;
-  if(document.getElementById('ref-list'))renderRefs();
+  if(state.method==='closet')chatStart();
+}
+/* ================================================================
+   SIZING ASSISTANT — a conversation, not a form.
+   Front-end experience first; the parsing below exists to power it.
+================================================================ */
+const KNOWN_BRANDS=['zara','h&m','hm','uniqlo',"levi's",'levis','gap','nike','adidas','j.crew','jcrew','banana republic','ralph lauren','polo','suitsupply','hugo boss','boss','calvin klein','tommy hilfiger','tommy','express','topman','asos','old navy','abercrombie','hollister','massimo dutti','cos','everlane','bonobos','brooks brothers','charles tyrwhitt','indochino','lululemon','patagonia','carhartt','dickies','wrangler','dockers','gucci','prada','armani','ted baker','reiss','club monaco'];
+const LETTER_CHEST={XS:34,S:36.5,M:39.5,L:42.5,XL:45.5,XXL:48.5,XXXL:51};
+let chat=null;
+function chatStart(){
+  if(chat&&document.getElementById('chat-log')&&document.getElementById('chat-log').children.length){chatScroll();return;}
+  chat={step:'brands',items:[],fitPref:null,heightIn:null,weightLb:null};
+  const log=document.getElementById('chat-log'); if(log)log.innerHTML='';
+  chatBot(`Hey — I'm going to find your size from clothes you already own. No measuring tape.<br><br>Which brands do you wear, and in what size? Say it however you'd say it to a friend — <i>"Zara M, Levi's 32, Ralph Lauren L"</i>.`);
+}
+function chatEl(role,html){
+  const log=document.getElementById('chat-log'); if(!log)return;
+  const d=document.createElement('div');
+  d.className='msg '+role;
+  d.innerHTML=html;
+  log.appendChild(d);
+  chatScroll();
+  return d;
+}
+function chatScroll(){const l=document.getElementById('chat-log');if(l)l.scrollTop=l.scrollHeight;}
+function chatChips(list){
+  const c=document.getElementById('chat-chips'); if(!c)return;
+  c.innerHTML=(list||[]).map(t=>`<button class="chip" onclick="chatQuick('${t.replace(/'/g,"\\'")}')">${t}</button>`).join('');
+}
+function chatQuick(t){const f=document.getElementById('chat-field');if(f)f.value=t;chatSend();}
+function chatBot(html,chips){
+  const t=chatEl('bot','<span class="typing"><i></i><i></i><i></i></span>');
+  chatChips([]);
+  setTimeout(()=>{if(t){t.innerHTML=html;chatScroll();}chatChips(chips);},650+Math.min(html.length*4,900));
+}
+/* scrape brand + size pairs out of free text */
+function parseCloset(text){
+  const found=[]; let t=' '+text.toLowerCase()+' ';
+  const sizeRe=/\b(xxxl|xxl|xl|xs|s|m|l|\d{2}(?:\s?[rsl])?)\b/gi;
+  // walk known brands first
+  KNOWN_BRANDS.forEach(b=>{
+    const i=t.indexOf(b);
+    if(i>-1){
+      const after=t.slice(i+b.length,i+b.length+18);
+      const m=after.match(sizeRe);
+      found.push({brand:b.replace(/(^|[\s.&-])([a-z])/g,(m,a,c)=>a+c.toUpperCase()),size:m?m[0].toUpperCase().replace(/\s+/g,''):null});
+      t=t.replace(b,' ');
+    }
+  });
+  // leftover "Word SIZE" pairs (unknown brands)
+  const rx=/([a-z][a-z&.'-]{2,})\s+(xxxl|xxl|xl|xs|s|m|l|\d{2}(?:\s?[rsl])?)\b/gi;
+  let m;
+  while((m=rx.exec(t))!==null){
+    if(!['size','wear','jeans','pants','shirt','suit','jacket','usually','about','like','the','and'].includes(m[1]))
+      found.push({brand:m[1].replace(/(^|[\s.&-])([a-z])/g,(a,b2,c)=>b2+c.toUpperCase()),size:m[2].toUpperCase().replace(/\s+/g,'')});
+  }
+  return found;
+}
+function parseBody(text){
+  const out={};
+  let m=text.match(/(\d)\s*['’]\s*(\d{1,2})/);            // 5'10
+  if(m)out.heightIn=parseInt(m[1])*12+parseInt(m[2]);
+  else if((m=text.match(/(\d{3})\s*cm/i)))out.heightIn=Math.round(parseInt(m[1])/2.54);
+  else if((m=text.match(/\b(5[5-9]|6\d|7[0-9])\b(?!\s*(kg|lb))/)))out.heightIn=parseInt(m[1]);
+  if((m=text.match(/(\d{2,3})\s*(lb|lbs|pounds)/i)))out.weightLb=parseInt(m[1]);
+  else if((m=text.match(/(\d{2,3})\s*kg/i)))out.weightLb=Math.round(parseInt(m[1])*2.2);
+  else if((m=text.match(/\b(1[2-9]\d|2\d{2})\b/)))out.weightLb=parseInt(m[1]);
+  return out;
+}
+function chatSummary(items){
+  return items.map(i=>`<b>${i.brand}</b>${i.size?' · '+i.size:''}`).join('&ensp;·&ensp;');
+}
+function chatSend(){
+  const f=document.getElementById('chat-field'); if(!f)return;
+  const text=f.value.trim(); if(!text)return;
+  f.value='';
+  chatEl('me',text.replace(/</g,'&lt;'));
+  handleChat(text);
+}
+function handleChat(text){
+  if(chat.step==='finished'){
+    if(/continue/i.test(text)){navNext();return;}
+    chatBot(`You're all set — hit <b>Continue</b> below to review your suit.`);
+    return;
+  }
+  if(chat.step==='brands'||chat.step==='more'){
+    const items=parseCloset(text);
+    const done=/\b(that's all|thats all|done|no|nope|nothing else|that's it|thats it)\b/i.test(text);
+    if(items.length){
+      const fresh=[];
+      items.forEach(it=>{
+        const key=it.brand.toLowerCase().replace(/[^a-z]/g,'');
+        if(!chat.items.some(x=>x.brand.toLowerCase().replace(/[^a-z]/g,'')===key)){chat.items.push(it);fresh.push(it);}
+      });
+      chat.step='more';
+      chatBot(`Noted — ${chatSummary(fresh.length?fresh:items)}. Anything else in the rotation?`,["That's all","Add one more"]);
+    }else if(done&&chat.items.length){
+      askFit();
+    }else if(chat.step==='more'&&chat.items.length){
+      askFit();
+    }else{
+      chatBot(`Give me at least one brand with a size — like <i>"Uniqlo L"</i> or <i>"Levi's 33"</i>. I'll do the rest.`);
+    }
+    return;
+  }
+  if(chat.step==='fit'){
+    const p=/slim/i.test(text)?'Slim':/relax|loose|comfort/i.test(text)?'Relaxed':'Tailored';
+    chat.fitPref=p; chat.step='body';
+    chatBot(`${p==='Slim'?'Sharp.':'Good call.'} Last one — height and weight? Roughly is fine, like <i>"5'10, 170 lb"</i>.`);
+    return;
+  }
+  if(chat.step==='body'){
+    const b=parseBody(text);
+    if(b.heightIn)chat.heightIn=b.heightIn;
+    if(b.weightLb)chat.weightLb=b.weightLb;
+    if(!chat.heightIn){chatBot(`Almost — I still need your height, like <i>"5'10"</i>.`);return;}
+    chat.step='done';
+    chatBot(`One second — cross-checking ${chat.items.length} brand${chat.items.length>1?'s':''} against our cut…`);
+    setTimeout(showVerdict,1600);
+    return;
+  }
+  if(chat.step==='done'){
+    if(/yes|right|correct|looks good|perfect|yep/i.test(text)){applyAssistantSize();return;}
+    if(/no|off|wrong|adjust/i.test(text)){state.method='tailor';renderAll();return;}
+    chatBot(`Tap <b>Looks right</b> to lock it in, or <b>Adjust manually</b> and I'll hand you the tape measure.`,['Looks right','Adjust manually']);
+  }
+}
+function askFit(){
+  chat.step='fit';
+  chatBot(`How do you like a suit to sit?`,['Slim','Tailored','Relaxed']);
+}
+function computeAssistantSize(){
+  const chests=[],waists=[];
+  chat.items.forEach(i=>{
+    if(!i.size)return;
+    if(LETTER_CHEST[i.size]!=null)chests.push(LETTER_CHEST[i.size]);
+    else{
+      const n=parseInt(i.size);
+      if(/[RSL]$/.test(i.size)||n>=37)chests.push(n);
+      else if(n>=26)waists.push(n);
+    }
+  });
+  const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null;
+  const adj=chat.fitPref==='Slim'?-0.5:chat.fitPref==='Relaxed'?0.75:0;
+  let chest=avg(chests); let waist=avg(waists);
+  if(chest==null&&waist!=null)chest=waist+7;
+  if(chest==null&&chat.weightLb)chest=34+(chat.weightLb-140)*0.055;
+  if(chest==null)chest=40;
+  chest+=adj;
+  if(waist==null)waist=chest-7+(chat.fitPref==='Relaxed'?1:0);
+  const H=chat.heightIn||70;
+  const sleeve=Math.round(H*0.355*4)/4;
+  const q=v=>Math.round(v*4)/4;
+  const len=H<67?'S':H>73?'L':'R';
+  return {sizeLabel:(Math.round(chest/2)*2)+len,Chest:q(chest),Waist:q(waist),Sleeve:sleeve,Height:H};
+}
+function showVerdict(){
+  const r=computeAssistantSize();
+  chat.result=r;
+  chatBot(`Here's my read: you're a <b class="verdict">${r.sizeLabel}</b>.<br>
+  <span class="vline">Chest <b>${r.Chest}"</b> · Waist <b>${r.Waist}"</b> · Sleeve <b>${r.Sleeve}"</b></span><br>
+  Cut with our usual allowance, your tailor brings it the final inch.`,['Looks right','Adjust manually']);
+}
+function applyAssistantSize(){
+  const r=chat.result||computeAssistantSize();
+  state.meas['t-chest']=String(r.Chest);
+  state.meas['t-waist']=String(r.Waist);
+  state.meas['t-sleeve']=String(r.Sleeve);
+  state.meas['t-heightin']=String(r.Height);
+  state.height=String(r.Height);
+  if(chat.weightLb)state.weight=String(chat.weightLb);
+  state.assistant={sizeLabel:r.sizeLabel,fitPref:chat.fitPref,brands:chat.items,at:new Date().toISOString()};
+  state.method='tailor'; // the verdict lands as real measurements downstream
+  chatBot(`Locked in — <b>${r.sizeLabel}</b>, saved to your order. You can fine-tune any number under <i>Enter measurements manually</i>, any time.`,['Continue →']);
+  chat.step='finished';
+  saveDraft();
 }
 function addRef(){
   state.refs.push({garment:'Suit jacket / blazer',brandsize:'',pitpit:'',shoulder:'',sleeve:'',verdict:'Perfect'});
@@ -2381,6 +2582,7 @@ function buildSpec(){
     },
     fit:{
       method:state.method,
+      assistant:state.assistant||null,
       measurementsInches:state.method==='tailor'?measurements:null,
       closetReferences:state.method==='closet'?{
         estimate:estimateFromCloset(),
