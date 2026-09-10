@@ -188,6 +188,17 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .hinfo span{display:block;font-size:.72rem;color:var(--ink-soft);margin-top:2px}
 .hnav{position:absolute;top:38%;z-index:30;width:46px;height:46px;border-radius:50%;border:none;background:rgba(251,250,246,.92);color:var(--ink);font-size:1.3rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3)}
 .hnav.prev{left:10px}.hnav.next{right:10px}
+/* social platform buttons + stats */
+.soc-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.soc-btn{display:flex;align-items:center;gap:10px;padding:11px 20px;border-radius:26px;border:1px solid rgba(251,250,246,.25);background:rgba(251,250,246,.06);color:var(--chalk);font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:none;min-height:44px;transition:background .15s,border-color .15s}
+.soc-btn:hover{background:rgba(251,250,246,.14);border-color:rgba(251,250,246,.5)}
+.soc-btn svg{width:20px;height:20px;flex-shrink:0}
+.soc-btn .cnt{font-weight:400;color:rgba(251,250,246,.65);font-size:.78rem}
+.soc-stats{display:flex;gap:34px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+.soc-stats div{color:rgba(251,250,246,.7);font-size:.75rem}
+.soc-stats strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--chalk);font-weight:700}
+.hslide .pchip{position:absolute;top:10px;right:10px;z-index:2;width:26px;height:26px;border-radius:8px;background:rgba(15,22,36,.75);display:flex;align-items:center;justify-content:center}
+.hslide .pchip svg{width:15px;height:15px}
 /* closet */
 .closet-card{border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:14px;margin-bottom:14px;display:flex;gap:14px;font-size:.85rem}
 .closet-card img{width:84px;height:112px;object-fit:cover;border-radius:var(--r);flex-shrink:0}
@@ -263,19 +274,6 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
   <button class="btn" onclick="startConfig()">Start designing</button>
 </section>
 
-<section class="shell sec" id="reviews">
-  <h2>What owners say</h2>
-  <div class="greviews-head">
-    <svg class="glogo" viewBox="0 0 48 48" aria-label="Google"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-    <div><span class="gscore">4.9</span> <span class="gstars">★★★★★</span><div class="gcount">Google rating · based on 214 verified reviews</div></div>
-  </div>
-  <div class="carousel-wrap">
-    <button class="car-btn car-prev" onclick="scrollRow('reviews-row',-1)" aria-label="Previous reviews">‹</button>
-    <div class="reviews" id="reviews-row"></div>
-    <button class="car-btn car-next" onclick="scrollRow('reviews-row',1)" aria-label="More reviews">›</button>
-  </div>
-</section>
-
 <section id="social">
   <div class="shell">
     <p class="k">On the feed</p>
@@ -286,6 +284,40 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
     <button class="hnav prev" id="soc-prev" aria-label="Previous clip">‹</button>
     <div class="hstage"><div class="hslides" id="soc-slides"></div></div>
     <button class="hnav next" id="soc-next" aria-label="Next clip">›</button>
+  </div>
+  <div class="shell">
+    <div class="soc-btns">
+      <a class="soc-btn" href="#" onclick="return socialStub('Instagram')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="iggrad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FFDC80"/><stop offset=".25" stop-color="#F77737"/><stop offset=".5" stop-color="#E1306C"/><stop offset=".75" stop-color="#C13584"/><stop offset="1" stop-color="#833AB4"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#iggrad)"/><circle cx="12" cy="12" r="4.4" fill="none" stroke="#fff" stroke-width="1.7"/><circle cx="17.2" cy="6.8" r="1.3" fill="#fff"/></svg>
+        @chalkandthread <span class="cnt">128K</span></a>
+      <a class="soc-btn" href="#" onclick="return socialStub('TikTok')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" fill="#010101"/><path d="M15.2 6.2c.5 1.3 1.5 2.2 2.9 2.4v2.2c-1.1 0-2.1-.35-2.9-.9v4.5c0 2.3-1.85 4.1-4.1 4.1a4.1 4.1 0 0 1-.4-8.18v2.3a1.9 1.9 0 1 0 2.3 1.86V5h2.2c0 .42.03.82.1 1.2z" fill="#25F4EE"/><path d="M14.9 5.9c.5 1.3 1.5 2.2 2.9 2.4v2.2c-1.1 0-2.1-.35-2.9-.9v4.5c0 2.3-1.85 4.1-4.1 4.1a4.1 4.1 0 0 1-.4-8.18v2.3a1.9 1.9 0 1 0 2.3 1.86V4.7h2.2c0 .42.03.82.1 1.2z" fill="#FE2C55" opacity=".85"/><path d="M15.05 6.05c.5 1.3 1.5 2.2 2.9 2.4v2.1c-1.1 0-2.1-.35-2.9-.9v4.6c0 2.3-1.85 4.1-4.1 4.1a4.08 4.08 0 0 1-.4-8.14v2.28a1.9 1.9 0 1 0 2.3 1.86V4.85h2.1c0 .42.03.82.1 1.2z" fill="#fff"/></svg>
+        @chalkandthread <span class="cnt">96K</span></a>
+      <a class="soc-btn" href="#" onclick="return socialStub('YouTube')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="4.5" width="21" height="15" rx="4" fill="#FF0000"/><path d="M10 9l5.2 3L10 15z" fill="#fff"/></svg>
+        Chalk &amp; Thread <span class="cnt">41K</span></a>
+      <a class="soc-btn" href="#" onclick="return socialStub('Facebook')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#1877F2"/><path d="M13.4 21v-6.5h2.2l.4-2.6h-2.6v-1.7c0-.75.37-1.3 1.4-1.3h1.3V6.6c-.3-.04-1.2-.13-2.1-.13-2.1 0-3.4 1.24-3.4 3.44v2h-2.3v2.6h2.3V21z" fill="#fff"/></svg>
+        Chalk &amp; Thread <span class="cnt">23K</span></a>
+    </div>
+    <div class="soc-stats">
+      <div><strong>288K</strong>followers across platforms</div>
+      <div><strong>4.2M</strong>views on reveal videos</div>
+      <div><strong>1,900+</strong>customer suits tagged #chalkandthread</div>
+    </div>
+  </div>
+</section>
+
+<section class="shell sec" id="reviews">
+  <h2>What owners say</h2>
+  <div class="greviews-head">
+    <svg class="glogo" viewBox="0 0 48 48" aria-label="Google"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    <div><span class="gscore">4.9</span> <span class="gstars">★★★★★</span><div class="gcount">Google rating · based on 214 verified reviews</div></div>
+  </div>
+  <div class="carousel-wrap">
+    <button class="car-btn car-prev" onclick="scrollRow('reviews-row',-1)" aria-label="Previous reviews">‹</button>
+    <div class="reviews" id="reviews-row"></div>
+    <button class="car-btn car-next" onclick="scrollRow('reviews-row',1)" aria-label="More reviews">›</button>
   </div>
 </section>
 
@@ -981,17 +1013,25 @@ function renderReviews(){
 
 /* ---- social focus carousel (Mr Bins-style) ---- */
 const SOCIAL=[
- {img:'loved-midnight.png',hh:'@chalkandthread',b:'the reveal after the tailor \u{1F525}',s:'$55 in alterations. that’s it.'},
- {img:'loved-blacktie.png',hh:'@chalkandthread',b:'his name is under the collar \u{1F440}',s:'nobody knows but him'},
- {img:'loved-firstsuit.png',hh:'@chalkandthread',b:'first suit, $300, fits like $1,500',s:'POV: you stopped renting'},
- {img:'loved-chairman.png',hh:'@chalkandthread',b:'double-breasted walked in first',s:'the chairman, as styled'},
- {img:'loved-eveningblue.png',hh:'@chalkandthread',b:'photo of his kids in the lining \u{1F979}',s:'wedding suit reveal'},
+ {img:'loved-midnight.png',hh:'@chalkandthread',b:'the reveal after the tailor \u{1F525}',s:'$55 in alterations. that’s it.',pf:'tt'},
+ {img:'loved-blacktie.png',hh:'@chalkandthread',b:'his name is under the collar \u{1F440}',s:'nobody knows but him',pf:'ig'},
+ {img:'loved-firstsuit.png',hh:'@chalkandthread',b:'first suit, $300, fits like $1,500',s:'POV: you stopped renting',pf:'tt'},
+ {img:'loved-chairman.png',hh:'@chalkandthread',b:'double-breasted walked in first',s:'the chairman, as styled',pf:'ig'},
+ {img:'loved-eveningblue.png',hh:'@chalkandthread',b:'photo of his kids in the lining \u{1F979}',s:'wedding suit reveal',pf:'tt'},
 ];
+const PF_ICONS={
+ ig:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="6" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.3" fill="#fff"/></svg>',
+ tt:'<svg viewBox="0 0 24 24"><path d="M15.05 4c.5 1.6 1.6 2.7 3.2 2.9v2.4c-1.2 0-2.3-.4-3.2-1v5.1c0 2.6-2.1 4.6-4.6 4.6a4.6 4.6 0 0 1-.45-9.17v2.55a2.1 2.1 0 1 0 2.55 2.06V4z" fill="#fff"/></svg>',
+};
+function socialStub(pf){
+  alert(pf+' page opens at launch — the handles are reserved.\n@chalkandthread everywhere.');
+  return false;
+}
 function initSocial(){
   const host=document.getElementById('soc-slides');
   host.innerHTML=SOCIAL.map(s=>`<figure class="hslide">
-    <div class="hmedia"><span class="chip">${s.hh}</span><img src="suit-images/${s.img}" alt="${s.b}" loading="lazy"></div>
-    <figcaption class="hinfo"><span class="hh">${s.hh}</span><b>${s.b}</b><span>${s.s}</span></figcaption>
+    <div class="hmedia"><span class="chip">${s.hh}</span><span class="pchip" aria-label="${s.pf==='ig'?'Instagram':'TikTok'}">${PF_ICONS[s.pf]}</span><img src="suit-images/${s.img}" alt="${s.b}" loading="lazy"></div>
+    <figcaption class="hinfo"><span class="hh">${s.hh}${s.pf==='ig'?' · Instagram':' · TikTok'}</span><b>${s.b}</b><span>${s.s}</span></figcaption>
   </figure>`).join('');
   const slides=[...host.children]; const N=slides.length; let a=0,timer;
   const step=()=>slides[0].getBoundingClientRect().width+28;
