@@ -679,6 +679,9 @@ body::-webkit-scrollbar-thumb:hover{background:rgba(20,31,51,.5);background-clip
   .hero-bleed{height:auto;min-height:0;aspect-ratio:1600/914;background:url('suit-images/hero-wide.jpg') center/cover no-repeat}
   .hero-plate{padding-top:16px}
 }
+/* page one is immune to any viewport weirdness */
+html,body{width:100%;min-width:0}
+#landing,.hero-bleed,.hero-plate{width:100%;max-width:none}
 </style>
 </head>
 <body>
