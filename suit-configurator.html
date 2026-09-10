@@ -112,13 +112,22 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .review-table td:last-child{font-weight:600}
 .alt-link{background:none;border:none;font:inherit;font-size:.8rem;color:var(--ink-soft);text-decoration:underline;cursor:pointer}
 .badge-good{color:var(--good);font-weight:600;font-size:.8rem}
-.hero{padding:64px 0 48px;max-width:740px}
-.hero h1{font-size:clamp(2.3rem,6vw,3.6rem);line-height:1.08;margin-bottom:16px}
-.hero h1 em{font-style:italic;color:var(--thread)}
-.hero p{font-size:1.02rem;color:var(--ink-soft);max-width:52ch;margin-bottom:10px}
-.hero-facts{display:flex;gap:28px;margin-top:30px;flex-wrap:wrap}
-.hero-facts div{font-size:.82rem;color:var(--ink-soft)}
-.hero-facts strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--ink);font-weight:700}
+/* full-bleed photographic hero */
+.hero-bleed{position:relative;min-height:min(92svh,860px);display:flex;align-items:flex-end;background:#8f9294 url('suit-images/hero-wide.png') center 30%/cover no-repeat}
+.hero-bleed::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,42,65,.1) 30%,rgba(20,30,48,.82) 88%)}
+.hero-inner{position:relative;z-index:1;width:100%;padding-top:56px;padding-bottom:48px;max-width:1200px}
+.hero-inner .tagpill{color:var(--thread-soft)}
+.hero-inner h1{font-size:clamp(2.3rem,5.5vw,3.8rem);line-height:1.08;margin-bottom:14px;color:var(--chalk);max-width:16ch}
+.hero-inner h1 em{font-style:italic;color:var(--thread-soft)}
+.hero-inner p{font-size:1rem;color:rgba(251,250,246,.85);max-width:50ch;margin-bottom:10px}
+.hero-cta{margin-top:14px;background:var(--chalk);color:var(--ink);border-color:var(--chalk)}
+.hero-cta:hover{background:#fff;border-color:#fff;color:var(--ink)}
+.hero-facts{display:flex;gap:28px;margin-top:26px;flex-wrap:wrap}
+.hero-facts div{font-size:.8rem;color:rgba(251,250,246,.75)}
+.hero-facts strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--chalk);font-weight:700}
+@media(max-width:640px){
+  .hero-bleed{background-image:url('suit-images/hero-tall.png');min-height:88svh;background-position:center 20%}
+}
 .hidden{display:none!important}
 
 /* ---- storefront ---- */
@@ -309,16 +318,17 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 </header>
 
 <div id="landing">
-<section class="shell hero" id="hero">
-  <p class="tagpill">Welcome to Chalk &amp; Thread</p>
-  <h1>Build your suit in five minutes. <em>Finish it</em> at your tailor.</h1>
-  <p>Every detail is yours — lapel, buttons, lining, your name under the collar, a photo inside the jacket. We cut it with deliberate extra allowance and ship it to your door.</p>
-  <p>Your local tailor takes it the final inch. You control the fit budget; we handle everything else.</p>
-  <button class="btn" style="margin-top:14px" onclick="startConfig()">Design my own suit — from $300</button>
-  <div class="hero-facts">
-    <div><strong>$300</strong>base suit, delivered</div>
-    <div><strong>5 min</strong>to assemble</div>
-    <div><strong>Your tailor</strong>does the finishing</div>
+<section class="hero-bleed" id="hero">
+  <div class="shell hero-inner">
+    <p class="tagpill">Welcome to Chalk &amp; Thread</p>
+    <h1>Build your suit in five minutes. <em>Finish it</em> at your tailor.</h1>
+    <p>Every detail is yours — lapel, buttons, lining, your name under the collar, a photo inside the jacket. Cut with deliberate allowance, shipped to your door, finished by your own tailor.</p>
+    <button class="btn hero-cta" onclick="startConfig()">Design my own suit — from $300</button>
+    <div class="hero-facts">
+      <div><strong>$300</strong>base suit, delivered</div>
+      <div><strong>5 min</strong>to assemble</div>
+      <div><strong>Your tailor</strong>does the finishing</div>
+    </div>
   </div>
 </section>
 
@@ -692,18 +702,19 @@ function isRoll(){return state.frontbtn.includes('roll');}
 /* ================================================================
    NAVIGATION MODEL: categories -> subtabs -> option groups
 ================================================================ */
+/* the build order compounds: color → silhouette → closure → details → trousers → yours → size → done */
 const NAV=[
- {id:'fit', label:'Fit', count:()=>1, subs:[{id:'fit-main',label:'Sizing'}]},
- {id:'style', label:'Style', count:()=>counts(['frontbtn','btnmat']), subs:[
-   {id:'frontbtn',label:'Front buttons'},{id:'btnmat',label:'Button material'}]},
- {id:'lapel', label:'Lapel', count:()=>counts(['lapel']), subs:[{id:'lapel',label:'Lapel'}]},
  {id:'cloth', label:'Cloth', count:()=>counts(['cloth']), subs:[{id:'cloth',label:'Cloth'}]},
+ {id:'lapel', label:'Lapel', count:()=>counts(['lapel']), subs:[{id:'lapel',label:'Lapel'}]},
+ {id:'style', label:'Buttons', count:()=>counts(['frontbtn','btnmat']), subs:[
+   {id:'frontbtn',label:'Front'},{id:'btnmat',label:'Material'}]},
+ {id:'pocket', label:'Pockets', count:()=>counts(['pockets']), subs:[{id:'pockets',label:'Pockets'}]},
  {id:'back', label:'Back', count:()=>counts(['vents']), subs:[{id:'vents',label:'Vents'}]},
- {id:'pocket', label:'Pocket', count:()=>counts(['pockets']), subs:[{id:'pockets',label:'Pockets'}]},
- {id:'trouser', label:'Trouser', count:()=>counts(['legfit','waistband','pleats','hem']), subs:[
-   {id:'legfit',label:'Leg fit'},{id:'waistband',label:'Waistband'},{id:'pleats',label:'Pleats'},{id:'hem',label:'Hem'}]},
- {id:'yours', label:'Make it yours', count:()=>persCount(), subs:[
-   {id:'lining',label:'Lining'},{id:'mono',label:'Monogram'},{id:'collarname',label:'Collar name'},{id:'photolining',label:'Photo lining'}]},
+ {id:'trouser', label:'Trousers', count:()=>counts(['legfit','waistband','pleats','hem']), subs:[
+   {id:'legfit',label:'Leg'},{id:'waistband',label:'Waist'},{id:'pleats',label:'Pleats'},{id:'hem',label:'Hem'}]},
+ {id:'yours', label:'Details', count:()=>persCount(), subs:[
+   {id:'lining',label:'Lining'},{id:'mono',label:'Monogram'},{id:'collarname',label:'Collar'},{id:'photolining',label:'Photo'}]},
+ {id:'fit', label:'Fit', count:()=>1, subs:[{id:'fit-main',label:'Sizing'}]},
  {id:'review', label:'Review', count:()=>'', subs:[{id:'review',label:'Review'}]},
 ];
 function counts(keys){return keys.filter(k=>state[k]!==DEFAULTS[k]).length||'';}
@@ -858,9 +869,9 @@ function photoSrc(){
   const lap=state.lapel.toLowerCase(), b=state.frontbtn;
   // shawl base image is 1-button; notch/peak base is 2-button
   const suff = lap==='shawl'
-    ? {'1 button':'','2 buttons':'-2btn','3 buttons':'-3btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'}[b]
-    : {'2 buttons':'','1 button':'-1btn','3 buttons':'-3btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'}[b];
-  if(suff===undefined) return null; // 5-button and roll-to-2nd render exactly as drawings
+    ? {'1 button':'','2 buttons':'-2btn','3 buttons':'-3btn','3 buttons (roll to 2nd)':'-roll','5 buttons':'-5btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'}[b]
+    : {'2 buttons':'','1 button':'-1btn','3 buttons':'-3btn','3 buttons (roll to 2nd)':'-roll','5 buttons':'-5btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'}[b];
+  if(suff===undefined) return null;
   return `suit-images/${c}-${lap}${suff}.png`;
 }
 function pvImgFail(el,kind){
@@ -1086,7 +1097,7 @@ function reviewHTML(){
   const total=currentTotal();
   const monoUpsell=state.monostyle==='None'?`<div class="quick-add">
     <span><b>Make it unmistakably yours.</b> A stitched monogram is the single most-added detail — initials, a name, a date.</span>
-    <button class="btn" onclick="state.monostyle='Script monogram';cur={cat:7,sub:1};renderAll()">Add monogram · +$15</button>
+    <button class="btn" onclick="state.monostyle='Script monogram';cur={cat:6,sub:1};renderAll()">Add monogram · +$15</button>
   </div>`:'';
   return `
   <h2 style="font-size:1.8rem;margin-top:14px">Your suit, on paper</h2>
