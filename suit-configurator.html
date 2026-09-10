@@ -116,7 +116,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .alt-link{background:none;border:none;font:inherit;font-size:.8rem;color:var(--ink-soft);text-decoration:underline;cursor:pointer}
 .badge-good{color:var(--good);font-weight:600;font-size:.8rem}
 /* full-bleed photographic hero */
-.hero-bleed{position:relative;min-height:min(92svh,860px);display:flex;align-items:flex-end;background:#8f9294 url('suit-images/hero-wide.png') center 30%/cover no-repeat}
+.hero-bleed{position:relative;min-height:min(92svh,860px);display:flex;align-items:flex-end;background:#8f9294 url('suit-images/hero-wide.jpg') center 30%/cover no-repeat}
 .hero-bleed::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,42,65,.1) 30%,rgba(20,30,48,.82) 88%)}
 .hero-inner{position:relative;z-index:1;width:100%;padding-top:56px;padding-bottom:48px;max-width:1200px}
 .hero-inner .tagpill{color:var(--thread-soft)}
@@ -129,7 +129,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .hero-facts div{font-size:.8rem;color:rgba(251,250,246,.75)}
 .hero-facts strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--chalk);font-weight:700}
 @media(max-width:640px){
-  .hero-bleed{background-image:url('suit-images/hero-tall.png');min-height:88svh;background-position:center 20%}
+  .hero-bleed{background-image:url('suit-images/hero-tall.jpg');min-height:88svh;background-position:center 20%}
 }
 .hidden{display:none!important}
 
@@ -861,7 +861,7 @@ function renderContent(){
   });
 }
 const PHOTO_CLOTH={'Navy wool blend':'navy','Charcoal herringbone':'herringbone','Black twill':'black','Midnight blue sharkskin':'sharkskin','Forest green wool':'green'};
-const MODEL_PHOTO={'Navy wool blend':'loved-firstsuit.png','Charcoal herringbone':'model-charcoal.png','Black twill':'model-black.png','Midnight blue sharkskin':'loved-eveningblue.png','Forest green wool':'model-green.png'};
+const MODEL_PHOTO={'Navy wool blend':'loved-firstsuit.jpg','Charcoal herringbone':'model-charcoal.jpg','Black twill':'model-black.jpg','Midnight blue sharkskin':'loved-eveningblue.jpg','Forest green wool':'model-green.jpg'};
 
 /* ---- 360 viewer: photoreal front + on-model, exact drawings for the rest ---- */
 const VIEWS=[{id:'photo',label:'Photo'},{id:'model',label:'On model'},{id:'back',label:'Back'},{id:'inside',label:'Inside'},{id:'trousers',label:'Trousers'}];
@@ -882,7 +882,7 @@ function clothTexture(){
   return n.includes('herringbone')?'herringbone':n.includes('sharkskin')?'sharkskin':null;
 }
 /* exact photo for cloth × lapel × buttons, or null when only the drawing is exact:
-   base {cloth}-{lapel}.png = 2 buttons (shawl base = 1 button); -1btn / -db variants;
+   base {cloth}-{lapel}.jpg = 2 buttons (shawl base = 1 button); -1btn / -db variants;
    3-button, 5-button, and roll fronts have no photo — the drawing renders them exactly */
 /* exact photo for any cloth × lapel × buttons; base image is 2-button (shawl base: 1-button) */
 function photoFor(cloth,lapel,frontbtn){
@@ -892,7 +892,7 @@ function photoFor(cloth,lapel,frontbtn){
     ? {'1 button':'','2 buttons':'-2btn','3 buttons':'-3btn','3 buttons (roll to 2nd)':'-roll','5 buttons':'-5btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'}
     : {'2 buttons':'','1 button':'-1btn','3 buttons':'-3btn','3 buttons (roll to 2nd)':'-roll','5 buttons':'-5btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'})[frontbtn];
   if(suff===undefined) return null;
-  return `suit-images/${c}-${lap}${suff}.png`;
+  return `suit-images/${c}-${lap}${suff}.jpg`;
 }
 function photoSrc(){return photoFor(state.cloth,state.lapel,state.frontbtn);}
 function pvImgFail(el,kind){
@@ -920,19 +920,19 @@ function trouserDrawing(clothFill,texture){
 }
 function backMedia(clothFill,texture){
   const c=PHOTO_CLOTH[state.cloth];
-  if(c) return `<img class="preview-photo" src="suit-images/back-${c}-${VENT_KEY[state.vents]}.png" alt="Back — ${state.vents}" onerror="pvImgFail(this,'back')">`;
+  if(c) return `<img class="preview-photo" src="suit-images/back-${c}-${VENT_KEY[state.vents]}.jpg" alt="Back — ${state.vents}" onerror="pvImgFail(this,'back')">`;
   return backSVG({vent:state.vents,clothFill,texture});
 }
 function insideMedia(clothFill,texture){
   const k=LINING_KEY[state.lining];
   const plain=state.monostyle==='None'&&state.collar==='None'&&state.photo==='None';
-  if(k&&plain) return `<img class="preview-photo" src="suit-images/inside-${k}.png" alt="Lining — ${state.lining}" onerror="pvImgFail(this,'inside')">`;
+  if(k&&plain) return `<img class="preview-photo" src="suit-images/inside-${k}.jpg" alt="Lining — ${state.lining}" onerror="pvImgFail(this,'inside')">`;
   return insideDrawing(clothFill,texture); // the drawing renders monogram / collar name / photo exactly
 }
 function trouserMedia(clothFill,texture){
   const c=PHOTO_CLOTH[state.cloth];
   const plain=state.pleats==='Flat front'&&state.hem==='Plain hem'&&state.waistband==='Belt loops';
-  if(c&&plain) return `<img class="preview-photo" src="suit-images/trouser-${c}-${FIT_KEY[state.legfit]}.png" alt="Trousers — ${state.legfit}" onerror="pvImgFail(this,'trouser')">`;
+  if(c&&plain) return `<img class="preview-photo" src="suit-images/trouser-${c}-${FIT_KEY[state.legfit]}.jpg" alt="Trousers — ${state.legfit}" onerror="pvImgFail(this,'trouser')">`;
   return trouserDrawing(clothFill,texture);
 }
 function modelSVG(){
@@ -975,7 +975,7 @@ function viewSVG(){
     return `<img class="preview-photo" src="${src}" alt="Your suit — ${state.cloth}, ${state.lapel} lapel, ${state.frontbtn}" onerror="pvImgFail(this)">`;
   }
   if(v==='model'){
-    const src=`suit-images/${MODEL_PHOTO[state.cloth]||'loved-firstsuit.png'}`;
+    const src=`suit-images/${MODEL_PHOTO[state.cloth]||'loved-firstsuit.jpg'}`;
     return `<img class="preview-photo" src="${src}" alt="Your cloth on a model" onerror="pvImgFail(this,'model')">`;
   }
   if(v==='front') return jacketSVG({lapel:state.lapel,buttons:btnCount(),roll:isRoll(),db:isDB(),
@@ -1212,15 +1212,15 @@ function leaveStyling(){
    STOREFRONT: most-loved presets, account, orders, checkout, guide
 ================================================================ */
 const MOSTLOVED=[
- {name:'The Midnight',tag:'Sleek black',img:'loved-midnight.png',desc:'A razor-clean black suit. One button, peak lapel, jetted pockets — nothing that doesn’t need to be there.',
+ {name:'The Midnight',tag:'Sleek black',img:'loved-midnight.jpg',desc:'A razor-clean black suit. One button, peak lapel, jetted pockets — nothing that doesn’t need to be there.',
   patch:{cloth:'Black twill',lapel:'Peak',frontbtn:'1 button',pockets:'Jetted (no flap)',vents:'Double vent',lining:'Tone-on-tone',legfit:'Slim'}},
- {name:'The Black Tie',tag:'Tuxedo',img:'loved-blacktie.png',desc:'Shawl lapel, single button, deep black. Your name under the collar, because a tuxedo should be nobody else’s.',
+ {name:'The Black Tie',tag:'Tuxedo',img:'loved-blacktie.jpg',desc:'Shawl lapel, single button, deep black. Your name under the collar, because a tuxedo should be nobody else’s.',
   patch:{cloth:'Black twill',lapel:'Shawl',frontbtn:'1 button',pockets:'Jetted (no flap)',vents:'No vent',lining:'Deep burgundy',collar:'Embroidered collar name'}},
- {name:'The First Suit',tag:'Navy classic',img:'loved-firstsuit.png',desc:'The navy suit every closet starts with. Notch lapel, two buttons, wears everywhere from interviews to weddings.',
+ {name:'The First Suit',tag:'Navy classic',img:'loved-firstsuit.jpg',desc:'The navy suit every closet starts with. Notch lapel, two buttons, wears everywhere from interviews to weddings.',
   patch:{cloth:'Navy wool blend',lapel:'Notch',frontbtn:'2 buttons',pockets:'Straight flap',lining:'Deep burgundy'}},
- {name:'The Chairman',tag:'Double-breasted',img:'loved-chairman.png',desc:'Charcoal herringbone, 6x2 double-breasted, peak lapel. Walks into the room slightly before you do.',
+ {name:'The Chairman',tag:'Double-breasted',img:'loved-chairman.jpg',desc:'Charcoal herringbone, 6x2 double-breasted, peak lapel. Walks into the room slightly before you do.',
   patch:{cloth:'Charcoal herringbone',lapel:'Peak',frontbtn:'Double-breasted 6x2',pockets:'Straight flap',lining:'Royal purple',waistband:'Side adjusters'}},
- {name:'The Evening Blue',tag:'Midnight sharkskin',img:'loved-eveningblue.png',desc:'Midnight blue sharkskin with a gold paisley lining. Reads black in the dark, glows blue in the light.',
+ {name:'The Evening Blue',tag:'Midnight sharkskin',img:'loved-eveningblue.jpg',desc:'Midnight blue sharkskin with a gold paisley lining. Reads black in the dark, glows blue in the light.',
   patch:{cloth:'Midnight blue sharkskin',lapel:'Peak',frontbtn:'2 buttons',pockets:'Slanted flap',lining:'Gold paisley'}},
 ];
 function presetPrice(p){
@@ -1288,11 +1288,11 @@ function renderReviews(){
 
 /* ---- social focus carousel (Mr Bins-style) ---- */
 const SOCIAL=[
- {img:'loved-midnight.png',hh:'@chalkandthread',b:'the reveal after the tailor \u{1F525}',s:'$55 in alterations. that’s it.',pf:'tt'},
- {img:'loved-blacktie.png',hh:'@chalkandthread',b:'his name is under the collar \u{1F440}',s:'nobody knows but him',pf:'ig'},
- {img:'loved-firstsuit.png',hh:'@chalkandthread',b:'first suit, $300, fits like $1,500',s:'POV: you stopped renting',pf:'tt'},
- {img:'loved-chairman.png',hh:'@chalkandthread',b:'double-breasted walked in first',s:'the chairman, as styled',pf:'ig'},
- {img:'loved-eveningblue.png',hh:'@chalkandthread',b:'photo of his kids in the lining \u{1F979}',s:'wedding suit reveal',pf:'tt'},
+ {img:'loved-midnight.jpg',hh:'@chalkandthread',b:'the reveal after the tailor \u{1F525}',s:'$55 in alterations. that’s it.',pf:'tt'},
+ {img:'loved-blacktie.jpg',hh:'@chalkandthread',b:'his name is under the collar \u{1F440}',s:'nobody knows but him',pf:'ig'},
+ {img:'loved-firstsuit.jpg',hh:'@chalkandthread',b:'first suit, $300, fits like $1,500',s:'POV: you stopped renting',pf:'tt'},
+ {img:'loved-chairman.jpg',hh:'@chalkandthread',b:'double-breasted walked in first',s:'the chairman, as styled',pf:'ig'},
+ {img:'loved-eveningblue.jpg',hh:'@chalkandthread',b:'photo of his kids in the lining \u{1F979}',s:'wedding suit reveal',pf:'tt'},
 ];
 const PF_ICONS={
  ig:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="6" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.3" fill="#fff"/></svg>',
@@ -1402,7 +1402,7 @@ function applySavedStyle(){
 /* ---- the closet: every purchase, wearable again ---- */
 function closetPhoto(spec){
   const c=PHOTO_CLOTH[spec.garment.cloth];
-  return c?`suit-images/${c}-${spec.garment.lapel.toLowerCase()}.png`:'suit-images/navy-notch.png';
+  return c?`suit-images/${c}-${spec.garment.lapel.toLowerCase()}.jpg`:'suit-images/navy-notch.jpg';
 }
 function applyOrder(i){
   const spec=getOrders()[i].spec; if(!spec)return;
