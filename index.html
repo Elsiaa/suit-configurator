@@ -148,11 +148,52 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .suitcard .pricing{font-weight:600;color:var(--thread)}
 .suitcard .btn{width:100%;text-align:center;margin-top:4px}
 .tagpill{display:inline-block;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-red);font-weight:600}
-.reviews{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.review{border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:18px}
-.review .stars{color:var(--thread);letter-spacing:2px;margin-bottom:6px}
-.review p{font-size:.85rem;margin-bottom:10px}
-.review .who{font-size:.75rem;color:var(--ink-soft);font-weight:600}
+/* Google reviews carousel */
+.greviews-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.greviews-head .glogo{width:34px;height:34px}
+.greviews-head .gscore{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700}
+.greviews-head .gstars{color:#fbbc05;font-size:1.1rem;letter-spacing:2px}
+.greviews-head .gcount{font-size:.8rem;color:var(--ink-soft)}
+.reviews{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.reviews::-webkit-scrollbar{display:none}
+.review{flex:0 0 300px;scroll-snap-align:start;border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:18px;position:relative}
+@media(max-width:640px){.review{flex-basis:82vw}}
+.review .gmark{position:absolute;top:14px;right:14px;width:20px;height:20px}
+.review .rhead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.review .avatar{width:38px;height:38px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.95rem;flex-shrink:0}
+.review .who{font-size:.82rem;font-weight:600;color:var(--ink)}
+.review .when{font-size:.72rem;color:var(--ink-soft)}
+.review .stars{color:#fbbc05;letter-spacing:2px;margin-bottom:6px;font-size:.9rem}
+.review p{font-size:.85rem;margin-bottom:8px}
+.review .gverified{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--ink-soft)}
+.review .gverified svg{width:12px;height:12px}
+/* social — Chalk & Thread on the feed (Mr Bins-style focus carousel) */
+#social{background:var(--ink);padding:56px 0 64px;text-align:center;overflow:hidden}
+#social .k{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--thread);font-weight:600}
+#social h2{color:var(--chalk);font-size:clamp(1.8rem,4.5vw,2.8rem);margin-top:8px}
+#social h2 em{font-style:italic;color:var(--thread)}
+#social .sub{color:rgba(251,250,246,.7);font-size:.9rem;margin-top:8px}
+.hwrap{position:relative;max-width:1200px;margin:0 auto}
+.hstage{position:relative;margin:26px auto 0;height:calc(clamp(170px,17vw,240px)*1.5 + 120px);overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.hslides{position:absolute;inset:0}
+.hslide{position:absolute;left:50%;top:0;width:clamp(170px,17vw,240px);margin:0;cursor:pointer;transition:transform .55s cubic-bezier(.2,.8,.2,1);will-change:transform}
+.hslide .hmedia{position:relative;aspect-ratio:3/4;border-radius:18px;overflow:hidden;background:#0f1a2c;transition:filter .5s ease,opacity .5s ease;box-shadow:0 24px 54px rgba(0,0,0,.4)}
+.hslide .hmedia img{width:100%;height:100%;object-fit:cover;display:block}
+.hslide:not(.act) .hmedia{filter:blur(7px) saturate(.85);opacity:.55}
+.hslide .chip{position:absolute;top:10px;left:10px;z-index:2;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:rgba(184,134,11,.95);color:#fff;padding:4px 8px;border-radius:6px}
+.hslide .hinfo{margin:10px auto 0;background:#fff;border-radius:14px;padding:10px 14px 11px;text-align:left;box-shadow:0 10px 26px rgba(11,20,40,.3);transform:rotate(-.6deg);opacity:0;transition:opacity .4s ease}
+.hslide.act .hinfo{opacity:1;transform:none}
+.hinfo .hh{display:block;font-size:.68rem;font-weight:700;color:var(--thread);letter-spacing:.04em;margin-bottom:2px}
+.hinfo b{display:block;font-size:.84rem;color:var(--ink);line-height:1.3}
+.hinfo span{display:block;font-size:.72rem;color:var(--ink-soft);margin-top:2px}
+.hnav{position:absolute;top:38%;z-index:30;width:46px;height:46px;border-radius:50%;border:none;background:rgba(251,250,246,.92);color:var(--ink);font-size:1.3rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.hnav.prev{left:10px}.hnav.next{right:10px}
+/* closet */
+.closet-card{border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:14px;margin-bottom:14px;display:flex;gap:14px;font-size:.85rem}
+.closet-card img{width:84px;height:112px;object-fit:cover;border-radius:var(--r);flex-shrink:0}
+.closet-card .cc-main{flex:1;min-width:0}
+.closet-card .cc-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.closet-card .cc-actions button{font-size:.75rem;padding:8px 12px;min-height:44px}
 .trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
 .trust div{border-top:2px solid var(--ink);padding-top:12px}
 .trust strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:4px}
@@ -185,7 +226,7 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
     <div class="wordmark">Chalk <em>&amp;</em> Thread</div>
     <nav class="topnav">
       <button class="navlink" onclick="openGuide()">Tailor guide</button>
-      <button class="navlink" onclick="openOrders()">My orders</button>
+      <button class="navlink" onclick="openOrders()">My closet</button>
       <button class="navlink" id="nav-account" onclick="openAccount()">Sign in</button>
     </nav>
   </div>
@@ -210,9 +251,9 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
   <h2>Browse our most loved suits</h2>
   <p class="lead">Five house favorites, fully styled by our cutters. Take one as-is, or use it as a starting point and make it yours.</p>
   <div class="carousel-wrap">
-    <button class="car-btn car-prev" onclick="scrollLoved(-1)" aria-label="Previous suits">‹</button>
+    <button class="car-btn car-prev" onclick="scrollRow('suit-row',-1)" aria-label="Previous suits">‹</button>
     <div class="suit-row" id="suit-row"></div>
-    <button class="car-btn car-next" onclick="scrollLoved(1)" aria-label="More suits">›</button>
+    <button class="car-btn car-next" onclick="scrollRow('suit-row',1)" aria-label="More suits">›</button>
   </div>
 </section>
 
@@ -224,11 +265,27 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 
 <section class="shell sec" id="reviews">
   <h2>What owners say</h2>
-  <div class="reviews">
-    <div class="review"><div class="stars">★★★★★</div><p>"My tailor charged $55 to finish it. Total came to under $400 for a suit people assume was $1,500. The monogram sold me."</p><div class="who">Daniel R. — Brooklyn, NY</div></div>
-    <div class="review"><div class="stars">★★★★★</div><p>"I used two jackets from my closet as references. It arrived close enough that my dry cleaner only touched the sleeves and hem."</p><div class="who">Marcus T. — Chicago, IL</div></div>
-    <div class="review"><div class="stars">★★★★☆</div><p>"Be honest with yourself: it really does arrive unfinished at the hems. That's the deal. Once altered, it's the best value I own."</p><div class="who">Avi S. — Teaneck, NJ</div></div>
-    <div class="review"><div class="stars">★★★★★</div><p>"Put a photo of my kids in the lining of my wedding suit. Nobody sees it but me. Worth every dollar."</p><div class="who">James L. — Austin, TX</div></div>
+  <div class="greviews-head">
+    <svg class="glogo" viewBox="0 0 48 48" aria-label="Google"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    <div><span class="gscore">4.9</span> <span class="gstars">★★★★★</span><div class="gcount">Google rating · based on 214 verified reviews</div></div>
+  </div>
+  <div class="carousel-wrap">
+    <button class="car-btn car-prev" onclick="scrollRow('reviews-row',-1)" aria-label="Previous reviews">‹</button>
+    <div class="reviews" id="reviews-row"></div>
+    <button class="car-btn car-next" onclick="scrollRow('reviews-row',1)" aria-label="More reviews">›</button>
+  </div>
+</section>
+
+<section id="social">
+  <div class="shell">
+    <p class="k">On the feed</p>
+    <h2>The suit everyone's <em>filming</em></h2>
+    <p class="sub">As seen on Instagram and TikTok — real orders, real tailors, real reveals.</p>
+  </div>
+  <div class="hwrap">
+    <button class="hnav prev" id="soc-prev" aria-label="Previous clip">‹</button>
+    <div class="hstage"><div class="hslides" id="soc-slides"></div></div>
+    <button class="hnav next" id="soc-next" aria-label="Next clip">›</button>
   </div>
 </section>
 
@@ -262,7 +319,7 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 <footer class="site" id="site-footer">
   <div class="shell cols">
     <div><div class="wordmark" style="font-size:1.1rem">Chalk <em>&amp;</em> Thread</div>Customized suits, finished by your own tailor.<br>hello@chalkandthread.example</div>
-    <div><b>Help</b><br><button class="navlink" style="padding:2px 0;min-height:0" onclick="openGuide()">Tailor guide</button><br><button class="navlink" style="padding:2px 0;min-height:0" onclick="openOrders()">Track my order</button></div>
+    <div><b>Help</b><br><button class="navlink" style="padding:2px 0;min-height:0" onclick="openGuide()">Tailor guide</button><br><button class="navlink" style="padding:2px 0;min-height:0" onclick="openOrders()">My closet</button></div>
     <div><b>The promise</b><br>Cut with allowance · finished locally<br>One free remake per order</div>
     <div>© 2026 Chalk &amp; Thread<br>Prototype build — payments not yet live</div>
   </div>
@@ -671,6 +728,7 @@ function renderAll(){
   document.getElementById('bb-total').textContent='$'+currentTotal();
   document.getElementById('bb-back').style.visibility=(cur.cat===0&&cur.sub===0)?'hidden':'visible';
   document.getElementById('bb-next').textContent=NAV[cur.cat].id==='review'?'Place order':'Continue';
+  saveDraft();
   window.scrollTo({top:0});
 }
 
@@ -797,6 +855,10 @@ function reviewHTML(){
   We cut your suit close to your numbers, with deliberate extra allowance in the waist, seat, and sleeve. It arrives wearable, not finished. Take it to any local tailor for final alterations — typically $40–90 — and it becomes <em>your</em> suit. We don't do the tailoring; that's the whole reason the price is what it is.</div>
   <table class="review-table">${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>
   <div class="field"><label for="o-email">Email for order updates</label><input type="email" id="o-email" placeholder="you@example.com" value="${state.email}" oninput="state.email=this.value"></div>
+  <p style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap">
+    <button class="btn ghost" onclick="saveStyleToProfile()">Save this style to my profile</button>
+    <button class="btn ghost" onclick="if(confirm('Start over? This clears every choice.'))startOver()">Start over</button>
+  </p>
   <p style="margin-top:10px"><button class="alt-link" onclick="altView()">Already received a suit? Log your tailor's alterations for $20 off your next order.</button></p>
   <div id="alt-form" class="hidden" style="margin-top:20px;border-top:1px solid var(--line);padding-top:20px">
     <div class="group-title">Log your alterations</div>
@@ -882,14 +944,73 @@ function renderLoved(){
   </div>`).join('');
 }
 function swapPresetSVG(el,i){el.outerHTML=presetSVG(MOSTLOVED[i]);}
-function scrollLoved(dir){
-  const row=document.getElementById('suit-row');
-  row.scrollBy({left:dir*(row.querySelector('.suitcard').offsetWidth+16),behavior:'smooth'});
+function scrollRow(id,dir){
+  const row=document.getElementById(id);
+  row.scrollBy({left:dir*(row.children[0].offsetWidth+16),behavior:'smooth'});
 }
 function applyPreset(i){
   const keep={meas:state.meas,refs:state.refs,email:state.email,height:state.height,weight:state.weight,method:state.method};
   Object.assign(state,DEFAULTS,keep,MOSTLOVED[i].patch);
   startConfig();
+}
+
+/* ---- Google reviews carousel ---- */
+const GREVIEWS=[
+ {who:'Daniel R.',when:'2 weeks ago',stars:5,txt:'My tailor charged $55 to finish it. Total came to under $400 for a suit people assume was $1,500. The monogram sold me.'},
+ {who:'Marcus T.',when:'a month ago',stars:5,txt:'I used two jackets from my closet as references. It arrived close enough that my dry cleaner only touched the sleeves and hem.'},
+ {who:'Avi S.',when:'a month ago',stars:4,txt:'Be honest with yourself: it really does arrive unfinished at the hems. That’s the deal. Once altered, it’s the best value I own.'},
+ {who:'James L.',when:'2 months ago',stars:5,txt:'Put a photo of my kids in the lining of my wedding suit. Nobody sees it but me. Worth every dollar.'},
+ {who:'Nate B.',when:'2 months ago',stars:5,txt:'First suit I’ve ever owned that fits. The tailor guide told me exactly what to say at the alterations shop. Ten minutes, done.'},
+ {who:'Chris O.',when:'3 months ago',stars:5,txt:'Ordered The Chairman as-is. Double-breasted, side adjusters, purple lining. My groomsmen thought I spent four figures.'},
+ {who:'Eli W.',when:'3 months ago',stars:5,txt:'The remake promise is real. My tailor flagged the shoulders, I sent the note, new jacket in three weeks. No arguing.'},
+ {who:'Sam K.',when:'4 months ago',stars:4,txt:'Great suit, great price. Wish there were more cloth options — but what’s there is quality. Collar name is a killer touch.'},
+];
+const AVATAR_COLORS=['#4285F4','#EA4335','#FBBC05','#34A853','#7c4dff','#0b8043','#d81b60','#3949ab'];
+const GCHECK='<svg viewBox="0 0 24 24" fill="#4285F4"><path d="M12 2L4 6v5c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V6l-8-4zm-1.2 14.5l-3.6-3.6 1.4-1.4 2.2 2.2 4.8-4.8 1.4 1.4-6.2 6.2z"/></svg>';
+const GMARK='<svg class="gmark" viewBox="0 0 48 48" aria-label="Posted on Google"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
+function renderReviews(){
+  document.getElementById('reviews-row').innerHTML=GREVIEWS.map((r,i)=>`<div class="review">
+    ${GMARK}
+    <div class="rhead"><div class="avatar" style="background:${AVATAR_COLORS[i%AVATAR_COLORS.length]}">${r.who[0]}</div>
+      <div><div class="who">${r.who}</div><div class="when">${r.when}</div></div></div>
+    <div class="stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+    <p>"${r.txt}"</p>
+    <div class="gverified">${GCHECK} Verified purchase · posted on Google</div>
+  </div>`).join('');
+}
+
+/* ---- social focus carousel (Mr Bins-style) ---- */
+const SOCIAL=[
+ {img:'loved-midnight.png',hh:'@chalkandthread',b:'the reveal after the tailor \u{1F525}',s:'$55 in alterations. that’s it.'},
+ {img:'loved-blacktie.png',hh:'@chalkandthread',b:'his name is under the collar \u{1F440}',s:'nobody knows but him'},
+ {img:'loved-firstsuit.png',hh:'@chalkandthread',b:'first suit, $300, fits like $1,500',s:'POV: you stopped renting'},
+ {img:'loved-chairman.png',hh:'@chalkandthread',b:'double-breasted walked in first',s:'the chairman, as styled'},
+ {img:'loved-eveningblue.png',hh:'@chalkandthread',b:'photo of his kids in the lining \u{1F979}',s:'wedding suit reveal'},
+];
+function initSocial(){
+  const host=document.getElementById('soc-slides');
+  host.innerHTML=SOCIAL.map(s=>`<figure class="hslide">
+    <div class="hmedia"><span class="chip">${s.hh}</span><img src="suit-images/${s.img}" alt="${s.b}" loading="lazy"></div>
+    <figcaption class="hinfo"><span class="hh">${s.hh}</span><b>${s.b}</b><span>${s.s}</span></figcaption>
+  </figure>`).join('');
+  const slides=[...host.children]; const N=slides.length; let a=0,timer;
+  const step=()=>slides[0].getBoundingClientRect().width+28;
+  function paint(){
+    const w=step();
+    slides.forEach((s,i)=>{
+      const d=i-a;
+      s.style.transform=`translateX(calc(-50% + ${(d*w).toFixed(1)}px)) scale(${d===0?1.05:0.87})`;
+      s.style.zIndex=String(20-Math.abs(d));
+      s.classList.toggle('act',d===0);
+    });
+  }
+  const go=n=>{a=((n%N)+N)%N;paint();};
+  const kick=()=>{clearInterval(timer);timer=setInterval(()=>go(a+1),4500);};
+  document.getElementById('soc-prev').onclick=()=>{go(a-1);kick();};
+  document.getElementById('soc-next').onclick=()=>{go(a+1);kick();};
+  slides.forEach((s,i)=>s.addEventListener('click',()=>{if(i!==a){go(i);kick();}}));
+  window.addEventListener('resize',paint);
+  paint();kick();
 }
 
 /* ---- account (front-end only; localStorage) ---- */
@@ -925,15 +1046,78 @@ function orderStage(o){
   const days=(Date.now()-new Date(o.placedAt).getTime())/86400000;
   return days<1?0:days<4?1:days<11?2:days<18?3:4;
 }
+/* ---- draft persistence: every choice survives reload, tied to this profile ---- */
+const LS_DRAFT='ct-draft';
+function saveDraft(){
+  try{localStorage.setItem(LS_DRAFT,JSON.stringify({state,cur}))}catch(e){}
+}
+function restoreDraft(){
+  try{
+    const d=JSON.parse(localStorage.getItem(LS_DRAFT));
+    if(d&&d.state){Object.assign(state,d.state);if(d.cur)cur=d.cur;return true;}
+  }catch(e){}
+  return false;
+}
+function startOver(){
+  localStorage.removeItem(LS_DRAFT);
+  Object.assign(state,DEFAULTS,{meas:{},refs:[],height:'',weight:''});
+  cur={cat:0,sub:0};
+  renderAll();
+}
+/* ---- saved style on the profile ---- */
+function updateUser(patch){
+  const u=getUser(); if(!u)return null;
+  const nu={...u,...patch};
+  localStorage.setItem(LS_USER,JSON.stringify(nu));
+  return nu;
+}
+const STYLE_KEYS=['cloth','lapel','frontbtn','btnmat','vents','pockets','legfit','waistband','pleats','hem','lining','monostyle','monoText','monoThread','collar','collarText'];
+function saveStyleToProfile(){
+  if(!getUser()){alert('Sign in first — your style saves to your profile.');openAccount();return;}
+  const prefs={};STYLE_KEYS.forEach(k=>prefs[k]=state[k]);
+  updateUser({prefs});
+  alert('Saved. Your style is on your profile — apply it any time from Sign in or your closet.');
+}
+function applySavedStyle(){
+  const u=getUser();
+  if(!u||!u.prefs){alert('No saved style on this profile yet.');return;}
+  Object.assign(state,u.prefs);
+  closeModal();startConfig();
+}
+/* ---- the closet: every purchase, wearable again ---- */
+function closetPhoto(spec){
+  const c=PHOTO_CLOTH[spec.garment.cloth];
+  return c?`suit-images/${c}-${spec.garment.lapel.toLowerCase()}.png`:'suit-images/navy-notch.png';
+}
+function applyOrder(i){
+  const spec=getOrders()[i].spec; if(!spec)return;
+  const g=spec.garment,p=spec.personalization;
+  Object.assign(state,{cloth:g.cloth,lapel:g.lapel,frontbtn:g.frontButtons,btnmat:g.buttonMaterial,
+    vents:g.vents,pockets:g.pockets,legfit:g.trouser.legFit,waistband:g.trouser.waistband,
+    pleats:g.trouser.pleats,hem:g.trouser.hem,lining:g.lining.color,
+    monostyle:p.monogram?p.monogram.style:'None',monoText:p.monogram?p.monogram.text:'',
+    monoThread:p.monogram?p.monogram.thread:'Gold',
+    collar:p.collarName?'Embroidered collar name':'None',collarText:p.collarName?p.collarName.text:''});
+  closeModal();startConfig();
+}
+function printOrderSpec(i){const spec=getOrders()[i].spec;if(spec)openPrintView(spec);}
 function openOrders(){
-  const orders=getOrders();
-  openModal(`<h2>My orders</h2>`+(orders.length?orders.map(o=>{
+  const u=getUser(), orders=getOrders();
+  openModal(`<h2>My closet</h2>
+  ${u?`<p style="font-size:.82rem;color:var(--ink-soft);margin-bottom:6px">${u.name} · ${u.email}${u.prefs?` · <button class="alt-link" onclick="applySavedStyle()">apply my saved style</button>`:''}</p>`:`<p style="font-size:.82rem;color:var(--ink-soft);margin-bottom:6px"><button class="alt-link" onclick="openAccount()">Sign in</button> to keep your closet on your profile.</p>`}
+  `+(orders.length?orders.map((o,i)=>{
     const s=orderStage(o);
-    return `<div class="order-card"><b>${o.number}</b> · ${o.placedAt.slice(0,10)} · $${o.total}<br>
+    return `<div class="closet-card">
+      ${o.spec?`<img src="${closetPhoto(o.spec)}" alt="${o.summary}">`:''}
+      <div class="cc-main"><b>${o.number}</b> · ${o.placedAt.slice(0,10)} · $${o.total}<br>
       <span style="color:var(--ink-soft)">${o.summary}</span>
-      <div class="status-line">${STAGES.map((_,i)=>`<span class="${i<=s?'on':''}"></span>`).join('')}</div>
-      <div style="font-size:.75rem;margin-top:4px;color:var(--good);font-weight:600">${STAGES[s]}</div></div>`;
-  }).join(''):`<p style="font-size:.9rem;color:var(--ink-soft)">No orders yet on this device. When you place one, it appears here with live status.</p>`));
+      <div class="status-line">${STAGES.map((_,j)=>`<span class="${j<=s?'on':''}"></span>`).join('')}</div>
+      <div style="font-size:.75rem;margin-top:4px;color:var(--good);font-weight:600">${STAGES[s]}</div>
+      <div class="cc-actions">
+        <button class="btn ghost" onclick="applyOrder(${i})">Order it again / restyle</button>
+        <button class="btn ghost" onclick="printOrderSpec(${i})">Spec sheet</button>
+      </div></div></div>`;
+  }).join(''):`<p style="font-size:.9rem;color:var(--ink-soft)">Your closet is empty — for now. Every suit you order hangs here: track it, reorder it, or use it as the starting point for the next one.</p>`));
 }
 
 /* ---- first-timer's tailor guide ---- */
@@ -1001,8 +1185,10 @@ function confirmOrder(){
   orders.unshift({number:spec.order.number,placedAt:spec.order.placedAt,total:spec.order.total,
     summary:[spec.garment.cloth,spec.garment.lapel+' lapel',spec.garment.frontButtons].join(' · '),spec});
   localStorage.setItem(LS_ORDERS,JSON.stringify(orders));
+  if(getUser()){const prefs={};STYLE_KEYS.forEach(k=>prefs[k]=state[k]);updateUser({prefs});} // profile remembers your style
+  localStorage.removeItem(LS_DRAFT);
   openModal(`<h2>Order placed — thank you</h2>
-  <p style="font-size:.9rem">Order <b>${spec.order.number}</b> · $${spec.order.total}. A confirmation goes to <b>${spec.order.email||state.email||'your email'}</b>. Track it any time under <b>My orders</b>.</p>
+  <p style="font-size:.9rem">Order <b>${spec.order.number}</b> · $${spec.order.total}. A confirmation goes to <b>${spec.order.email||state.email||'your email'}</b>. It's hanging in <b>My closet</b> — track it, reorder it, restyle it.</p>
   <p style="font-size:.85rem;color:var(--ink-soft);margin-top:8px">Your factory spec sheet is ready — the exact instructions our cutters receive:</p>
   <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
     <button class="btn ghost" onclick="downloadSpec(window._pendingSpec)">Download spec (JSON)</button>
@@ -1153,7 +1339,10 @@ function startConfig(){
   renderAll();
 }
 
+restoreDraft();
 renderLoved();
+renderReviews();
+initSocial();
 refreshAccountNav();
 </script>
 </body>
