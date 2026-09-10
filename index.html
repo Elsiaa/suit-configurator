@@ -803,6 +803,11 @@ header.top{background:linear-gradient(180deg,#fcfbf8 0%,#f5f3ee 100%);border-bot
 .hero-plate::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:120px;border-top:1px solid rgba(162,118,28,.35)}
 .modal{background:linear-gradient(180deg,#fdfcfa 0%,#f7f5f0 100%)}
 .bbar{box-shadow:0 -1px 0 var(--line),0 -2px 0 rgba(162,118,28,.28)}
+/* mobile: the wide hero leaves a short image band — content rises to meet it */
+@media(max-width:640px){
+  .fold .hero-plate{justify-content:flex-start;padding-top:30px}
+  .fold .hero-plate h1{margin-top:0}
+}
 /* ================================================================
    MOBILE CONFIGURATOR — compact v2: smaller pieces, more air.
 ================================================================ */
