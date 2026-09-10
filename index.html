@@ -174,6 +174,38 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .quick-add{border:1px dashed var(--thread);background:var(--thread-soft);border-radius:var(--r);padding:14px 16px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:.85rem}
 .trust-strip{display:flex;gap:16px;flex-wrap:wrap;font-size:.72rem;color:var(--ink-soft);margin:12px 0 4px;align-items:center}
 .trust-strip .gs{color:#fbbc05}
+
+/* ---- mobile polish: one-line header, calm chrome, compact bottom bar ---- */
+@media(max-width:640px){
+  .top-inner{padding:9px 0;align-items:center}
+  .wordmark{font-size:1.12rem;white-space:nowrap}
+  .topnav{gap:0}
+  .navlink{font-size:.72rem;padding:10px 6px;white-space:nowrap}
+  .cat{padding:11px 13px;font-size:.86rem}
+  .hero{padding:40px 0 34px}
+  .hero-facts{gap:20px;margin-top:24px}
+  .sec{padding:36px 0}
+  .sec .lead{margin-bottom:18px}
+  .prog{margin:10px 0 2px}
+  .prog-lbl{font-size:.64rem;gap:10px;white-space:nowrap}
+  .prog-lbl span{overflow:hidden;text-overflow:ellipsis}
+  .group-title{margin:16px 0 10px}
+  .pv-dots{gap:5px}
+  .pv-dot{font-size:.64rem;padding:6px 9px}
+  .bbar-inner{padding:10px 14px;gap:8px}
+  .bbar .sum{font-size:.72rem;line-height:1.3;white-space:nowrap}
+  .bbar .sum strong{font-size:1.25rem;margin-left:6px}
+  .bbar .anchor{display:none}
+  .bbar .btn,.bbar .btn.ghost{padding:11px 18px;font-size:.85rem}
+  body{padding-bottom:70px}
+  .modal{padding:20px 16px 18px}
+  .value-box{padding:13px 14px}
+  .guarantees{gap:8px;flex-direction:column}
+  #social .soc-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 4px}
+  #social .soc-btn{justify-content:center;padding:10px 8px;font-size:.76rem}
+  #social .soc-stats{gap:20px}
+  footer.site{padding:24px 0 96px}
+}
 .suitcard .info{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
 .suitcard .info h3{font-size:1.25rem}
 .suitcard .info p{font-size:.8rem;color:var(--ink-soft);flex:1}
@@ -368,7 +400,7 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 <div class="shell workspace hidden" id="workspace">
   <main id="main-col">
     <div class="prog"><div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
-      <div class="prog-lbl"><span id="prog-step"></span><span>Saves automatically — leave and come back any time</span></div></div>
+      <div class="prog-lbl"><span id="prog-step"></span><span class="prog-save">Saves automatically</span></div></div>
     <div class="mob-preview" id="mob-preview"></div>
     <div class="subtabs" id="subtabs"></div>
     <div id="content"></div>
@@ -395,8 +427,8 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 
 <div class="bbar hidden" id="bbar">
   <div class="bbar-inner">
-    <div class="sum">Your suit, so far<strong id="bb-total">$300</strong>
-      <span class="anchor">comparable made-to-measure: <s>$1,200+</s> — you finish it at your tailor instead</span></div>
+    <div class="sum">Your suit<strong id="bb-total">$300</strong>
+      <span class="anchor">comparable made-to-measure: <s>$1,200+</s></span></div>
     <div class="actions">
       <button class="leave-link" onclick="leaveStyling()">Leave the styling to us</button>
       <button class="btn ghost" id="bb-back" onclick="navBack()">Back</button>
