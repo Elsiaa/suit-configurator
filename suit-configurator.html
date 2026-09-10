@@ -907,7 +907,7 @@ header.top{background:linear-gradient(180deg,#fcfbf8 0%,#f5f3ee 100%);border-bot
   <h2>Find my size</h2>
   <p class="lead">Do it once — every suit you build here is cut to it. It stays with this session, and lands on your profile when you sign in.</p>
   <div class="method-pick">
-    <button class="method" onclick="openSizeManual()"><h3>Enter my measurements</h3><p>Numbers from a tailor's fitting — like a prescription from your optometrist.</p></button>
+    <button class="method" onclick="openSizeManual()"><h3>Enter my measurements</h3><p>Nine numbers from any tailor's fitting. Ten minutes, good for every suit after.</p></button>
     <button class="method" onclick="openFindMySize()"><h3>Chat with the sizing assistant</h3><p>Tell it the brands and sizes you already wear. It works out the rest.</p></button>
   </div>
   <p class="size-onfile" id="size-onfile"></p>
@@ -2036,7 +2036,7 @@ function reviewHTML(){
   <div id="alt-form" class="hidden" style="margin-top:20px;border-top:1px solid var(--line);padding-top:20px">
     <div class="group-title">Log your alterations</div>
     <div class="grid2">
-      <div class="field"><label for="a-order">Order number</label><input type="text" id="a-order" placeholder="JS-1024"></div>
+      <div class="field"><label for="a-order">Order number</label><input type="text" id="a-order" placeholder="IS-1024"></div>
       <div class="field"><label for="a-cost">Alteration cost ($)</label><input type="number" id="a-cost" min="0" placeholder="65"></div>
     </div>
     <div class="grid3">
@@ -2726,7 +2726,7 @@ async function confirmOrder(){
 const MEAS_LABELS={tchest:'Chest',tshoulder:'Shoulder',tsleeve:'Sleeve',tjacketlength:'Jacket length',twaist:'Waist',thipseat:'Hip / seat',tinseam:'Inseam',tthigh:'Thigh',theightin:'Height'};
 function orderNumber(){
   const d=new Date();
-  return 'JS-'+d.getFullYear().toString().slice(2)+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'-'+String(Math.floor(Math.random()*9000)+1000);
+  return 'IS-'+d.getFullYear().toString().slice(2)+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'-'+String(Math.floor(Math.random()*9000)+1000);
 }
 function upchargeLines(){
   const u={};
