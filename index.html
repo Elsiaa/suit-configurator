@@ -758,6 +758,7 @@ html,body{width:100%;min-width:0}
     </button>
     <button class="hamb" id="hamb" aria-label="Menu" onclick="toggleMenu()"><span></span><span></span><span></span></button>
     <nav class="topnav" id="topnav">
+      <button class="navlink" onclick="openFindMySize()">Find my size</button>
       <button class="navlink" onclick="openGuide()">Tailor guide</button>
       <button class="navlink" onclick="openOrders()">My closet</button>
       <button class="navlink" id="nav-account" onclick="openAccount()">Sign in</button>
@@ -1312,6 +1313,12 @@ function renderCats(){
     const act=s.querySelector('.stp.act');
     if(act) s.scrollTo({left:act.offsetLeft - s.offsetLeft - s.clientWidth/2 + act.offsetWidth/2});
   }
+}
+function openFindMySize(){
+  startConfig();
+  state.method='closet';
+  cur={cat:7,sub:0};
+  renderAll();
 }
 function goHome(){
   if(typeof KIOSK!=='undefined'&&KIOSK){window.scrollTo({top:0});return;}
@@ -2165,7 +2172,7 @@ function specFromDesign(design){
 function openCartCheckout(){
   const c=getCart();if(!c.length)return;
   openModal(`<h2>Checkout</h2>
-  <table class="review-table">${c.map(i=>`<tr><td>${i.name}</td><td>$${i.total}</td></tr>`).join('')}
+  <table class="review-table">${c.map(i=>`<tr><td style="display:flex;align-items:center;gap:10px"><img src="${designPhoto(i.design)}" alt="" style="width:34px;height:45px;object-fit:cover;border-radius:2px">${i.name}</td><td>$${i.total}</td></tr>`).join('')}
     <tr><td><b>Total</b></td><td><b>$${cartTotal()}</b></td></tr></table>
   <div class="field"><label for="sh-name">Full name</label><input type="text" id="sh-name" value="${(getUser()||{}).name||''}"></div>
   <div class="field"><label for="sh-addr">Address</label><input type="text" id="sh-addr" placeholder="Street, city, state, ZIP"></div>
