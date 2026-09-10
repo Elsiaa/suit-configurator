@@ -522,10 +522,78 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
 /* scroll-reveal: sections and cards rise into place */
 .rv{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
 .rv.inview{opacity:1;transform:none}
+
+/* ================================================================
+   CONTROL SYSTEM — every button speaks the same language:
+   rest · hover (lift) · press (compress) · focus (gold ring) · disabled (quiet)
+================================================================ */
+button{-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+:where(button,a,summary):focus-visible{outline:2px solid var(--thread);outline-offset:2px;border-radius:2px}
+/* primary + ghost */
+.btn{box-shadow:0 1px 0 rgba(20,31,51,.15)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(20,31,51,.16)}
+.btn:active{transform:translateY(0) scale(.98);box-shadow:0 1px 2px rgba(20,31,51,.2)}
+.btn.ghost{box-shadow:none}
+.btn.ghost:hover{background:var(--ink);border-color:var(--ink);color:var(--chalk)}
+.btn[disabled]:hover{transform:none;box-shadow:0 1px 0 rgba(20,31,51,.15)}
+.hero-cta:hover{background:#fff;border-color:#fff;color:var(--ink)}
+/* pills */
+.subtab:hover:not(.active),.pv-dot:hover:not(.on){border-color:var(--ink);transform:translateY(-1px)}
+.leave-link:hover{background:#fff;transform:translateY(-1px)}
+/* desktop step tabs: ink underline draws in */
+.cat{background:linear-gradient(var(--ink),var(--ink)) left bottom/0% 2px no-repeat;transition:background-size .28s var(--pace,cubic-bezier(.2,.8,.2,1)),color .15s ease;border-bottom:2px solid transparent}
+.cat:hover{color:var(--ink);background-size:100% 2px}
+.cat.active{border-bottom-color:transparent;background-size:100% 2px}
+/* round arrows invert on hover */
+.car-btn:hover,.pv-arr:hover,.hnav:hover{background:var(--ink);color:var(--chalk);border-color:var(--ink);transform:scale(1.07)}
+.car-btn:active,.pv-arr:active,.hnav:active{transform:scale(.96)}
+/* stepper dots */
+.stp:hover .stp-dot{border-color:var(--ink);transform:scale(1.08)}
+.stp .stp-dot{transition:transform .18s cubic-bezier(.2,.8,.2,1),background-color .2s ease,border-color .2s ease,color .2s ease}
+/* hamburger morphs to a close */
+.hamb span{transition:transform .25s cubic-bezier(.2,.8,.2,1),opacity .2s ease}
+.hamb.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamb.open span:nth-child(2){opacity:0}
+.hamb.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.hamb:hover span{background:var(--thread)}
+/* cart: icon nods, badge pulses on add */
+.cart-btn:hover svg{transform:translateY(-1px)}
+.cart-btn svg{transition:transform .18s cubic-bezier(.2,.8,.2,1)}
+.cart-n.bump{animation:bump .4s cubic-bezier(.2,.8,.2,1)}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.45)}100%{transform:scale(1)}}
+/* quiet text links */
+.alt-link{text-underline-offset:3px;text-decoration-color:var(--line);transition:color .15s ease,text-decoration-color .15s ease}
+.alt-link:hover{color:var(--ink);text-decoration-color:var(--thread)}
+.rm{border-radius:2px;transition:background-color .15s ease}
+.rm:hover{background:rgba(154,74,30,.08)}
+.add-ref:hover{transform:translateY(-1px)}
+/* social + google CTAs */
+.soc-btn:hover{transform:translateY(-2px)}
+.greviews-cta{transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease,border-color .15s ease}
+.greviews-cta:hover{transform:translateY(-1px)}
+.foot-social a:hover{transform:translateY(-2px)}
+.foot-social a{transition:transform .18s cubic-bezier(.2,.8,.2,1),color .15s ease,border-color .15s ease}
+/* modal close rotates shut */
+.modal .x{transition:transform .25s cubic-bezier(.2,.8,.2,1),color .15s ease;border-radius:50%}
+.modal .x:hover{transform:rotate(90deg);color:var(--ink)}
+/* forms: bespoke checkboxes + selects */
+.agree input{appearance:none;-webkit-appearance:none;border:1.5px solid var(--ink-soft);border-radius:2px;background:#fff;display:inline-flex;align-items:center;justify-content:center;transition:background-color .15s ease,border-color .15s ease}
+.agree input:hover{border-color:var(--ink)}
+.agree input:checked{background:var(--ink);border-color:var(--ink)}
+.agree input:checked::after{content:'✓';color:var(--thread-soft);font-size:.8rem;font-weight:700;line-height:1}
+.agree input:focus-visible{outline:2px solid var(--thread);outline-offset:2px}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%2343506a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:11px;padding-right:34px}
+input:focus,select:focus,textarea:focus{outline:1.5px solid var(--thread);border-color:var(--thread);box-shadow:0 0 0 3px rgba(162,118,28,.12)}
+/* method + closet cards */
+.method:hover:not(.sel){border-color:var(--ink-soft);transform:translateY(-1px)}
+.cc-actions .btn.ghost:hover{background:var(--ink);color:var(--chalk)}
+
 @media (prefers-reduced-motion: reduce){
   .rv{opacity:1;transform:none;transition:none}
-  .btn,.optcard,.suitcard{transition:none}
+  .btn,.optcard,.suitcard,.cat,.stp .stp-dot,.hamb span,.modal .x,.cart-btn svg{transition:none}
   .pv-stage{animation:none}
+  .cart-n.bump{animation:none}
+  .btn:hover,.soc-btn:hover,.car-btn:hover,.pv-arr:hover,.hnav:hover,.foot-social a:hover{transform:none}
 }
 </style>
 </head>
@@ -1601,7 +1669,10 @@ function socialStub(pf){
   openModal(`<h2>@joshssuits</h2><p style="font-size:.9rem">Find us on ${pf} at launch.</p>`);
   return false;
 }
-function toggleMenu(){document.getElementById('topnav').classList.toggle('open');}
+function toggleMenu(){
+  const open=document.getElementById('topnav').classList.toggle('open');
+  document.getElementById('hamb').classList.toggle('open',open);
+}
 function initSocial(){
   const host=document.getElementById('soc-slides');
   host.innerHTML=SOCIAL.map(s=>`<figure class="hslide">
@@ -1730,8 +1801,10 @@ function setCart(c){localStorage.setItem(LS_CART,JSON.stringify(c));updateCartBa
 function updateCartBadge(){
   const n=getCart().length, el=document.getElementById('cart-n');
   if(!el)return;
+  const prev=el.textContent;
   el.textContent=n;
   el.classList.toggle('hidden',!n);
+  if(n&&String(n)!==prev){el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');}
 }
 function addToCart(){
   const design={};STYLE_KEYS.forEach(k=>design[k]=state[k]);
