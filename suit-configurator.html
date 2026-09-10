@@ -1593,7 +1593,7 @@ const PHOTO_CLOTH={'Navy wool blend':'navy','Charcoal herringbone':'herringbone'
 const MODEL_PHOTO={'Navy wool blend':'loved-firstsuit.jpg','Charcoal herringbone':'model-charcoal.jpg','Black twill':'model-black.jpg','Midnight blue sharkskin':'loved-eveningblue.jpg','Forest green wool':'model-green.jpg'};
 
 /* ---- 360 viewer: photoreal front + on-model, exact drawings for the rest ---- */
-const VIEWS=[{id:'photo',label:'Photo'},{id:'model',label:'On model'},{id:'back',label:'Back'},{id:'inside',label:'Inside'},{id:'trousers',label:'Trousers'}];
+const VIEWS=[{id:'photo',label:'Jacket'},{id:'model',label:'On model'},{id:'back',label:'Back'},{id:'inside',label:'Inside'},{id:'trousers',label:'Trousers'}];
 let curView=0;
 function prevView(){curView=(curView+VIEWS.length-1)%VIEWS.length;renderPreview();}
 function nextView(){curView=(curView+1)%VIEWS.length;renderPreview();}
