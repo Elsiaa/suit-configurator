@@ -138,6 +138,14 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .topnav{display:flex;gap:8px;align-items:center}
 .navlink{background:none;border:none;font:inherit;font-size:.82rem;font-weight:500;color:var(--ink);cursor:pointer;padding:10px 10px;min-height:44px}
 .navlink:hover{color:var(--thread)}
+.cart-btn{position:relative;width:44px;height:44px;background:none;border:none;cursor:pointer;color:var(--ink);display:flex;align-items:center;justify-content:center;margin-left:auto}
+.cart-btn svg{width:21px;height:21px}
+.cart-btn:hover{color:var(--thread)}
+.cart-n{position:absolute;top:4px;right:2px;min-width:16px;height:16px;border-radius:8px;background:var(--thread);color:#fff;font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;font-family:'Spectral',serif}
+.cart-item{display:flex;gap:12px;border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:12px;margin-bottom:10px;font-size:.85rem;align-items:center}
+.cart-item img{width:56px;height:74px;object-fit:cover;border-radius:var(--r);flex-shrink:0}
+.cart-item .ci-main{flex:1;min-width:0}
+.cart-item .rm{background:none;border:none;color:var(--warn);cursor:pointer;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:8px}
 .hamb{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;background:none;border:none;cursor:pointer;padding:10px}
 .hamb span{display:block;height:2px;background:var(--ink);border-radius:1px}
 @media(max-width:640px){
@@ -290,7 +298,14 @@ header.top .top-inner{padding-left:max(6px,env(safe-area-inset-left))}
   .cats{display:none!important}
   .bbar-steps{display:flex;overflow-x:auto;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);scrollbar-width:none}
   .bbar-steps::-webkit-scrollbar{display:none}
-  .bbar-steps .cat{padding:10px 10px;font-size:.8rem}
+  .bbar-steps{align-items:center;padding:0 14px}
+  .stp{display:flex;align-items:center;gap:7px;background:none;border:none;cursor:pointer;padding:9px 1px;flex-shrink:0}
+  .stp-dot{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);color:var(--ink-soft);font-size:.66rem;font-weight:600;display:flex;align-items:center;justify-content:center;background:#fff;font-family:'Spectral',serif;transition:background-color .2s ease,border-color .2s ease,color .2s ease}
+  .stp.done .stp-dot{background:var(--ink);border-color:var(--ink);color:var(--thread-soft);font-size:.6rem}
+  .stp.act .stp-dot{background:var(--ink);border-color:var(--ink);color:#fff}
+  .stp-lbl{text-transform:uppercase;letter-spacing:.11em;font-size:.66rem;font-weight:600;color:var(--ink);white-space:nowrap}
+  .stp-line{flex:0 0 14px;height:1.5px;background:var(--line);transition:background-color .2s ease}
+  .stp-line.done{background:var(--ink)}
   body{padding-bottom:108px}
   footer.site{padding-bottom:150px}
 }
@@ -481,6 +496,10 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
 <header class="top">
   <div class="shell top-inner">
     <button class="wordmark wordmark-btn" onclick="goHome()" aria-label="Home">Josh&rsquo;s <em>Suits</em></button>
+    <button class="cart-btn" onclick="openCart()" aria-label="My cart">
+      <svg viewBox="0 0 24 24"><path d="M6 8h12l-1.2 11.2a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 10V7a3 3 0 0 1 6 0v3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <span class="cart-n hidden" id="cart-n">0</span>
+    </button>
     <button class="hamb" id="hamb" aria-label="Menu" onclick="toggleMenu()"><span></span><span></span><span></span></button>
     <nav class="topnav" id="topnav">
       <button class="navlink" onclick="openGuide()">Tailor guide</button>
@@ -1004,11 +1023,17 @@ function renderCats(){
     });
   };
   build(document.getElementById('cats'));
+  // mobile: a real stepper — dots joined by a line; done = ink + tick, active carries its label
   const s=document.getElementById('bb-steps');
   if(s){
-    build(s);
-    const act=s.querySelector('.cat.active');
-    if(act) s.scrollTo({left:act.offsetLeft - s.clientWidth/2 + act.offsetWidth/2});
+    s.innerHTML=NAV.map((cat,i)=>{
+      const done=i<cur.cat, act=i===cur.cat;
+      return `<button class="stp${act?' act':done?' done':''}" onclick="cur={cat:${i},sub:0};renderAll()" aria-label="Step ${i+1}: ${cat.label}">
+        <span class="stp-dot">${done?'✓':i+1}</span>${act?`<span class="stp-lbl">${cat.label}</span>`:''}
+      </button>${i<NAV.length-1?`<span class="stp-line${done?' done':''}"></span>`:''}`;
+    }).join('');
+    const act=s.querySelector('.stp.act');
+    if(act) s.scrollTo({left:act.offsetLeft - s.offsetLeft - s.clientWidth/2 + act.offsetWidth/2});
   }
 }
 function goHome(){
@@ -1375,6 +1400,7 @@ function reviewHTML(){
   <table class="review-table">${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>
   <div class="field"><label for="o-email">Email for order updates</label><input type="email" id="o-email" placeholder="you@example.com" value="${state.email}" oninput="state.email=this.value"></div>
   <p style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap">
+    <button class="btn" onclick="addToCart()">Add to cart</button>
     <button class="btn ghost" onclick="openSaveDesign()">Save my design</button>
     <button class="btn ghost" onclick="saveDesignQuickShare()">Share this design</button>
     <button class="btn ghost" onclick="if(confirm('Start over? This clears every choice.'))startOver()">Start over</button>
@@ -1636,6 +1662,93 @@ function applyOrder(i){
   closeModal();startConfig();
 }
 function printOrderSpec(i){const spec=getOrders()[i].spec;if(spec)openPrintView(spec);}
+/* ---- my cart: several suits, one checkout ---- */
+const LS_CART='js-cart';
+function getCart(){try{return JSON.parse(localStorage.getItem(LS_CART))||[]}catch(e){return []}}
+function setCart(c){localStorage.setItem(LS_CART,JSON.stringify(c));updateCartBadge();}
+function updateCartBadge(){
+  const n=getCart().length, el=document.getElementById('cart-n');
+  if(!el)return;
+  el.textContent=n;
+  el.classList.toggle('hidden',!n);
+}
+function addToCart(){
+  const design={};STYLE_KEYS.forEach(k=>design[k]=state[k]);
+  const c=getCart();
+  c.push({id:Math.random().toString(36).slice(2,10),name:autoDesignName(),total:currentTotal(),design});
+  setCart(c);
+  openModal(`<h2>Added to your cart</h2>
+  <p style="font-size:.9rem"><b>${autoDesignName()}</b> · $${currentTotal()}. ${getCart().length>1?getCart().length+' suits waiting.':''}</p>
+  <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+    <button class="btn" onclick="openCart()">View cart</button>
+    <button class="btn ghost" onclick="closeModal();startOver()">Design another</button>
+  </div>`);
+}
+function removeCartItem(id){setCart(getCart().filter(i=>i.id!==id));openCart();}
+function editCartItem(id){
+  const it=getCart().find(i=>i.id===id);if(!it)return;
+  Object.assign(state,it.design);
+  removeCartItem(id);closeModal();startConfig();cur={cat:NAV.length-1,sub:0};renderAll();
+}
+function cartTotal(){return getCart().reduce((s,i)=>s+i.total,0);}
+function openCart(){
+  const c=getCart();
+  openModal(`<h2>My cart</h2>`+(c.length?c.map(i=>`<div class="cart-item">
+      <img src="${designPhoto(i.design)}" alt="${i.name}">
+      <div class="ci-main"><b>${i.name}</b><br><span style="color:var(--ink-soft)">${i.design.cloth} · ${i.design.frontbtn}</span><br><b>$${i.total}</b></div>
+      <div><button class="rm" onclick="editCartItem('${i.id}')" style="color:var(--ink)">Edit</button><button class="rm" onclick="removeCartItem('${i.id}')">Remove</button></div>
+    </div>`).join('')+`
+    <div class="value-box" style="margin:12px 0"><div class="vrow big" style="border:none;margin:0;padding:0"><span>${c.length} suit${c.length>1?'s':''}</span><span>$${cartTotal()}</span></div></div>
+    <button class="btn" style="width:100%" onclick="openCartCheckout()">Checkout — $${cartTotal()}</button>`
+  :`<p style="font-size:.9rem;color:var(--ink-soft)">Nothing in here yet. Design a suit and add it from the review step.</p>
+    <button class="btn" style="margin-top:10px" onclick="closeModal();startConfig()">Start designing</button>`));
+}
+function specFromDesign(design){
+  const snap={};STYLE_KEYS.forEach(k=>snap[k]=state[k]);
+  Object.assign(state,design);
+  const spec=buildSpec();
+  Object.assign(state,snap);
+  return spec;
+}
+function openCartCheckout(){
+  const c=getCart();if(!c.length)return;
+  openModal(`<h2>Checkout</h2>
+  <table class="review-table">${c.map(i=>`<tr><td>${i.name}</td><td>$${i.total}</td></tr>`).join('')}
+    <tr><td><b>Total</b></td><td><b>$${cartTotal()}</b></td></tr></table>
+  <div class="field"><label for="sh-name">Full name</label><input type="text" id="sh-name" value="${(getUser()||{}).name||''}"></div>
+  <div class="field"><label for="sh-addr">Address</label><input type="text" id="sh-addr" placeholder="Street, city, state, ZIP"></div>
+  <div class="field"><label for="sh-email">Email</label><input type="email" id="sh-email" value="${state.email||(getUser()||{}).email||''}" placeholder="you@example.com"></div>
+  <label class="agree"><input type="checkbox" id="ct-happy" onchange="cartGate()"><span>I've reviewed each suit above. They're exactly what I want made.</span></label>
+  <label class="agree"><input type="checkbox" id="ct-terms" onchange="cartGate()"><span>I accept the Order Agreement for every suit in this order. Each one <b>requires tailoring at my own cost</b>.</span></label>
+  <div class="pay-note">Card fields open at launch — checkout runs on Stripe, and nothing is charged today.</div>
+  <button class="btn" id="ct-place" style="width:100%;margin-top:12px" disabled onclick="placeCartOrder()">Place order — $${cartTotal()}</button>`);
+}
+function cartGate(){
+  document.getElementById('ct-place').disabled=!(document.getElementById('ct-happy').checked&&document.getElementById('ct-terms').checked);
+}
+async function placeCartOrder(){
+  const nm=document.getElementById('sh-name').value.trim(), ad=document.getElementById('sh-addr').value.trim(), em=document.getElementById('sh-email').value.trim();
+  if(!nm||!ad||!em){alert('Name, address, and email, please.');return;}
+  state.email=em;
+  const c=getCart(), orders=getOrders(), placed=[];
+  for(const it of c){
+    const spec=specFromDesign(it.design);
+    spec.order.email=em;
+    spec.shipping={name:nm,address:ad};
+    spec.agreement={version:AGREEMENT_VERSION,acceptedAt:new Date().toISOString(),inspected:true};
+    try{const res=await submitOrder(spec);spec.payment={status:res.status==='redirect'?'awaiting checkout':res.status};}
+    catch(e){spec.payment={status:'failed'};}
+    orders.unshift({number:spec.order.number,placedAt:spec.order.placedAt,total:spec.order.total,
+      summary:[spec.garment.cloth,spec.garment.lapel+' lapel',spec.garment.frontButtons].join(' · '),spec});
+    placed.push(spec.order.number);
+  }
+  localStorage.setItem(LS_ORDERS,JSON.stringify(orders));
+  setCart([]);
+  openModal(`<h2>Order placed — thank you</h2>
+  <p style="font-size:.9rem">${placed.length} suit${placed.length>1?'s':''} · $${placed.length?orders.slice(0,placed.length).reduce((s,o)=>s+o.total,0):0}. Confirmation goes to <b>${em}</b>. Everything's hanging in <b>My closet</b>.</p>
+  ${KIOSK?'<button class="btn" style="width:100%;margin-top:14px" onclick="kioskReset()">Done — next customer</button>':''}`);
+}
+
 /* ---- my designs: save the suit you built, wear it later, share it anywhere ---- */
 const LS_DESIGNS='js-designs';
 function getDesigns(){try{return JSON.parse(localStorage.getItem(LS_DESIGNS))||[]}catch(e){return []}}
@@ -2149,6 +2262,7 @@ renderLoved();
 renderReviews();
 initSocial();
 refreshAccountNav();
+updateCartBadge();
 if(_sharedDesign&&!KIOSK){
   startConfig();
   cur={cat:NAV.length-1,sub:0};
