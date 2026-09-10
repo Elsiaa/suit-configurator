@@ -462,7 +462,7 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
 .craft-txt p{color:var(--ink-soft);max-width:52ch;margin-top:14px;font-size:.98rem}
 @media(max-width:760px){.craft-inner{grid-template-columns:1fr}.craft-img{max-width:260px}}
 /* imagery settles in rather than popping */
-.preview-photo,.thumb-photo,.suitcard .stage img,.hmedia img,.craft-img img,.cloth-strip img{animation:imgin .45s ease both}
+.preview-photo{animation:imgin .45s ease both}
 @keyframes imgin{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion: reduce){.preview-photo,.thumb-photo,.suitcard .stage img,.hmedia img,.craft-img img,.cloth-strip img{animation:none}}
 /* desktop configurator: the atelier view — big suit right, options left */
@@ -532,8 +532,8 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
 .optcard:hover{box-shadow:0 6px 20px rgba(20,31,51,.08)}
 .optcard.sel{box-shadow:inset 0 0 0 1.5px var(--ink),0 8px 22px rgba(20,31,51,.1)}
 .suitcard:hover{box-shadow:0 10px 30px rgba(20,31,51,.1);transform:translateY(-2px)}
-/* scroll-reveal: sections and cards rise into place */
-.rv{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+/* (scroll-reveal removed — content is locked in place) */
+.rv{opacity:1;transform:none}
 .rv.inview{opacity:1;transform:none}
 
 /* ================================================================
@@ -615,7 +615,6 @@ input:focus,select:focus,textarea:focus{outline:1.5px solid var(--thread);border
 ================================================================ */
 body{
   background-image:radial-gradient(120% 60% at 50% -12%,#fbfaf7 0%,#f2f1ee 55%,#ecebe6 100%);
-  background-attachment:fixed;
 }
 header.top{background:rgba(248,247,244,.86);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);border-bottom:1px solid rgba(20,31,51,.08)}
 .topnav.open{background:rgba(248,247,244,.97)}
@@ -683,9 +682,18 @@ body::-webkit-scrollbar-thumb:hover{background:rgba(20,31,51,.5);background-clip
 /* the opening fold measures the browser and fills it exactly */
 :root{--hdr:57px}
 @media(max-width:640px){:root{--hdr:44px}}
-.fold{display:flex;flex-direction:column;min-height:calc(100svh - var(--hdr));min-height:calc(100dvh - var(--hdr))}
+.fold{display:flex;flex-direction:column;min-height:calc(100svh - var(--hdr))}
 .fold .hero-plate{flex:1;display:flex;flex-direction:column;justify-content:center}
 @media(min-width:641px){.fold .hero-bleed{flex:1;height:auto;min-height:320px}}
+/* locked-in scroll: no hover physics on touch, no sideways drift ever */
+body{overflow-x:hidden}
+@media(hover:none){
+  .btn:hover,.btn.ghost:hover,.leave-link:hover,.subtab:hover,.pv-dot:hover,.suitcard:hover,
+  .soc-btn:hover,.car-btn:hover,.pv-arr:hover,.hnav:hover,.greviews-cta:hover,.foot-social a:hover,
+  .add-ref:hover,.method:hover,.cloth-strip:hover img,.stp:hover .stp-dot,.cart-btn:hover svg,.optcard:hover{
+    transform:none!important;box-shadow:none!important
+  }
+}
 /* page one is immune to any viewport weirdness */
 html,body{width:100%;min-width:0}
 #landing,.hero-bleed,.hero-plate{width:100%;max-width:none}
@@ -2509,14 +2517,7 @@ if(KIOSK){
 window.addEventListener('online',flushOrderQueue);
 flushOrderQueue();
 
-/* scroll-reveal on the landing page (skipped when reduced motion is set) */
-if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window){
-  const io=new IntersectionObserver(es=>es.forEach(e=>{
-    if(e.isIntersecting){e.target.classList.add('inview');io.unobserve(e.target);}
-  }),{threshold:.12});
-  document.querySelectorAll('#landing .sec, #social .shell, .suitcard, .review, .trust > div, footer.site .cols > div')
-    .forEach((el,i)=>{el.classList.add('rv');el.style.transitionDelay=(Math.min(i%6,4)*60)+'ms';io.observe(el);});
-}
+/* scroll-reveal removed: the page is locked in — nothing moves while you scroll */
 </script>
 </body>
 </html>
