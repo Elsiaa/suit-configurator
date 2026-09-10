@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assemble Your Suit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1b2a41; --ink-soft:#3d4f66;
+  --chalk:#fbfaf6; --paper:#f3f1ea;
+  --thread:#b8860b; --thread-soft:#e9dfc4;
+  --line:#d8d4c8; --good:#2e6e4e; --warn:#9a4a1e;
+  --accent-red:#c0392b;
+  --r:4px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--chalk);color:var(--ink);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;padding-bottom:84px}
+h1,h2,h3{font-family:'Cormorant Garamond',serif;font-weight:600}
+
+.shell{max-width:1200px;margin:0 auto;padding:0 18px}
+header.top{border-bottom:1px solid var(--line);background:var(--chalk);position:sticky;top:0;z-index:50}
+.top-inner{display:flex;align-items:baseline;justify-content:space-between;padding:12px 0}
+.wordmark{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700}
+.wordmark em{font-style:italic;color:var(--thread)}
+.top-note{font-size:.78rem;color:var(--ink-soft)}
+@media(max-width:640px){.top-note{display:none}}
+
+/* category tabs (screenshot-style, with counts) */
+.cats{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex-shrink:0;padding:12px 16px;border:none;background:none;font:inherit;font-size:.92rem;font-weight:500;color:var(--ink-soft);cursor:pointer;border-bottom:2px solid transparent;display:flex;gap:6px;align-items:baseline}
+.cat .cnt{font-size:.72rem;color:var(--thread);font-weight:600}
+.cat.active{color:var(--ink);font-weight:600;border-bottom-color:var(--ink)}
+.cat:focus-visible{outline:2px solid var(--thread);outline-offset:-2px}
+
+/* sub-tabs (pill style like screenshot) */
+.subtabs{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 6px}
+.subtab{padding:9px 18px;border-radius:22px;border:1px solid var(--line);background:#fff;font:inherit;font-size:.85rem;font-weight:500;cursor:pointer;color:var(--ink)}
+.subtab.active{background:var(--ink);color:var(--chalk);border-color:var(--ink)}
+.subtab .tick{margin-left:6px}
+
+/* layout */
+.workspace{display:grid;grid-template-columns:1fr 360px;gap:32px;padding:8px 0 40px}
+.mob-preview{display:none;margin:14px 0;text-align:center}
+@media(max-width:960px){.workspace{grid-template-columns:1fr}.preview-col{display:none}.mob-preview{display:block}}
+.mob-preview svg{max-width:220px}
+
+.group-title{font-size:1.05rem;font-weight:600;margin:20px 0 12px;font-family:'Inter',sans-serif}
+.opt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:12px}
+.optcard{border:1px solid var(--line);border-radius:var(--r);background:#fff;padding:14px 10px 12px;cursor:pointer;text-align:center;font:inherit;color:var(--ink);position:relative;transition:border-color .1s}
+.optcard:hover{border-color:var(--ink-soft)}
+.optcard.sel{border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink);background:var(--paper)}
+.optcard.sel::after{content:"✓";position:absolute;top:8px;right:11px;color:var(--ink);font-weight:600}
+.optcard svg{width:100%;max-width:130px;height:auto;margin-bottom:8px}
+.optcard .nm{font-weight:600;font-size:.86rem}
+.optcard .std{font-size:.72rem;color:var(--ink-soft);margin-top:3px}
+.optcard .pr{font-size:.74rem;color:var(--thread);font-weight:600;margin-top:3px}
+.optcard:focus-visible{outline:2px solid var(--thread);outline-offset:2px}
+.optcard .swatch{width:64px;height:64px;border-radius:50%;margin:0 auto 8px;border:1px solid rgba(0,0,0,.1)}
+
+/* preview column */
+.preview-col{position:relative}
+.preview{position:sticky;top:120px;background:var(--paper);border:1px solid var(--line);padding:20px;text-align:center}
+.preview h3{font-size:1.25rem;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:12px}
+.preview svg{max-width:250px;width:100%}
+.spec{margin-top:10px;text-align:left}
+.spec .ln{display:flex;justify-content:space-between;font-size:.76rem;padding:3px 0;border-bottom:1px dotted var(--line)}
+.spec .k{color:var(--ink-soft)}.spec .v{font-weight:600}
+
+/* bottom bar */
+.bbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:60}
+.bbar-inner{max-width:1200px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.bbar .sum{font-size:.85rem}
+.bbar .sum strong{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;margin-left:8px}
+.bbar .actions{display:flex;gap:10px;align-items:center}
+.btn{display:inline-block;padding:11px 26px;border-radius:var(--r);border:1px solid var(--ink);background:var(--ink);color:var(--chalk);font:inherit;font-size:.9rem;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--ink-soft);border-color:var(--ink-soft)}
+.btn.ghost{background:none;color:var(--ink)}
+.btn.ghost:hover{background:var(--paper)}
+.btn:focus-visible{outline:2px solid var(--thread);outline-offset:2px}
+.leave-link{background:none;border:1px solid var(--line);border-radius:var(--r);padding:11px 18px;font:inherit;font-size:.85rem;font-weight:500;cursor:pointer;color:var(--ink)}
+.leave-link:hover{border-color:var(--ink)}
+@media(max-width:640px){.leave-link{display:none}}
+
+/* forms */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.82rem;font-weight:600;margin-bottom:5px}
+.field .hint{font-size:.74rem;color:var(--ink-soft);margin-top:4px}
+input[type=text],input[type=number],input[type=email],select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:var(--r);font:inherit;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-color:var(--thread)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:640px){.grid3{grid-template-columns:1fr 1fr}}
+.method-pick{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0 22px}
+@media(max-width:640px){.method-pick{grid-template-columns:1fr}}
+.method{border:1px solid var(--line);border-radius:var(--r);background:#fff;padding:16px;cursor:pointer;text-align:left;font:inherit;color:var(--ink)}
+.method.sel{border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink);background:var(--paper)}
+.method h3{font-size:1.2rem;margin-bottom:4px}
+.method p{font-size:.78rem;color:var(--ink-soft)}
+.ref-card{border:1px solid var(--line);border-radius:var(--r);background:#fff;padding:16px;margin-bottom:12px;position:relative}
+.ref-card .rm{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--warn);cursor:pointer;font-size:.75rem;font-weight:600}
+.add-ref{border:1px dashed var(--ink-soft);background:none;border-radius:var(--r);padding:11px 16px;font:inherit;font-size:.84rem;font-weight:600;color:var(--ink);cursor:pointer}
+.add-ref:hover{border-color:var(--thread);color:var(--thread)}
+.disclosure{border:1px solid var(--thread);background:var(--thread-soft);border-radius:var(--r);padding:16px 18px;margin:20px 0;font-size:.85rem}
+.disclosure strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.2rem;margin-bottom:4px}
+.review-table{width:100%;border-collapse:collapse;margin:14px 0}
+.review-table td{padding:7px 4px;border-bottom:1px solid var(--line);font-size:.85rem}
+.review-table td:first-child{color:var(--ink-soft);width:42%}
+.review-table td:last-child{font-weight:600}
+.alt-link{background:none;border:none;font:inherit;font-size:.8rem;color:var(--ink-soft);text-decoration:underline;cursor:pointer}
+.badge-good{color:var(--good);font-weight:600;font-size:.8rem}
+.hero{padding:64px 0 48px;max-width:740px}
+.hero h1{font-size:clamp(2.3rem,6vw,3.6rem);line-height:1.08;margin-bottom:16px}
+.hero h1 em{font-style:italic;color:var(--thread)}
+.hero p{font-size:1.02rem;color:var(--ink-soft);max-width:52ch;margin-bottom:10px}
+.hero-facts{display:flex;gap:28px;margin-top:30px;flex-wrap:wrap}
+.hero-facts div{font-size:.82rem;color:var(--ink-soft)}
+.hero-facts strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--ink);font-weight:700}
+.hidden{display:none!important}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="shell top-inner">
+    <div class="wordmark">Chalk <em>&amp;</em> Thread</div>
+    <div class="top-note">Customized suits, finished by your own tailor.</div>
+  </div>
+  <nav class="shell cats hidden" id="cats" aria-label="Configuration sections"></nav>
+</header>
+
+<section class="shell hero" id="hero">
+  <h1>Build your suit in five minutes. <em>Finish it</em> at your tailor.</h1>
+  <p>Every detail is yours — lapel, buttons, lining, your name under the collar, a photo inside the jacket. We cut it with deliberate extra allowance and ship it to your door.</p>
+  <p>Your local tailor takes it the final inch. You control the fit budget; we handle everything else.</p>
+  <button class="btn" style="margin-top:14px" onclick="startConfig()">Start assembling — from $250</button>
+  <div class="hero-facts">
+    <div><strong>$250</strong>base suit, delivered</div>
+    <div><strong>5 min</strong>to assemble</div>
+    <div><strong>Your tailor</strong>does the finishing</div>
+  </div>
+</section>
+
+<div class="shell workspace hidden" id="workspace">
+  <main id="main-col">
+    <div class="mob-preview" id="mob-preview"></div>
+    <div class="subtabs" id="subtabs"></div>
+    <div id="content"></div>
+  </main>
+  <aside class="preview-col">
+    <div class="preview" aria-live="polite">
+      <h3>Your suit so far</h3>
+      <div id="live-preview"></div>
+      <div class="spec" id="spec"></div>
+    </div>
+  </aside>
+</div>
+
+<div class="bbar hidden" id="bbar">
+  <div class="bbar-inner">
+    <div class="sum">Ready to send — the rest is our standard<strong id="bb-total">$250</strong></div>
+    <div class="actions">
+      <button class="leave-link" onclick="leaveStyling()">Leave the styling to us</button>
+      <button class="btn ghost" id="bb-back" onclick="navBack()">Back</button>
+      <button class="btn" id="bb-next" onclick="navNext()">Continue</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   SVG JACKET ILLUSTRATOR
+   Line-drawing style: white fill, ink stroke, red accent on the
+   feature currently being chosen (like a tailor's chalk mark).
+================================================================ */
+const S = {ink:'#2a3444', red:'#c0392b', lw:1.6};
+
+function jacketSVG(o){
+  // o: {lapel, buttons, db, pockets, vent(front hem hint ignored), accent, clothFill, w}
+  const a = o.accent||{}; // {lapel:1,buttons:1,pockets:1}
+  const flat = o.clothFill || '#ffffff';
+  // cloth texture: fine diagonal hatch (herringbone) / two-tone weave (sharkskin)
+  let defs='', fill=flat;
+  if(o.clothFill && o.texture){
+    const pid='ctp'+(jacketSVG._n=(jacketSVG._n||0)+1);
+    if(o.texture==='herringbone'){
+      defs=`<defs><pattern id="${pid}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="${flat}"/><line x1="1" y1="0" x2="1" y2="6" stroke="rgba(255,255,255,.13)" stroke-width="1"/></pattern></defs>`;
+    } else if(o.texture==='sharkskin'){
+      defs=`<defs><pattern id="${pid}" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="${flat}"/><rect width="2" height="2" fill="rgba(255,255,255,.09)"/><rect x="2" y="2" width="2" height="2" fill="rgba(255,255,255,.09)"/></pattern></defs>`;
+    }
+    if(defs) fill=`url(#${pid})`;
+  }
+  const detFill = o.clothFill ? fill : '#fff'; // lapels/pockets match cloth in preview, stay white in thumbnails
+  const inkL = c=>`stroke="${S.ink}" stroke-width="${S.lw}" fill="none" stroke-linecap="round" stroke-linejoin="round"`;
+  const acc = k => a[k] ? S.red : S.ink;
+
+  // lapel paths (right side mirrored)
+  let lapelL='', lapelR='', collar='';
+  if(o.lapel==='Shawl'){
+    lapelL=`M84,38 C70,58 66,92 78,122 L92,60 Z`;
+    lapelR=`M116,38 C130,58 134,92 122,122 L108,60 Z`;
+    collar=`M84,38 C92,30 108,30 116,38`;
+  } else if(o.lapel==='Peak'){
+    lapelL=`M84,38 L90,62 L66,70 L80,84 L90,120 L96,60 Z`;
+    lapelR=`M116,38 L110,62 L134,70 L120,84 L110,120 L104,60 Z`;
+    collar=`M84,38 C92,31 108,31 116,38`;
+  } else { // Notch
+    lapelL=`M84,38 L92,60 L74,66 L88,76 L92,120 L96,58 Z`;
+    lapelR=`M116,38 L108,60 L126,66 L112,76 L108,120 L104,58 Z`;
+    collar=`M84,38 C92,31 108,31 116,38`;
+  }
+
+  // buttons
+  let btns='';
+  const bc = a['buttons'] ? S.red : (o.clothFill ? '#cfc9ba' : S.ink); // visible on dark cloth
+  if(o.db){
+    // double breasted: two columns
+    const pts = o.buttons===6 ? [[86,108],[114,108],[86,128],[114,128],[86,148],[114,148]] : [[86,124],[114,124],[86,144],[114,144]];
+    btns = pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="${bc}"/>`).join('');
+  } else {
+    const n=o.buttons||2;
+    const start = n===1?138 : n===2?126 : n===3?114 : 96;
+    const gap = n>=5?13:16;
+    for(let i=0;i<n;i++) btns+=`<circle cx="100" cy="${start+i*gap}" r="3" fill="${i===0&&o.roll? '#b9c0cb':bc}"/>`;
+    if(o.roll) btns+=`<line x1="94" y1="${start-2}" x2="99" y2="${start+3}" stroke="${bc}" stroke-width="1.4"/>`;
+  }
+
+  // pockets
+  const pc = acc('pockets');
+  let pockets='';
+  const py=150;
+  if(o.pockets==='Slanted flap'){
+    pockets=`<path d="M50,${py} l26,-6 l2,9 l-26,6 Z" fill="${detFill}" stroke="${pc}" stroke-width="1.4"/>
+             <path d="M150,${py} l-26,-6 l-2,9 l26,6 Z" fill="${detFill}" stroke="${pc}" stroke-width="1.4"/>`;
+  } else if(o.pockets==='Jetted (no flap)'){
+    pockets=`<line x1="50" y1="${py}" x2="78" y2="${py}" stroke="${pc}" stroke-width="2"/>
+             <line x1="122" y1="${py}" x2="150" y2="${py}" stroke="${pc}" stroke-width="2"/>`;
+  } else if(o.pockets==='Patch'){
+    pockets=`<rect x="48" y="${py-4}" width="30" height="26" rx="2" fill="${detFill}" stroke="${pc}" stroke-width="1.4"/>
+             <rect x="122" y="${py-4}" width="30" height="26" rx="2" fill="${detFill}" stroke="${pc}" stroke-width="1.4"/>`;
+  } else { // straight flap
+    pockets=`<rect x="48" y="${py-3}" width="30" height="9" rx="1.5" fill="${detFill}" stroke="${pc}" stroke-width="1.4"/>
+             <rect x="122" y="${py-3}" width="30" height="9" rx="1.5" fill="${detFill}" stroke="${pc}" stroke-width="1.4"/>`;
+  }
+
+  // breast pocket
+  const breast=`<rect x="120" y="96" width="22" height="5" rx="1" fill="${detFill}" stroke="${S.ink}" stroke-width="1.2" transform="rotate(-4 131 98)"/>`;
+
+  // lining peek between the open front edges
+  const lining = o.liningFill ? `<path d="M92,120 L88,200 L112,200 L108,120 C104,127 96,127 92,120 Z" fill="${o.liningFill}"/>` : '';
+
+  // sleeve buttons
+  const sc = o.clothFill ? '#cfc9ba' : S.ink;
+  const cuffL=`<g fill="${sc}"><circle cx="34" cy="176" r="1.6"/><circle cx="34" cy="181" r="1.6"/><circle cx="34" cy="186" r="1.6"/><circle cx="34" cy="191" r="1.6"/></g>`;
+  const cuffR=`<g fill="${sc}"><circle cx="166" cy="176" r="1.6"/><circle cx="166" cy="181" r="1.6"/><circle cx="166" cy="186" r="1.6"/><circle cx="166" cy="191" r="1.6"/></g>`;
+
+  return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jacket illustration"${o.w?` width="${o.w}"`:''}>
+  ${defs}
+  <!-- body -->
+  <path d="M62,40 C74,32 84,30 100,30 C116,30 126,32 138,40
+           L152,52 C158,60 160,72 160,84 L158,170 C158,176 156,182 152,186
+           L148,200 L120,200 L118,150 L108,200 L92,200 L82,150 L80,200 L52,200
+           L48,186 C44,182 42,176 42,170 L40,84 C40,72 42,60 48,52 Z"
+        fill="${fill}" ${inkL()}/>
+  <!-- arms -->
+  <path d="M48,52 C36,62 30,84 28,110 L26,168 C26,176 30,182 38,182 L46,180 L48,120" ${inkL()} fill="${fill}"/>
+  <path d="M152,52 C164,62 170,84 172,110 L174,168 C174,176 170,182 162,182 L154,180 L152,120" ${inkL()} fill="${fill}"/>
+  <!-- lining peek + front edges -->
+  ${lining}
+  <path d="M92,120 L88,200" ${inkL()}/>
+  <path d="M108,120 L112,200" ${inkL()}/>
+  <!-- collar + lapels -->
+  <path d="${collar}" ${inkL()}/>
+  <path d="${lapelL}" fill="${detFill}" stroke="${acc('lapel')}" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="${lapelR}" fill="${detFill}" stroke="${acc('lapel')}" stroke-width="1.5" stroke-linejoin="round"/>
+  ${breast}${pockets}${btns}${cuffL}${cuffR}
+</svg>`;
+}
+
+function backSVG(o){
+  // vents on the back view
+  const a=o.accent? S.red : S.ink;
+  let vents='';
+  if(o.vent==='Double vent'){
+    vents=`<line x1="72" y1="160" x2="70" y2="200" stroke="${a}" stroke-width="2"/>
+           <line x1="128" y1="160" x2="130" y2="200" stroke="${a}" stroke-width="2"/>`;
+  } else if(o.vent==='Single vent'){
+    vents=`<line x1="100" y1="152" x2="100" y2="200" stroke="${a}" stroke-width="2"/>`;
+  }
+  return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jacket back">
+  <path d="M62,40 C74,32 84,30 100,30 C116,30 126,32 138,40 L152,52 C158,60 160,72 160,84 L158,170 C158,176 156,182 152,186 L148,200 L52,200 L48,186 C44,182 42,176 42,170 L40,84 C40,72 42,60 48,52 Z"
+        fill="#fff" stroke="${S.ink}" stroke-width="${S.lw}" stroke-linejoin="round"/>
+  <path d="M48,52 C36,62 30,84 28,110 L26,168 C26,176 30,182 38,182 L46,180 L48,120" fill="#fff" stroke="${S.ink}" stroke-width="${S.lw}" stroke-linejoin="round"/>
+  <path d="M152,52 C164,62 170,84 172,110 L174,168 C174,176 170,182 162,182 L154,180 L152,120" fill="#fff" stroke="${S.ink}" stroke-width="${S.lw}" stroke-linejoin="round"/>
+  <path d="M100,30 L100,60" stroke="${S.ink}" stroke-width="1.3"/>
+  <path d="M84,34 C92,42 108,42 116,34" stroke="${S.ink}" stroke-width="1.3" fill="none"/>
+  ${vents}
+</svg>`;
+}
+
+function trouserSVG(o){
+  // o: {fit, pleats, cuff, accent:{fit,pleats,cuff}}
+  const a=o.accent||{};
+  const acc=k=>a[k]?S.red:S.ink;
+  let legs;
+  if(o.fit==='Slim') legs=`M70,50 L74,200 L92,200 L96,52 M104,52 L108,200 L126,200 L130,50`;
+  else if(o.fit==='Straight') legs=`M66,50 L66,200 L92,200 L97,52 M103,52 L108,200 L134,200 L134,50`;
+  else legs=`M66,50 L72,200 L94,200 L97,52 M103,52 L106,200 L128,200 L134,50`; // tapered
+  let pleats='';
+  if(o.pleats==='Single pleat') pleats=`<line x1="84" y1="52" x2="86" y2="86" stroke="${acc('pleats')}" stroke-width="1.5"/><line x1="116" y1="52" x2="114" y2="86" stroke="${acc('pleats')}" stroke-width="1.5"/>`;
+  if(o.pleats==='Double pleat') pleats=`<line x1="80" y1="52" x2="82" y2="82" stroke="${acc('pleats')}" stroke-width="1.5"/><line x1="88" y1="52" x2="89" y2="88" stroke="${acc('pleats')}" stroke-width="1.5"/><line x1="120" y1="52" x2="118" y2="82" stroke="${acc('pleats')}" stroke-width="1.5"/><line x1="112" y1="52" x2="111" y2="88" stroke="${acc('pleats')}" stroke-width="1.5"/>`;
+  let cuff='';
+  if(o.cuff) cuff=`<rect x="71" y="188" width="24" height="10" fill="#fff" stroke="${acc('cuff')}" stroke-width="1.5"/><rect x="105" y="188" width="24" height="10" fill="#fff" stroke="${acc('cuff')}" stroke-width="1.5"/>`;
+  const band = o.side?`<rect x="64" y="40" width="72" height="12" rx="2" fill="#fff" stroke="${acc('band')||S.ink}" stroke-width="1.5"/><path d="M64,46 l-8,0 M136,46 l8,0" stroke="${acc('band')}" stroke-width="2"/>`
+                     :`<rect x="64" y="40" width="72" height="12" rx="2" fill="#fff" stroke="${acc('band')||S.ink}" stroke-width="1.5"/><rect x="72" y="38" width="5" height="6" fill="${a.band?S.red:S.ink}"/><rect x="97" y="38" width="5" height="6" fill="${a.band?S.red:S.ink}"/><rect x="122" y="38" width="5" height="6" fill="${a.band?S.red:S.ink}"/>`;
+  return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Trouser illustration">
+  <path d="${legs}" fill="#fff" stroke="${acc('fit')}" stroke-width="${S.lw}" stroke-linejoin="round"/>
+  ${band}${pleats}${cuff}
+</svg>`;
+}
+
+/* ================================================================
+   STATE + CATALOG
+================================================================ */
+const BASE=250;
+const state={
+  method:'tailor',
+  meas:{}, height:'', weight:'', refs:[], email:'',
+  cloth:'Navy wool blend', lapel:'Notch', frontbtn:'2 buttons', btnmat:'Corozo (matte)',
+  vents:'Double vent', pockets:'Straight flap',
+  legfit:'Tapered', waistband:'Belt loops', pleats:'Flat front', hem:'Plain hem',
+  lining:'Deep burgundy', monostyle:'None', monoText:'', monoThread:'Gold',
+  collar:'None', collarText:'', photo:'None', photoName:'',
+};
+const DEFAULTS={...state};
+const PRICES={
+  'Charcoal herringbone':20,'Midnight blue sharkskin':35,
+  'Peak':15,'Shawl':25,'Horn (polished)':12,'Mother-of-pearl':22,
+  '1 button':10,'3 buttons (roll to 2nd)':8,'Double-breasted 2x1':40,'Double-breasted 6x2':55,
+  'Side adjusters':18,'Double pleat':10,'Cuffed hem (1.75\")':8,
+  'Script monogram':15,'Block monogram':15,'Embroidered collar name':18,
+  'Photo lining':45,'Contrast piping lining':12,
+};
+const CLOTHS={
+  'Navy wool blend':'#243b55','Charcoal herringbone':'#3a3f45',
+  'Black twill':'#17181c','Midnight blue sharkskin':'#1c2f52',
+};
+const LININGS={
+  'Deep burgundy':'#5c1a24','Forest green':'#1f3b2c','Royal purple':'#3c2a56',
+  'Gold paisley':'#a2803a','Sky blue':'#7da7c9','Tone-on-tone':'#2c3e55','Contrast piping lining':'#8c2f39',
+};
+
+/* thumbnail generators per option */
+const thumbBtn = (n,roll,db)=>jacketSVG({lapel:state.lapel,buttons:n,roll,db,pockets:state.pockets,accent:{buttons:1}});
+const thumbLapel = l=>jacketSVG({lapel:l,buttons:btnCount(),db:isDB(),pockets:state.pockets,accent:{lapel:1}});
+const thumbPocket = p=>jacketSVG({lapel:state.lapel,buttons:btnCount(),db:isDB(),pockets:p,accent:{pockets:1}});
+const thumbVent = v=>backSVG({vent:v,accent:true});
+const thumbFit = f=>trouserSVG({fit:f,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),accent:{fit:1}});
+const thumbPleat = p=>trouserSVG({fit:state.legfit,pleats:p,cuff:state.hem.startsWith('Cuffed'),accent:{pleats:1}});
+const thumbHem = c=>trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:c,accent:{cuff:1}});
+const thumbBand = s=>trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),side:s,accent:{band:1}});
+
+function btnCount(){
+  const m={'1 button':1,'2 buttons':2,'3 buttons':3,'3 buttons (roll to 2nd)':3,'5 buttons':5};
+  return m[state.frontbtn]||2;
+}
+function isDB(){return state.frontbtn.startsWith('Double');}
+function isRoll(){return state.frontbtn.includes('roll');}
+
+/* ================================================================
+   NAVIGATION MODEL: categories -> subtabs -> option groups
+================================================================ */
+const NAV=[
+ {id:'fit', label:'Fit', count:()=>1, subs:[{id:'fit-main',label:'Sizing'}]},
+ {id:'style', label:'Style', count:()=>counts(['frontbtn','btnmat']), subs:[
+   {id:'frontbtn',label:'Front buttons'},{id:'btnmat',label:'Button material'}]},
+ {id:'lapel', label:'Lapel', count:()=>counts(['lapel']), subs:[{id:'lapel',label:'Lapel'}]},
+ {id:'cloth', label:'Cloth', count:()=>counts(['cloth']), subs:[{id:'cloth',label:'Cloth'}]},
+ {id:'back', label:'Back', count:()=>counts(['vents']), subs:[{id:'vents',label:'Vents'}]},
+ {id:'pocket', label:'Pocket', count:()=>counts(['pockets']), subs:[{id:'pockets',label:'Pockets'}]},
+ {id:'trouser', label:'Trouser', count:()=>counts(['legfit','waistband','pleats','hem']), subs:[
+   {id:'legfit',label:'Leg fit'},{id:'waistband',label:'Waistband'},{id:'pleats',label:'Pleats'},{id:'hem',label:'Hem'}]},
+ {id:'yours', label:'Make it yours', count:()=>persCount(), subs:[
+   {id:'lining',label:'Lining'},{id:'mono',label:'Monogram'},{id:'collarname',label:'Collar name'},{id:'photolining',label:'Photo lining'}]},
+ {id:'review', label:'Review', count:()=>'', subs:[{id:'review',label:'Review'}]},
+];
+function counts(keys){return keys.filter(k=>state[k]!==DEFAULTS[k]).length||'';}
+function persCount(){
+  let n=0;
+  if(state.lining!==DEFAULTS.lining)n++;
+  if(state.monostyle!=='None')n++;
+  if(state.collar!=='None')n++;
+  if(state.photo!=='None')n++;
+  return n||'';
+}
+let cur={cat:0, sub:0};
+
+/* option group definitions */
+const OPTGROUPS={
+ frontbtn:{key:'frontbtn',title:'Front buttons',opts:[
+   {n:'1 button',svg:()=>thumbBtn(1)},
+   {n:'2 buttons',std:'our standard',svg:()=>thumbBtn(2)},
+   {n:'3 buttons',svg:()=>thumbBtn(3)},
+   {n:'3 buttons (roll to 2nd)',svg:()=>thumbBtn(3,true)},
+   {n:'5 buttons',svg:()=>thumbBtn(5)},
+   {n:'Double-breasted 2x1',svg:()=>thumbBtn(4,false,true)},
+   {n:'Double-breasted 6x2',svg:()=>jacketSVG({lapel:'Peak',buttons:6,db:true,pockets:state.pockets,accent:{buttons:1}})},
+ ]},
+ btnmat:{key:'btnmat',title:'Button material',opts:[
+   {n:'Corozo (matte)',std:'our standard',dot:'#8a7b64'},
+   {n:'Horn (polished)',dot:'#4a3826'},
+   {n:'Mother-of-pearl',dot:'#e8e4dc'},
+ ]},
+ lapel:{key:'lapel',title:'Lapel',opts:[
+   {n:'Notch',std:'our standard',svg:()=>thumbLapel('Notch')},
+   {n:'Peak',svg:()=>thumbLapel('Peak')},
+   {n:'Shawl',svg:()=>thumbLapel('Shawl')},
+ ]},
+ cloth:{key:'cloth',title:'Cloth',opts:Object.keys(CLOTHS).map(n=>({n,dot:CLOTHS[n],std:n==='Navy wool blend'?'our standard':''}))},
+ vents:{key:'vents',title:'Vents',opts:[
+   {n:'Double vent',std:'our standard',svg:()=>thumbVent('Double vent')},
+   {n:'Single vent',svg:()=>thumbVent('Single vent')},
+   {n:'No vent',svg:()=>thumbVent('No vent')},
+ ]},
+ pockets:{key:'pockets',title:'Pockets',opts:[
+   {n:'Straight flap',std:'our standard',svg:()=>thumbPocket('Straight flap')},
+   {n:'Slanted flap',svg:()=>thumbPocket('Slanted flap')},
+   {n:'Jetted (no flap)',svg:()=>thumbPocket('Jetted (no flap)')},
+   {n:'Patch',svg:()=>thumbPocket('Patch')},
+ ]},
+ legfit:{key:'legfit',title:'Leg fit',opts:[
+   {n:'Tapered',std:'our standard',svg:()=>thumbFit('Tapered')},
+   {n:'Straight',svg:()=>thumbFit('Straight')},
+   {n:'Slim',svg:()=>thumbFit('Slim')},
+ ]},
+ waistband:{key:'waistband',title:'Waistband',opts:[
+   {n:'Belt loops',std:'our standard',svg:()=>thumbBand(false)},
+   {n:'Side adjusters',svg:()=>thumbBand(true)},
+ ]},
+ pleats:{key:'pleats',title:'Pleats',opts:[
+   {n:'Flat front',std:'our standard',svg:()=>thumbPleat('Flat front')},
+   {n:'Single pleat',svg:()=>thumbPleat('Single pleat')},
+   {n:'Double pleat',svg:()=>thumbPleat('Double pleat')},
+ ]},
+ hem:{key:'hem',title:'Hem',opts:[
+   {n:'Plain hem',std:'left long for your tailor',svg:()=>thumbHem(false)},
+   {n:'Cuffed hem (1.75")',svg:()=>thumbHem(true)},
+ ]},
+ lining:{key:'lining',title:'Lining color',opts:Object.keys(LININGS).map(n=>({n,dot:LININGS[n],std:n==='Deep burgundy'?'our standard':''}))},
+};
+
+/* ================================================================
+   RENDERING
+================================================================ */
+function renderCats(){
+  const c=document.getElementById('cats');
+  c.innerHTML='';
+  NAV.forEach((cat,i)=>{
+    const b=document.createElement('button');
+    b.className='cat'+(i===cur.cat?' active':'');
+    const n=cat.count();
+    b.innerHTML=cat.label+(n?`<span class="cnt">${n}</span>`:'');
+    b.onclick=()=>{cur={cat:i,sub:0};renderAll();};
+    c.appendChild(b);
+  });
+}
+function renderSubtabs(){
+  const wrap=document.getElementById('subtabs');
+  const subs=NAV[cur.cat].subs;
+  wrap.innerHTML='';
+  if(subs.length<2){wrap.classList.add('hidden');return;}
+  wrap.classList.remove('hidden');
+  subs.forEach((s,i)=>{
+    const b=document.createElement('button');
+    b.className='subtab'+(i===cur.sub?' active':'');
+    b.innerHTML=s.label+(i===cur.sub?'<span class="tick">✓</span>':'');
+    b.onclick=()=>{cur.sub=i;renderAll();};
+    wrap.appendChild(b);
+  });
+}
+function optGrid(group){
+  const g=OPTGROUPS[group];
+  let h=`<div class="group-title">${g.title}</div><div class="opt-grid">`;
+  g.opts.forEach(o=>{
+    const sel=state[g.key]===o.n;
+    const p=PRICES[o.n];
+    h+=`<button class="optcard${sel?' sel':''}" data-g="${group}" data-n="${o.n.replace(/"/g,'&quot;')}">
+      ${o.svg?o.svg():o.dot?`<div class="swatch" style="background:${o.dot}"></div>`:''}
+      <div class="nm">${o.n}</div>
+      ${o.std?`<div class="std">${o.std}</div>`:''}
+      ${p?`<div class="pr">+ $${p}</div>`:''}
+    </button>`;
+  });
+  return h+'</div>';
+}
+function renderContent(){
+  const sub=NAV[cur.cat].subs[cur.sub].id;
+  const c=document.getElementById('content');
+  if(sub==='fit-main'){c.innerHTML=fitHTML();wireFit();return;}
+  if(sub==='mono'){c.innerHTML=monoHTML();return;}
+  if(sub==='collarname'){c.innerHTML=collarHTML();return;}
+  if(sub==='photolining'){c.innerHTML=photoHTML();return;}
+  if(sub==='review'){c.innerHTML=reviewHTML();return;}
+  c.innerHTML=optGrid(sub);
+  c.querySelectorAll('.optcard').forEach(b=>{
+    b.onclick=()=>{state[b.dataset.g==='mono'?'monostyle':OPTGROUPS[b.dataset.g].key]=b.dataset.n;renderAll();};
+  });
+}
+function renderPreview(){
+  const clothName=state.cloth.toLowerCase();
+  const opts = {
+    lapel:state.lapel, buttons:btnCount(), roll:isRoll(), db:isDB(),
+    pockets:state.pockets,
+    clothFill:CLOTHS[state.cloth]||'#ffffff',
+    texture:clothName.includes('herringbone')?'herringbone':clothName.includes('sharkskin')?'sharkskin':null,
+    liningFill:LININGS[state.lining]||null,
+  };
+  // build each copy separately so the texture <pattern> ids stay unique per SVG
+  document.getElementById('live-preview').innerHTML=jacketSVG(opts);
+  const mp=document.getElementById('mob-preview'); if(mp) mp.innerHTML=jacketSVG(opts);
+  const lines=[
+    ['Cloth',state.cloth],['Lapel',state.lapel],['Front',state.frontbtn],
+    ['Vents',state.vents],['Pockets',state.pockets],
+    ['Trouser',state.legfit+' · '+state.pleats],['Lining',state.lining],
+  ];
+  if(state.monostyle!=='None')lines.push(['Monogram',(state.monoText||'—')+' · '+state.monoThread]);
+  if(state.collar!=='None')lines.push(['Collar',state.collarText||'—']);
+  if(state.photo!=='None')lines.push(['Photo',state.photoName||'awaiting upload']);
+  document.getElementById('spec').innerHTML=lines.map(l=>`<div class="ln"><span class="k">${l[0]}</span><span class="v">${l[1]}</span></div>`).join('');
+}
+function currentTotal(){
+  let t=BASE;
+  ['cloth','lapel','frontbtn','btnmat','vents','pockets','legfit','waistband','pleats','hem','lining','monostyle','collar','photo']
+    .forEach(k=>{const p=PRICES[state[k]];if(p)t+=p;});
+  return t;
+}
+function renderAll(){
+  renderCats();renderSubtabs();renderContent();renderPreview();
+  document.getElementById('bb-total').textContent='$'+currentTotal();
+  document.getElementById('bb-back').style.visibility=(cur.cat===0&&cur.sub===0)?'hidden':'visible';
+  document.getElementById('bb-next').textContent=NAV[cur.cat].id==='review'?'Place order':'Continue';
+  window.scrollTo({top:0});
+}
+
+/* ================================================================
+   FIT / PERSONALIZATION / REVIEW PANES
+================================================================ */
+function fitHTML(){return `
+  <h2 style="font-size:1.8rem;margin-top:14px">How should we size you?</h2>
+  <p style="color:var(--ink-soft);max-width:56ch;margin:6px 0 4px">A tailor's measurement sheet is most accurate. No sheet? Reference clothes from your own closet that already fit well.</p>
+  <div class="method-pick" role="radiogroup" aria-label="Sizing method">
+    <button class="method ${state.method==='tailor'?'sel':''}" id="m-tailor"><h3>I have my measurements</h3><p>From a tailor's fitting — like a prescription from your optometrist.</p></button>
+    <button class="method ${state.method==='closet'?'sel':''}" id="m-closet"><h3>Reference my closet</h3><p>Tell us 2–3 garments that fit well. Our sizing engine estimates from there.</p></button>
+  </div>
+  <div id="fit-tailor" class="${state.method==='tailor'?'':'hidden'}">
+    <div class="group-title">Jacket &amp; trouser measurements (inches)</div>
+    <div class="grid3">
+      ${['Chest','Shoulder','Sleeve','Jacket length','Waist','Hip / seat','Inseam','Thigh','Height (in)'].map(l=>{
+        const id='t-'+l.toLowerCase().replace(/[^a-z]/g,'');
+        return `<div class="field"><label for="${id}">${l}</label><input type="number" id="${id}" step="0.25" value="${state.meas[id]??''}" oninput="state.meas['${id}']=this.value"></div>`;}).join('')}
+    </div>
+    <p class="hint">Any tailor or dry cleaner with alterations can take these in ten minutes. Bring this list.</p>
+  </div>
+  <div id="fit-closet" class="${state.method==='closet'?'':'hidden'}">
+    <div class="group-title">Garments that fit you well</div>
+    <p class="hint" style="margin-bottom:12px">Best results: lay the garment flat and measure it. Four numbers beat a size label — brand sizing varies wildly.</p>
+    <div id="ref-list"></div>
+    <button class="add-ref" id="add-ref-btn">+ Add a reference garment</button>
+    <div class="grid2" style="margin-top:16px">
+      <div class="field"><label for="c-height">Your height (in)</label><input type="number" id="c-height" step="0.5" value="${state.height}" oninput="state.height=this.value"></div>
+      <div class="field"><label for="c-weight">Your weight (lb)</label><input type="number" id="c-weight" step="1" value="${state.weight}" oninput="state.weight=this.value"></div>
+    </div>
+  </div>`;}
+function wireFit(){
+  document.getElementById('m-tailor').onclick=()=>{state.method='tailor';renderAll();};
+  document.getElementById('m-closet').onclick=()=>{state.method='closet';renderAll();};
+  const btn=document.getElementById('add-ref-btn');
+  if(btn)btn.onclick=addRef;
+  if(document.getElementById('ref-list'))renderRefs();
+}
+function addRef(){
+  state.refs.push({garment:'Suit jacket / blazer',brandsize:'',pitpit:'',shoulder:'',sleeve:'',verdict:'Perfect'});
+  renderRefs();
+}
+function rmRef(i){state.refs.splice(i,1);renderRefs();}
+function setRef(i,k,v){state.refs[i][k]=v;}
+function renderRefs(){
+  const esc=s=>String(s).replace(/"/g,'&quot;');
+  document.getElementById('ref-list').innerHTML=state.refs.map((r,i)=>`<div class="ref-card">
+    <button class="rm" onclick="rmRef(${i})">remove</button>
+    <div class="grid2">
+      <div class="field"><label>Garment</label><select onchange="setRef(${i},'garment',this.value)">${['Suit jacket / blazer','Dress shirt','Trousers / chinos','Sweater'].map(g=>`<option${r.garment===g?' selected':''}>${g}</option>`).join('')}</select></div>
+      <div class="field"><label>Brand &amp; size (e.g. "Suit Supply 40R")</label><input type="text" placeholder="Brand + size" value="${esc(r.brandsize)}" oninput="setRef(${i},'brandsize',this.value)"></div>
+    </div>
+    <div class="group-title" style="font-size:.8rem;margin:4px 0 8px">Measured flat (inches) — optional but far more accurate</div>
+    <div class="grid3">
+      <div class="field"><label>Pit-to-pit</label><input type="number" step="0.25" value="${r.pitpit}" oninput="setRef(${i},'pitpit',this.value)"></div>
+      <div class="field"><label>Shoulder seam</label><input type="number" step="0.25" value="${r.shoulder}" oninput="setRef(${i},'shoulder',this.value)"></div>
+      <div class="field"><label>Sleeve / inseam</label><input type="number" step="0.25" value="${r.sleeve}" oninput="setRef(${i},'sleeve',this.value)"></div>
+    </div>
+    <div class="field"><label>How does it fit?</label><select onchange="setRef(${i},'verdict',this.value)">${['Perfect','Slightly loose','Slightly snug'].map(v=>`<option${r.verdict===v?' selected':''}>${v}</option>`).join('')}</select></div>
+  </div>`).join('');
+}
+function monoHTML(){return `
+  <div class="group-title">Monogram — stitched inside the jacket</div>
+  <div class="opt-grid" style="margin-bottom:18px">
+    ${['None','Script monogram','Block monogram'].map(n=>`
+      <button class="optcard${state.monostyle===n?' sel':''}" onclick="state.monostyle='${n}';renderAll()">
+        <div style="font-family:${n==='Script monogram'?"'Cormorant Garamond',serif;font-style:italic":n==='Block monogram'?"'Inter',sans-serif;letter-spacing:.1em":'inherit'};font-size:1.6rem;padding:14px 0;color:${n==='None'?'var(--ink-soft)':'var(--thread)'}">${n==='None'?'—':'Y.K.'}</div>
+        <div class="nm">${n}</div>${PRICES[n]?`<div class="pr">+ $${PRICES[n]}</div>`:''}
+      </button>`).join('')}
+  </div>
+  <div class="grid2">
+    <div class="field"><label for="p-monotext">Monogram text</label><input type="text" id="p-monotext" maxlength="24" value="${state.monoText}" placeholder="Y. Krug" oninput="state.monoText=this.value;renderPreview()"><div class="hint">Up to 24 characters. Initials, full name, a date — your call.</div></div>
+    <div class="field"><label for="p-monothread">Thread color</label>
+      <select id="p-monothread" onchange="state.monoThread=this.value;renderPreview()">
+        ${['Gold','Silver','Burgundy','Royal blue','Tone-on-tone'].map(c=>`<option${state.monoThread===c?' selected':''}>${c}</option>`).join('')}
+      </select></div>
+  </div>`;}
+function collarHTML(){return `
+  <div class="group-title">Collar felt — name under the collar</div>
+  <div class="opt-grid" style="margin-bottom:18px">
+    ${['None','Embroidered collar name'].map(n=>`
+      <button class="optcard${state.collar===n?' sel':''}" onclick="state.collar='${n}';renderAll()">
+        <div style="font-size:1.1rem;padding:16px 0;letter-spacing:.18em;color:${n==='None'?'var(--ink-soft)':'var(--thread)'}">${n==='None'?'—':'KRUG'}</div>
+        <div class="nm">${n}</div>
+        ${n!=='None'?'<div class="std">under the collar, where only you know</div>':''}
+        ${PRICES[n]?`<div class="pr">+ $${PRICES[n]}</div>`:''}
+      </button>`).join('')}
+  </div>
+  <div class="field ${state.collar==='None'?'hidden':''}"><label for="p-collartext">Collar text</label><input type="text" id="p-collartext" maxlength="18" value="${state.collarText}" placeholder="KRUG" oninput="state.collarText=this.value;renderPreview()"></div>`;}
+function photoHTML(){return `
+  <div class="group-title">Photo lining — printed inside the jacket</div>
+  <div class="opt-grid" style="margin-bottom:18px">
+    ${['None','Photo lining'].map(n=>`
+      <button class="optcard${state.photo===n?' sel':''}" onclick="state.photo='${n}';renderAll()">
+        <div style="font-size:1.8rem;padding:12px 0">${n==='None'?'—':'🖼'}</div>
+        <div class="nm">${n}</div>
+        ${n!=='None'?'<div class="std">your image, printed across the inner back panel</div>':''}
+        ${PRICES[n]?`<div class="pr">+ $${PRICES[n]}</div>`:''}
+      </button>`).join('')}
+  </div>
+  <div class="field ${state.photo==='None'?'hidden':''}">
+    <label for="p-photo">Upload your image</label>
+    <input type="file" id="p-photo" accept="image/*" onchange="if(this.files[0]){state.photoName=this.files[0].name;renderAll();}">
+    <div class="hint">High-resolution, landscape works best.</div>
+    ${state.photoName?`<div class="badge-good" style="margin-top:6px">✓ ${state.photoName} attached</div>`:''}
+  </div>`;}
+function reviewHTML(){
+  const rows=[
+    ['Sizing method',state.method==='tailor'?'Tailor measurements':'Closet references'],
+    ['Cloth',state.cloth],['Lapel',state.lapel],['Front buttons',state.frontbtn],
+    ['Button material',state.btnmat],['Vents',state.vents],['Pockets',state.pockets],
+    ['Trouser fit',state.legfit],['Pleats',state.pleats],['Waistband',state.waistband],['Hem',state.hem],
+    ['Lining',state.lining],
+    ['Monogram',state.monostyle==='None'?'—':state.monostyle+': "'+(state.monoText||'')+'" in '+state.monoThread],
+    ['Collar name',state.collar==='None'?'—':'"'+(state.collarText||'')+'"'],
+    ['Photo lining',state.photo==='None'?'—':(state.photoName||'awaiting upload')],
+    ['Total','$'+currentTotal()],
+  ];
+  return `
+  <h2 style="font-size:1.8rem;margin-top:14px">Your suit, on paper</h2>
+  <div class="disclosure"><strong>How the fit works — read this once</strong>
+  We cut your suit close to your numbers, with deliberate extra allowance in the waist, seat, and sleeve. It arrives wearable, not finished. Take it to any local tailor for final alterations — typically $40–90 — and it becomes <em>your</em> suit. We don't do the tailoring; that's the whole reason the price is what it is.</div>
+  <table class="review-table">${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>
+  <div class="field"><label for="o-email">Email for order updates</label><input type="email" id="o-email" placeholder="you@example.com" value="${state.email}" oninput="state.email=this.value"></div>
+  <p style="margin-top:10px"><button class="alt-link" onclick="altView()">Already received a suit? Log your tailor's alterations for $20 off your next order.</button></p>
+  <div id="alt-form" class="hidden" style="margin-top:20px;border-top:1px solid var(--line);padding-top:20px">
+    <div class="group-title">Log your alterations</div>
+    <div class="grid2">
+      <div class="field"><label for="a-order">Order number</label><input type="text" id="a-order" placeholder="CT-1024"></div>
+      <div class="field"><label for="a-cost">Alteration cost ($)</label><input type="number" id="a-cost" min="0" placeholder="65"></div>
+    </div>
+    <div class="grid3">
+      ${['Trouser waist','Seat','Trouser length','Sleeve length','Jacket waist'].map((l,i)=>`<div class="field"><label for="a-${i}">${l} (in)</label><input type="number" id="a-${i}" step="0.25" placeholder="-1"></div>`).join('')}
+    </div>
+    <div class="field"><label for="a-notes">Anything else your tailor said</label><textarea id="a-notes" rows="3" placeholder="Shoulders were spot on, sleeves ran long..."></textarea></div>
+    <button class="btn" onclick="alert('Thank you — alteration data logged. Your $20 credit code: THREAD20\\n\\n(Prototype: posts to the sizing-engine feedback endpoint in production.)')">Submit — claim $20 credit</button>
+  </div>`;}
+function altView(){document.getElementById('alt-form').classList.toggle('hidden');}
+
+/* ================================================================
+   NAV ACTIONS
+================================================================ */
+function navNext(){
+  if(NAV[cur.cat].id==='review'){
+    const e=document.getElementById('o-email');
+    if(!e||!(e.value||'').trim()){alert('Add an email so we can send order updates.');return;}
+    state.email=e.value.trim();
+    const spec=buildSpec();
+    downloadSpec(spec);
+    openPrintView(spec);
+    alert('Order '+spec.order.number+' placed — $'+spec.order.total+'.\nSpec sheet downloaded + print view opened.\n\n(Prototype: in production this posts the spec to the manufacturer API and charges via Stripe.)');
+    return;
+  }
+  if(cur.sub<NAV[cur.cat].subs.length-1)cur.sub++;
+  else{cur.cat++;cur.sub=0;}
+  renderAll();
+}
+function navBack(){
+  if(cur.sub>0)cur.sub--;
+  else if(cur.cat>0){cur.cat--;cur.sub=NAV[cur.cat].subs.length-1;}
+  renderAll();
+}
+function leaveStyling(){
+  // keep fit + personalization, reset styling to house standard, jump to review
+  const keep={method:state.method,monostyle:state.monostyle,monoText:state.monoText,monoThread:state.monoThread,collar:state.collar,collarText:state.collarText,photo:state.photo,photoName:state.photoName,lining:state.lining};
+  Object.assign(state,DEFAULTS,keep);
+  cur={cat:NAV.length-1,sub:0};
+  renderAll();
+}
+/* ================================================================
+   MANUFACTURER SPEC EXPORT (Phase 2)
+   JSON for the factory system + printable HTML for humans.
+   Zero ambiguity: every state field, measurements or closet refs,
+   personalization text verbatim, and per-zone allowance instructions.
+================================================================ */
+const MEAS_LABELS={tchest:'Chest',tshoulder:'Shoulder',tsleeve:'Sleeve',tjacketlength:'Jacket length',twaist:'Waist',thipseat:'Hip / seat',tinseam:'Inseam',tthigh:'Thigh',theightin:'Height'};
+function orderNumber(){
+  const d=new Date();
+  return 'CT-'+d.getFullYear().toString().slice(2)+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'-'+String(Math.floor(Math.random()*9000)+1000);
+}
+function upchargeLines(){
+  const u={};
+  ['cloth','lapel','frontbtn','btnmat','vents','pockets','legfit','waistband','pleats','hem','lining','monostyle','collar','photo']
+    .forEach(k=>{const p=PRICES[state[k]];if(p)u[state[k]]=p;});
+  return u;
+}
+function computeAllowances(){
+  const cuffed=state.hem.startsWith('Cuffed');
+  return {
+    jacket:{
+      chest:'+0.75" ease beyond finished chest spec',
+      waist:'+1.0" allowance — tailor takes in',
+      sleeve:'leave 1.5" unfinished hem inside cuff — tailor sets length',
+      shoulder:'cut to spec, no allowance (not alterable locally)',
+    },
+    trouser:{
+      waist:'+1.5" allowance in waistband — tailor takes in',
+      seat:'+1.25" allowance through seat',
+      thigh:'+0.5" allowance',
+      length:cuffed?'finish with 1.75" cuff, leave 1" letdown inside':'leave 2" unfinished — tailor hems to length',
+    },
+  };
+}
+function buildSpec(){
+  const measurements={};
+  Object.keys(state.meas).forEach(id=>{
+    const v=state.meas[id];
+    if(v!=='' && v!=null) measurements[MEAS_LABELS[id.replace(/[^a-z]/g,'')]||id]=parseFloat(v);
+  });
+  return {
+    format:'chalk-thread-spec-v1',
+    order:{
+      number:orderNumber(),
+      placedAt:new Date().toISOString(),
+      email:state.email,
+      basePrice:BASE,
+      upcharges:upchargeLines(),
+      total:currentTotal(),
+    },
+    garment:{
+      cloth:state.cloth, clothHex:CLOTHS[state.cloth]||null,
+      lapel:state.lapel, frontButtons:state.frontbtn, buttonMaterial:state.btnmat,
+      vents:state.vents, pockets:state.pockets,
+      trouser:{legFit:state.legfit, waistband:state.waistband, pleats:state.pleats, hem:state.hem},
+      lining:{color:state.lining, hex:LININGS[state.lining]||null},
+    },
+    personalization:{
+      monogram:state.monostyle==='None'?null:{style:state.monostyle, text:state.monoText, thread:state.monoThread},
+      collarName:state.collar==='None'?null:{text:state.collarText},
+      photoLining:state.photo==='None'?null:{filename:state.photoName||'AWAITING UPLOAD'},
+    },
+    fit:{
+      method:state.method,
+      measurementsInches:state.method==='tailor'?measurements:null,
+      closetReferences:state.method==='closet'?{
+        heightIn:state.height?parseFloat(state.height):null,
+        weightLb:state.weight?parseFloat(state.weight):null,
+        garments:state.refs.map(r=>({garment:r.garment, brandAndSize:r.brandsize,
+          flatMeasurements:{pitToPit:r.pitpit?parseFloat(r.pitpit):null, shoulderSeam:r.shoulder?parseFloat(r.shoulder):null, sleeveOrInseam:r.sleeve?parseFloat(r.sleeve):null},
+          fitVerdict:r.verdict})),
+      }:null,
+    },
+    allowances:computeAllowances(),
+  };
+}
+function downloadSpec(spec){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(spec,null,2)],{type:'application/json'}));
+  a.download=spec.order.number+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+function openPrintView(spec){
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const row=(k,v)=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`;
+  const section=(t,rows)=>`<h2>${t}</h2><table>${rows}</table>`;
+  const g=spec.garment,p=spec.personalization,f=spec.fit,al=spec.allowances;
+  let fitRows='';
+  if(f.method==='tailor'){
+    const m=f.measurementsInches||{};
+    fitRows=Object.keys(m).length?Object.keys(m).map(k=>row(k,m[k]+'"')).join(''):row('Measurements','NOT PROVIDED — hold order');
+  } else {
+    const c=f.closetReferences;
+    fitRows=row('Height',c.heightIn?c.heightIn+'"':'—')+row('Weight',c.weightLb?c.weightLb+' lb':'—')+
+      (c.garments.length?c.garments.map((r,i)=>row('Ref '+(i+1)+': '+r.garment+' ('+(r.brandAndSize||'no brand given')+')',
+        'pit-to-pit '+(r.flatMeasurements.pitToPit??'—')+'" · shoulder '+(r.flatMeasurements.shoulderSeam??'—')+'" · sleeve/inseam '+(r.flatMeasurements.sleeveOrInseam??'—')+'" · fits: '+r.fitVerdict)).join('')
+      :row('References','NOT PROVIDED — hold order'));
+  }
+  const w=window.open('','_blank');
+  if(!w){alert('Pop-up blocked — allow pop-ups to open the printable spec sheet.');return;}
+  w.document.write(`<!DOCTYPE html><html><head><title>${spec.order.number} — Manufacturing Spec</title><style>
+    body{font-family:Georgia,serif;color:#1b2a41;max-width:720px;margin:24px auto;padding:0 16px}
+    h1{font-size:1.5rem;border-bottom:2px solid #1b2a41;padding-bottom:8px}
+    h1 small{float:right;font-size:.9rem;font-weight:normal}
+    h2{font-size:1.05rem;margin:22px 0 6px;border-bottom:1px solid #999;padding-bottom:3px}
+    table{width:100%;border-collapse:collapse;font-size:.85rem;font-family:Helvetica,Arial,sans-serif}
+    td{padding:5px 6px;border-bottom:1px solid #ddd;vertical-align:top}
+    td:first-child{width:40%;color:#555}
+    .verbatim{font-weight:bold;background:#fdf6e3}
+    .warn{color:#9a4a1e;font-weight:bold}
+    @media print{body{margin:8px auto}}
+  </style></head><body>
+  <h1>Chalk &amp; Thread — Manufacturing Spec <small>${spec.order.number} · ${spec.order.placedAt.slice(0,10)}</small></h1>
+  <p style="font-size:.8rem">Cut with the allowance instructions below. All personalization text is VERBATIM — reproduce exactly, including punctuation and case.</p>
+  ${section('Garment',
+    row('Cloth',g.cloth+' ('+(g.clothHex||'—')+')')+row('Lapel',g.lapel)+row('Front buttons',g.frontButtons)+
+    row('Button material',g.buttonMaterial)+row('Vents',g.vents)+row('Pockets',g.pockets)+
+    row('Trouser leg',g.trouser.legFit)+row('Waistband',g.trouser.waistband)+row('Pleats',g.trouser.pleats)+row('Hem',g.trouser.hem)+
+    row('Lining',g.lining.color+' ('+(g.lining.hex||'—')+')'))}
+  ${section('Personalization',
+    (p.monogram?`<tr><td>Monogram (${esc(p.monogram.style)}, ${esc(p.monogram.thread)} thread)</td><td class="verbatim">${esc(p.monogram.text)||'<span class=warn>TEXT MISSING — hold order</span>'}</td></tr>`:row('Monogram','none'))+
+    (p.collarName?`<tr><td>Collar name</td><td class="verbatim">${esc(p.collarName.text)||'<span class=warn>TEXT MISSING — hold order</span>'}</td></tr>`:row('Collar name','none'))+
+    (p.photoLining?row('Photo lining file',p.photoLining.filename):row('Photo lining','none')))}
+  ${section('Fit — '+(f.method==='tailor'?'tailor measurements (inches)':'closet references'),fitRows)}
+  ${section('Cutting allowances — jacket',Object.keys(al.jacket).map(k=>row(k,al.jacket[k])).join(''))}
+  ${section('Cutting allowances — trouser',Object.keys(al.trouser).map(k=>row(k,al.trouser[k])).join(''))}
+  ${section('Order',row('Email',spec.order.email)+row('Base','$'+spec.order.basePrice)+
+    Object.keys(spec.order.upcharges).map(k=>row('+ '+k,'$'+spec.order.upcharges[k])).join('')+row('Total','$'+spec.order.total))}
+  <script>window.onload=()=>window.print()<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+function startConfig(){
+  document.getElementById('hero').classList.add('hidden');
+  document.getElementById('workspace').classList.remove('hidden');
+  document.getElementById('cats').classList.remove('hidden');
+  document.getElementById('bbar').classList.remove('hidden');
+  renderAll();
+}
+</script>
+</body>
+</html>
