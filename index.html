@@ -60,6 +60,7 @@ header.top{border-bottom:1px solid var(--line);background:var(--chalk);position:
 .optcard .pr{font-size:.74rem;color:var(--thread);font-weight:600;margin-top:3px}
 .optcard:focus-visible{outline:2px solid var(--thread);outline-offset:2px}
 .optcard .swatch{width:64px;height:64px;border-radius:50%;margin:0 auto 8px;border:1px solid rgba(0,0,0,.1)}
+.optcard .thumb-photo{width:100%;max-width:130px;aspect-ratio:3/4;object-fit:cover;border-radius:3px;display:block;margin:0 auto 8px;background:#f6f4ee}
 
 /* preview column */
 .preview-col{position:relative}
@@ -695,9 +696,15 @@ const LININGS={
   'Gold paisley':'#a2803a','Sky blue':'#7da7c9','Tone-on-tone':'#2c3e55','Contrast piping lining':'#8c2f39',
 };
 
-/* thumbnail generators per option */
-const thumbBtn = (n,roll,db)=>jacketSVG({lapel:state.lapel,buttons:n,roll,db,pockets:state.pockets,accent:{buttons:1}});
-const thumbLapel = l=>jacketSVG({lapel:l,buttons:btnCount(),db:isDB(),pockets:state.pockets,accent:{lapel:1}});
+/* thumbnail generators per option.
+   Lapel / front-button / cloth thumbs are REAL photos of the customer's current
+   suit with only that option changed — the 90-photo matrix covers every combo.
+   Construction details (pockets, vents, trousers) keep the technical drawings,
+   because only the drawings render those truthfully. */
+const thumbPhoto = src => src?`<img class="thumb-photo" src="${src}" alt="" loading="lazy">`:'';
+const thumbBtnPhoto = name => thumbPhoto(photoFor(state.cloth,state.lapel,name));
+const thumbLapelPhoto = l => thumbPhoto(photoFor(state.cloth,l,state.frontbtn)||photoFor(state.cloth,l,'2 buttons'));
+const thumbClothPhoto = c => thumbPhoto(photoFor(c,state.lapel,state.frontbtn)||photoFor(c,state.lapel,'2 buttons'));
 const thumbPocket = p=>jacketSVG({lapel:state.lapel,buttons:btnCount(),db:isDB(),pockets:p,accent:{pockets:1}});
 const thumbVent = v=>backSVG({vent:v,accent:true});
 const thumbFit = f=>trouserSVG({fit:f,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),accent:{fit:1}});
@@ -744,13 +751,12 @@ let cur={cat:0, sub:0};
 /* option group definitions */
 const OPTGROUPS={
  frontbtn:{key:'frontbtn',title:'Front buttons',opts:[
-   {n:'1 button',svg:()=>thumbBtn(1)},
-   {n:'2 buttons',std:'our standard',svg:()=>thumbBtn(2)},
-   {n:'3 buttons',svg:()=>thumbBtn(3)},
-   {n:'3 buttons (roll to 2nd)',svg:()=>thumbBtn(3,true)},
-   {n:'5 buttons',svg:()=>thumbBtn(5)},
-   {n:'Double-breasted 2x1',svg:()=>thumbBtn(4,false,true)},
-   {n:'Double-breasted 6x2',svg:()=>jacketSVG({lapel:'Peak',buttons:6,db:true,pockets:state.pockets,accent:{buttons:1}})},
+   {n:'1 button',svg:()=>thumbBtnPhoto('1 button')},
+   {n:'2 buttons',std:'our standard',svg:()=>thumbBtnPhoto('2 buttons')},
+   {n:'3 buttons',svg:()=>thumbBtnPhoto('3 buttons')},
+   {n:'3 buttons (roll to 2nd)',svg:()=>thumbBtnPhoto('3 buttons (roll to 2nd)')},
+   {n:'5 buttons',svg:()=>thumbBtnPhoto('5 buttons')},
+   {n:'Double-breasted 6x2',svg:()=>thumbBtnPhoto('Double-breasted 6x2')},
  ]},
  btnmat:{key:'btnmat',title:'Button material',opts:[
    {n:'Corozo (matte)',std:'our standard',dot:'#8a7b64'},
@@ -758,11 +764,11 @@ const OPTGROUPS={
    {n:'Mother-of-pearl',dot:'#e8e4dc'},
  ]},
  lapel:{key:'lapel',title:'Lapel',opts:[
-   {n:'Notch',std:'our standard',svg:()=>thumbLapel('Notch')},
-   {n:'Peak',pop:'Customer favorite',svg:()=>thumbLapel('Peak')},
-   {n:'Shawl',svg:()=>thumbLapel('Shawl')},
+   {n:'Notch',std:'our standard',svg:()=>thumbLapelPhoto('Notch')},
+   {n:'Peak',pop:'Customer favorite',svg:()=>thumbLapelPhoto('Peak')},
+   {n:'Shawl',svg:()=>thumbLapelPhoto('Shawl')},
  ]},
- cloth:{key:'cloth',title:'Cloth',opts:Object.keys(CLOTHS).map(n=>({n,dot:CLOTHS[n],std:n==='Navy wool blend'?'our standard':'',pop:n==='Midnight blue sharkskin'?'Customer favorite':''}))},
+ cloth:{key:'cloth',title:'Cloth',opts:Object.keys(CLOTHS).map(n=>({n,svg:()=>thumbClothPhoto(n),std:n==='Navy wool blend'?'our standard':'',pop:n==='Midnight blue sharkskin'?'Customer favorite':''}))},
  vents:{key:'vents',title:'Vents',opts:[
    {n:'Double vent',std:'our standard',svg:()=>thumbVent('Double vent')},
    {n:'Single vent',svg:()=>thumbVent('Single vent')},
@@ -877,16 +883,17 @@ function clothTexture(){
 /* exact photo for cloth × lapel × buttons, or null when only the drawing is exact:
    base {cloth}-{lapel}.png = 2 buttons (shawl base = 1 button); -1btn / -db variants;
    3-button, 5-button, and roll fronts have no photo — the drawing renders them exactly */
-function photoSrc(){
-  const c=PHOTO_CLOTH[state.cloth]; if(!c) return null;
-  const lap=state.lapel.toLowerCase(), b=state.frontbtn;
-  // shawl base image is 1-button; notch/peak base is 2-button
-  const suff = lap==='shawl'
-    ? {'1 button':'','2 buttons':'-2btn','3 buttons':'-3btn','3 buttons (roll to 2nd)':'-roll','5 buttons':'-5btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'}[b]
-    : {'2 buttons':'','1 button':'-1btn','3 buttons':'-3btn','3 buttons (roll to 2nd)':'-roll','5 buttons':'-5btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'}[b];
+/* exact photo for any cloth × lapel × buttons; base image is 2-button (shawl base: 1-button) */
+function photoFor(cloth,lapel,frontbtn){
+  const c=PHOTO_CLOTH[cloth]; if(!c) return null;
+  const lap=lapel.toLowerCase();
+  const suff = (lap==='shawl'
+    ? {'1 button':'','2 buttons':'-2btn','3 buttons':'-3btn','3 buttons (roll to 2nd)':'-roll','5 buttons':'-5btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'}
+    : {'2 buttons':'','1 button':'-1btn','3 buttons':'-3btn','3 buttons (roll to 2nd)':'-roll','5 buttons':'-5btn','Double-breasted 2x1':'-db','Double-breasted 6x2':'-db'})[frontbtn];
   if(suff===undefined) return null;
   return `suit-images/${c}-${lap}${suff}.png`;
 }
+function photoSrc(){return photoFor(state.cloth,state.lapel,state.frontbtn);}
 function pvImgFail(el,kind){
   // no photo for this combination: fall back to the exact drawing
   el.outerHTML = kind==='model' ? modelSVG()
