@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover">
 <title>Josh’s Suits — custom suits, finished by your tailor</title>
 <meta name="description" content="Design a custom suit in five minutes — cloth, lapel, buttons, lining, your name under the collar. Cut with deliberate allowance, from $300, finished by your own tailor.">
 <meta name="theme-color" content="#141f33">
@@ -686,7 +686,7 @@ body::-webkit-scrollbar-thumb:hover{background:rgba(20,31,51,.5);background-clip
 .fold .hero-plate{flex:1;display:flex;flex-direction:column;justify-content:center}
 @media(min-width:641px){.fold .hero-bleed{flex:1;height:auto;min-height:320px}}
 /* locked-in scroll: no hover physics on touch, no sideways drift ever */
-body{overflow-x:hidden}
+body{overflow-x:hidden;min-height:100svh}
 @media(hover:none){
   .btn:hover,.btn.ghost:hover,.leave-link:hover,.subtab:hover,.pv-dot:hover,.suitcard:hover,
   .soc-btn:hover,.car-btn:hover,.pv-arr:hover,.hnav:hover,.greviews-cta:hover,.foot-social a:hover,
