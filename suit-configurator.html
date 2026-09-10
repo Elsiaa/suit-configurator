@@ -266,8 +266,8 @@ details.terms li{margin:5px 0}
   #workspace.opts-step .mob-preview{flex:1;min-height:170px;display:flex;flex-direction:column;margin:2px 0 4px}
   #workspace.opts-step .pv{flex:1;display:flex;flex-direction:column;min-height:0}
   #workspace.opts-step .pv-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
-  #workspace.opts-step .pv-stage img.preview-photo{width:auto;max-width:80vw;max-height:100%;margin:0 auto}
-  #workspace.opts-step .pv-stage svg{max-height:100%;width:auto;max-width:60vw}
+  #workspace.opts-step .pv-stage img.preview-photo{width:auto;max-width:80vw;max-height:clamp(170px,calc(100svh - 380px),470px);margin:0 auto}
+  #workspace.opts-step .pv-stage svg{max-height:clamp(170px,calc(100svh - 380px),470px);width:auto;max-width:60vw}
   #workspace.opts-step .prog{margin:5px 0 0}
   .pv-arr{width:30px;height:30px;top:36%;font-size:1rem}
   .field{margin-bottom:12px}
@@ -449,6 +449,16 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
 .cloth-strip img:nth-child(4){transition-delay:.09s}
 .cloth-strip img:nth-child(5){transition-delay:.12s}
 @media(max-width:640px){.cloth-strip img:nth-child(n+4){display:none}.cloth-strip{gap:6px}}
+/* the smallest phones: keep the pills on one line, shorten the cards */
+@media(max-width:374px){
+  .pv-dots{flex-wrap:nowrap;gap:3px}
+  .pv-dot{font-size:.54rem;padding:4px 6px;letter-spacing:.05em}
+}
+@media(max-width:640px) and (max-height:640px){
+  .optcard{flex:0 0 40vw}
+  .optcard:has(.swatch){flex-basis:32vw}
+  #workspace.opts-step .mob-preview{min-height:150px}
+}
 /* interaction physics: everything answers the finger */
 .btn,.btn.ghost,.leave-link,.subtab,.pv-dot,.optcard,.suitcard,.soc-btn,.navlink,.method,.cat,.car-btn,.pv-arr,.hnav{transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease,background-color .15s ease,border-color .15s ease,color .15s ease}
 .btn:active,.subtab:active,.pv-dot:active,.optcard:active,.method:active{transform:scale(.97)}
