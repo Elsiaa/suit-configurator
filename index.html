@@ -727,6 +727,16 @@ function trouserSVG(o){
 /* ================================================================
    STATE + CATALOG
 ================================================================ */
+/* ================================================================
+   BACKEND SEAM (Phase 4) — the one knob that takes this live.
+   '' = no backend: orders record locally, no charge.
+   Set to your API origin (e.g. 'https://api.joshssuits.com') and
+   POST /api/orders should accept the spec JSON and respond
+   { orderId, checkoutUrl } — checkoutUrl being a Stripe Checkout
+   session URL; the browser is redirected there to pay.
+================================================================ */
+const API_BASE='';
+
 const BASE=300;
 const state={
   method:'tailor',
@@ -1623,17 +1633,64 @@ function openCheckout(){
   <button class="btn" style="margin-top:10px;width:100%" onclick="confirmOrder()">Place order — $${spec.order.total}</button>
   <p style="font-size:.72rem;color:var(--ink-soft);text-align:center;margin-top:8px">Nothing is charged in this preview. Your suit stays saved either way.</p>`);
 }
-function confirmOrder(){
+/* submitOrder(spec): the entire client→backend contract lives here.
+   Returns {status:'recorded'} (no backend), {status:'redirect',checkoutUrl},
+   or {status:'queued'} (kiosk offline — flushed automatically). */
+const LS_QUEUE='js-order-queue';
+async function submitOrder(spec){
+  if(!API_BASE) return {status:'recorded'};
+  try{
+    const r=await fetch(API_BASE+'/api/orders',{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(spec)});
+    if(!r.ok) throw new Error('orders API '+r.status);
+    const d=await r.json();
+    return d.checkoutUrl?{status:'redirect',checkoutUrl:d.checkoutUrl,orderId:d.orderId}:{status:'recorded',orderId:d.orderId};
+  }catch(err){
+    if(KIOSK){
+      const q=JSON.parse(localStorage.getItem(LS_QUEUE)||'[]');
+      q.push(spec);
+      localStorage.setItem(LS_QUEUE,JSON.stringify(q));
+      return {status:'queued'};
+    }
+    throw err;
+  }
+}
+async function flushOrderQueue(){
+  if(!API_BASE) return;
+  const q=JSON.parse(localStorage.getItem(LS_QUEUE)||'[]');
+  if(!q.length) return;
+  const remaining=[];
+  for(const spec of q){
+    try{
+      const r=await fetch(API_BASE+'/api/orders',{
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(spec)});
+      if(!r.ok) remaining.push(spec);
+    }catch(e){remaining.push(spec);}
+  }
+  localStorage.setItem(LS_QUEUE,JSON.stringify(remaining));
+}
+async function confirmOrder(){
   const nm=document.getElementById('sh-name').value.trim(), ad=document.getElementById('sh-addr').value.trim();
   if(!nm||!ad){alert('Name and shipping address, please.');return;}
   const spec=window._pendingSpec;
   spec.shipping={name:nm,address:ad};
+  let res;
+  try{res=await submitOrder(spec);}
+  catch(err){alert("We couldn't reach the order system — nothing was charged. Your suit is saved; try again in a moment.");return;}
+  spec.payment={status:res.status==='redirect'?'awaiting checkout':res.status};
   const orders=getOrders();
   orders.unshift({number:spec.order.number,placedAt:spec.order.placedAt,total:spec.order.total,
     summary:[spec.garment.cloth,spec.garment.lapel+' lapel',spec.garment.frontButtons].join(' · '),spec});
   localStorage.setItem(LS_ORDERS,JSON.stringify(orders));
   if(getUser()){const prefs={};STYLE_KEYS.forEach(k=>prefs[k]=state[k]);updateUser({prefs});} // profile remembers your style
   localStorage.removeItem(LS_DRAFT);
+  if(res.status==='redirect'){location.href=res.checkoutUrl;return;}
+  if(res.status==='queued'){
+    openModal(`<h2>Order saved</h2>
+    <p style="font-size:.9rem">Order <b>${spec.order.number}</b> · $${spec.order.total}. The connection is down, so it's held safely on this device and sends itself the moment we're back online.</p>
+    ${KIOSK?'<button class="btn" style="width:100%;margin-top:14px" onclick="kioskReset()">Done — next customer</button>':''}`);
+    return;
+  }
   openModal(`<h2>Order placed — thank you</h2>
   <p style="font-size:.9rem">Order <b>${spec.order.number}</b> · $${spec.order.total}. A confirmation goes to <b>${spec.order.email||state.email||'your email'}</b>. It's hanging in <b>My closet</b> — track it, reorder it, restyle it.</p>
   <p style="font-size:.85rem;color:var(--ink-soft);margin-top:8px">Your factory spec sheet is ready — the exact instructions our cutters receive:</p>
@@ -1818,7 +1875,10 @@ if(KIOSK){
   window.addEventListener('beforeunload',e=>{e.preventDefault();e.returnValue='';});
   kioskKick();
   startConfig();
+  setInterval(flushOrderQueue,60000); // kiosk retries queued orders every minute
 }
+window.addEventListener('online',flushOrderQueue);
+flushOrderQueue();
 </script>
 </body>
 </html>
