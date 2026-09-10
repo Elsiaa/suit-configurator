@@ -266,6 +266,19 @@ details.terms li{margin:5px 0}
 /* kiosk: shared iPad — no accounts, no closet */
 body.kiosk #nav-account,body.kiosk .navlink[onclick="openOrders()"]{display:none}
 body.kiosk{-webkit-user-select:none;user-select:none}
+/* wordmark doubles as the home button */
+.wordmark-btn{background:none;border:none;cursor:pointer;text-align:left;padding:0}
+header.top .top-inner{padding-left:max(6px,env(safe-area-inset-left))}
+/* mobile: steps live in the thumb zone, attached to the bottom bar */
+.bbar-steps{display:none}
+@media(max-width:640px){
+  .cats{display:none!important}
+  .bbar-steps{display:flex;overflow-x:auto;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);scrollbar-width:none}
+  .bbar-steps::-webkit-scrollbar{display:none}
+  .bbar-steps .cat{padding:12px 12px;font-size:.84rem}
+  body{padding-bottom:120px}
+  footer.site{padding-bottom:150px}
+}
 .suitcard .info{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
 .suitcard .info h3{font-size:1.25rem}
 .suitcard .info p{font-size:.8rem;color:var(--ink-soft);flex:1}
@@ -364,7 +377,7 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 
 <header class="top">
   <div class="shell top-inner">
-    <div class="wordmark">Josh&rsquo;s <em>Suits</em></div>
+    <button class="wordmark wordmark-btn" onclick="goHome()" aria-label="Home">Josh&rsquo;s <em>Suits</em></button>
     <button class="hamb" id="hamb" aria-label="Menu" onclick="toggleMenu()"><span></span><span></span><span></span></button>
     <nav class="topnav" id="topnav">
       <button class="navlink" onclick="openGuide()">Tailor guide</button>
@@ -497,6 +510,7 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 <div id="modal-root"></div>
 
 <div class="bbar hidden" id="bbar">
+  <nav class="bbar-steps" id="bb-steps" aria-label="Steps"></nav>
   <div class="bbar-inner">
     <div class="sum">Your suit<strong id="bb-total">$300</strong>
       <span class="anchor">comparable made-to-measure: <s>$1,200+</s></span></div>
@@ -852,16 +866,33 @@ const OPTGROUPS={
    RENDERING
 ================================================================ */
 function renderCats(){
-  const c=document.getElementById('cats');
-  c.innerHTML='';
-  NAV.forEach((cat,i)=>{
-    const b=document.createElement('button');
-    b.className='cat'+(i===cur.cat?' active':'');
-    const n=cat.count();
-    b.innerHTML=`<span class="stepn">${i+1}</span>`+cat.label+(n?`<span class="cnt">${n}</span>`:'');
-    b.onclick=()=>{cur={cat:i,sub:0};renderAll();};
-    c.appendChild(b);
-  });
+  const build=host=>{
+    host.innerHTML='';
+    NAV.forEach((cat,i)=>{
+      const b=document.createElement('button');
+      b.className='cat'+(i===cur.cat?' active':'');
+      const n=cat.count();
+      b.innerHTML=`<span class="stepn">${i+1}</span>`+cat.label+(n?`<span class="cnt">${n}</span>`:'');
+      b.onclick=()=>{cur={cat:i,sub:0};renderAll();};
+      host.appendChild(b);
+    });
+  };
+  build(document.getElementById('cats'));
+  const s=document.getElementById('bb-steps');
+  if(s){
+    build(s);
+    const act=s.querySelector('.cat.active');
+    if(act) s.scrollTo({left:act.offsetLeft - s.clientWidth/2 + act.offsetWidth/2});
+  }
+}
+function goHome(){
+  if(typeof KIOSK!=='undefined'&&KIOSK){window.scrollTo({top:0});return;}
+  document.getElementById('workspace').classList.add('hidden');
+  document.getElementById('cats').classList.add('hidden');
+  document.getElementById('bbar').classList.add('hidden');
+  document.getElementById('landing').classList.remove('hidden');
+  document.getElementById('site-footer').classList.remove('hidden');
+  window.scrollTo({top:0});
 }
 function renderSubtabs(){
   const wrap=document.getElementById('subtabs');
