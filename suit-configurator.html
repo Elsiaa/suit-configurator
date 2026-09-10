@@ -137,6 +137,15 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .topnav{display:flex;gap:8px;align-items:center}
 .navlink{background:none;border:none;font:inherit;font-size:.82rem;font-weight:500;color:var(--ink);cursor:pointer;padding:10px 10px;min-height:44px}
 .navlink:hover{color:var(--thread)}
+.hamb{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;background:none;border:none;cursor:pointer;padding:10px}
+.hamb span{display:block;height:2px;background:var(--ink);border-radius:1px}
+@media(max-width:640px){
+  .hamb{display:flex}
+  .topnav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--chalk);border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch;gap:0;padding:4px 18px 10px;box-shadow:0 10px 24px rgba(27,42,65,.12)}
+  .topnav.open{display:flex}
+  .topnav .navlink{text-align:left;font-size:.92rem;padding:13px 0;border-bottom:1px solid var(--line)}
+  .topnav .navlink:last-child{border-bottom:none}
+}
 .sec{padding:56px 0}
 .sec h2{font-size:clamp(1.7rem,4vw,2.4rem);margin-bottom:6px}
 .sec .lead{color:var(--ink-soft);max-width:60ch;margin-bottom:26px}
@@ -326,6 +335,12 @@ body.kiosk{-webkit-user-select:none;user-select:none}
 .trust p{font-size:.82rem;color:var(--ink-soft)}
 footer.site{border-top:1px solid var(--line);margin-top:40px;padding:30px 0 110px;font-size:.78rem;color:var(--ink-soft)}
 footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-between}
+.foot-mail{color:var(--thread);text-decoration:none;font-weight:600}
+.foot-mail:hover{text-decoration:underline}
+.foot-social{display:flex;gap:14px;margin-top:12px}
+.foot-social a{color:var(--ink);width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:50%}
+.foot-social a:hover{color:var(--thread);border-color:var(--thread)}
+.foot-social svg{width:17px;height:17px}
 /* modal */
 .overlay{position:fixed;inset:0;background:rgba(27,42,65,.45);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto}
 .modal{background:var(--chalk);border-radius:var(--r);max-width:560px;width:100%;padding:26px 26px 22px;position:relative;margin:auto 0}
@@ -350,7 +365,8 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 <header class="top">
   <div class="shell top-inner">
     <div class="wordmark">Chalk <em>&amp;</em> Thread</div>
-    <nav class="topnav">
+    <button class="hamb" id="hamb" aria-label="Menu" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+    <nav class="topnav" id="topnav">
       <button class="navlink" onclick="openGuide()">Tailor guide</button>
       <button class="navlink" onclick="openOrders()">My closet</button>
       <button class="navlink" id="nav-account" onclick="openAccount()">Sign in</button>
@@ -385,9 +401,8 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 </section>
 
 <section class="shell sec" style="background:none">
-  <h2>Or design your own — starting at $300</h2>
-  <p class="lead">Lapel, cloth, buttons, vents, pockets, trouser, lining, monogram, collar name, even a photo printed inside the jacket. Every choice is priced as you go.</p>
-  <button class="btn" onclick="startConfig()">Start designing</button>
+  <h2>Or design your own — from $300</h2>
+  <button class="btn" style="margin-top:8px" onclick="startConfig()">Start designing</button>
 </section>
 
 <section id="social">
@@ -405,21 +420,16 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
     <div class="soc-btns">
       <a class="soc-btn" href="#" onclick="return socialStub('Instagram')">
         <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="iggrad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FFDC80"/><stop offset=".25" stop-color="#F77737"/><stop offset=".5" stop-color="#E1306C"/><stop offset=".75" stop-color="#C13584"/><stop offset="1" stop-color="#833AB4"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#iggrad)"/><circle cx="12" cy="12" r="4.4" fill="none" stroke="#fff" stroke-width="1.7"/><circle cx="17.2" cy="6.8" r="1.3" fill="#fff"/></svg>
-        @chalkandthread <span class="cnt">128K</span></a>
+        @chalkandthread</a>
       <a class="soc-btn" href="#" onclick="return socialStub('TikTok')">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" fill="#010101"/><path d="M15.2 6.2c.5 1.3 1.5 2.2 2.9 2.4v2.2c-1.1 0-2.1-.35-2.9-.9v4.5c0 2.3-1.85 4.1-4.1 4.1a4.1 4.1 0 0 1-.4-8.18v2.3a1.9 1.9 0 1 0 2.3 1.86V5h2.2c0 .42.03.82.1 1.2z" fill="#25F4EE"/><path d="M14.9 5.9c.5 1.3 1.5 2.2 2.9 2.4v2.2c-1.1 0-2.1-.35-2.9-.9v4.5c0 2.3-1.85 4.1-4.1 4.1a4.1 4.1 0 0 1-.4-8.18v2.3a1.9 1.9 0 1 0 2.3 1.86V4.7h2.2c0 .42.03.82.1 1.2z" fill="#FE2C55" opacity=".85"/><path d="M15.05 6.05c.5 1.3 1.5 2.2 2.9 2.4v2.1c-1.1 0-2.1-.35-2.9-.9v4.6c0 2.3-1.85 4.1-4.1 4.1a4.08 4.08 0 0 1-.4-8.14v2.28a1.9 1.9 0 1 0 2.3 1.86V4.85h2.1c0 .42.03.82.1 1.2z" fill="#fff"/></svg>
-        @chalkandthread <span class="cnt">96K</span></a>
+        @chalkandthread</a>
       <a class="soc-btn" href="#" onclick="return socialStub('YouTube')">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="4.5" width="21" height="15" rx="4" fill="#FF0000"/><path d="M10 9l5.2 3L10 15z" fill="#fff"/></svg>
-        Chalk &amp; Thread <span class="cnt">41K</span></a>
+        Chalk &amp; Thread</a>
       <a class="soc-btn" href="#" onclick="return socialStub('Facebook')">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#1877F2"/><path d="M13.4 21v-6.5h2.2l.4-2.6h-2.6v-1.7c0-.75.37-1.3 1.4-1.3h1.3V6.6c-.3-.04-1.2-.13-2.1-.13-2.1 0-3.4 1.24-3.4 3.44v2h-2.3v2.6h2.3V21z" fill="#fff"/></svg>
-        Chalk &amp; Thread <span class="cnt">23K</span></a>
-    </div>
-    <div class="soc-stats">
-      <div><strong>288K</strong>followers across platforms</div>
-      <div><strong>4.2M</strong>views on reveal videos</div>
-      <div><strong>1,900+</strong>customer suits tagged #chalkandthread</div>
+        Chalk &amp; Thread</a>
     </div>
   </div>
 </section>
@@ -428,7 +438,7 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
   <h2>What owners say</h2>
   <div class="greviews-head">
     <svg class="glogo" viewBox="0 0 48 48" aria-label="Google"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-    <div><span class="gscore">4.9</span> <span class="gstars">★★★★★</span><div class="gcount">Google rating · based on 214 verified reviews</div></div>
+    <div><span class="gscore">4.9</span> <span class="gstars">★★★★★</span><div class="gcount">Google rating</div></div>
   </div>
   <div class="carousel-wrap">
     <button class="car-btn car-prev" onclick="scrollRow('reviews-row',-1)" aria-label="Previous reviews">‹</button>
@@ -467,10 +477,20 @@ footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-bet
 
 <footer class="site" id="site-footer">
   <div class="shell cols">
-    <div><div class="wordmark" style="font-size:1.1rem">Chalk <em>&amp;</em> Thread</div>Customized suits, finished by your own tailor.<br>hello@chalkandthread.example</div>
+    <div>
+      <div class="wordmark" style="font-size:1.1rem">Chalk <em>&amp;</em> Thread</div>
+      Customized suits, finished by your own tailor.<br>
+      <a href="mailto:hello@chalkandthread.com" class="foot-mail">hello@chalkandthread.com</a>
+      <div class="foot-social">
+        <a href="#" aria-label="Instagram" onclick="return socialStub('Instagram')"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="6" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.3" fill="currentColor"/></svg></a>
+        <a href="#" aria-label="TikTok" onclick="return socialStub('TikTok')"><svg viewBox="0 0 24 24"><path d="M15.05 4c.5 1.6 1.6 2.7 3.2 2.9v2.4c-1.2 0-2.3-.4-3.2-1v5.1c0 2.6-2.1 4.6-4.6 4.6a4.6 4.6 0 0 1-.45-9.17v2.55a2.1 2.1 0 1 0 2.55 2.06V4z" fill="currentColor"/></svg></a>
+        <a href="#" aria-label="YouTube" onclick="return socialStub('YouTube')"><svg viewBox="0 0 24 24"><rect x="1.5" y="5.5" width="21" height="13" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 9.5l4.6 2.5L10 14.5z" fill="currentColor"/></svg></a>
+        <a href="#" aria-label="Facebook" onclick="return socialStub('Facebook')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M13.2 20v-6h2l.35-2.4H13.2v-1.5c0-.7.34-1.2 1.3-1.2h1.2V6.7c-.28-.04-1.1-.12-1.95-.12-1.95 0-3.15 1.15-3.15 3.2v1.8H8.5V14h2.1v6z" fill="currentColor"/></svg></a>
+      </div>
+    </div>
     <div><b>Help</b><br><button class="navlink" style="padding:2px 0;min-height:0" onclick="openGuide()">Tailor guide</button><br><button class="navlink" style="padding:2px 0;min-height:0" onclick="openOrders()">My closet</button></div>
     <div><b>The promise</b><br>Cut with allowance · finished locally<br>One free remake per order</div>
-    <div>© 2026 Chalk &amp; Thread<br>Prototype build — payments not yet live</div>
+    <div>© 2026 Chalk &amp; Thread<br>Payments open at launch</div>
   </div>
 </footer>
 
@@ -1203,7 +1223,7 @@ function reviewHTML(){
       ${['Trouser waist','Seat','Trouser length','Sleeve length','Jacket waist'].map((l,i)=>`<div class="field"><label for="a-${i}">${l} (in)</label><input type="number" id="a-${i}" step="0.25" placeholder="-1"></div>`).join('')}
     </div>
     <div class="field"><label for="a-notes">Anything else your tailor said</label><textarea id="a-notes" rows="3" placeholder="Shoulders were spot on, sleeves ran long..."></textarea></div>
-    <button class="btn" onclick="alert('Thank you — alteration data logged. Your $20 credit code: THREAD20\\n\\n(Prototype: posts to the sizing-engine feedback endpoint in production.)')">Submit — claim $20 credit</button>
+    <button class="btn" onclick="openModal('<h2>Logged — thank you</h2><p style=&quot;font-size:.9rem&quot;>Your $20 credit code: <b>THREAD20</b>. It applies at checkout on your next order.</p>')">Submit — claim $20 credit</button>
   </div>`;}
 function altView(){document.getElementById('alt-form').classList.toggle('hidden');}
 
@@ -1308,7 +1328,6 @@ function renderReviews(){
       <div><div class="who">${r.who}</div><div class="when">${r.when}</div></div></div>
     <div class="stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
     <p>"${r.txt}"</p>
-    <div class="gverified">${GCHECK} Verified purchase · posted on Google</div>
   </div>`).join('');
 }
 
@@ -1325,9 +1344,10 @@ const PF_ICONS={
  tt:'<svg viewBox="0 0 24 24"><path d="M15.05 4c.5 1.6 1.6 2.7 3.2 2.9v2.4c-1.2 0-2.3-.4-3.2-1v5.1c0 2.6-2.1 4.6-4.6 4.6a4.6 4.6 0 0 1-.45-9.17v2.55a2.1 2.1 0 1 0 2.55 2.06V4z" fill="#fff"/></svg>',
 };
 function socialStub(pf){
-  alert(pf+' page opens at launch — the handles are reserved.\n@chalkandthread everywhere.');
+  openModal(`<h2>@chalkandthread</h2><p style="font-size:.9rem">Find us on ${pf} at launch.</p>`);
   return false;
 }
+function toggleMenu(){document.getElementById('topnav').classList.toggle('open');}
 function initSocial(){
   const host=document.getElementById('soc-slides');
   host.innerHTML=SOCIAL.map(s=>`<figure class="hslide">
@@ -1370,7 +1390,7 @@ function openAccount(){
   const u=getUser();
   if(u){localStorage.removeItem(LS_USER);refreshAccountNav();return;}
   openModal(`<h2>Sign in</h2>
-    <p style="font-size:.85rem;color:var(--ink-soft);margin-bottom:14px">Track orders, save configurations, claim alteration credits. No password in this preview build — accounts get real authentication at launch.</p>
+    <p style="font-size:.85rem;color:var(--ink-soft);margin-bottom:14px">Track your orders and keep your style on file.</p>
     <div class="field"><label for="ac-name">Your name</label><input type="text" id="ac-name" placeholder="Full name"></div>
     <div class="field"><label for="ac-email">Email</label><input type="email" id="ac-email" placeholder="you@example.com"></div>
     <button class="btn" onclick="doSignIn()">Sign in</button>`);
@@ -1417,7 +1437,7 @@ function saveStyleToProfile(){
   if(!getUser()){alert('Sign in first — your style saves to your profile.');openAccount();return;}
   const prefs={};STYLE_KEYS.forEach(k=>prefs[k]=state[k]);
   updateUser({prefs});
-  alert('Saved. Your style is on your profile — apply it any time from Sign in or your closet.');
+  alert('Saved to your profile.');
 }
 function applySavedStyle(){
   const u=getUser();
@@ -1567,7 +1587,7 @@ function openCheckout(){
     <div class="field"><label for="pay-exp">Expiry</label><input type="text" id="pay-exp" placeholder="MM/YY" disabled></div>
     <div class="field"><label for="pay-cvc">CVC</label><input type="text" id="pay-cvc" placeholder="•••" disabled></div>
   </div>
-  <div class="pay-note">Preview build: payment fields are disabled. At launch this is a secure Stripe checkout — no card details ever touch our servers.</div>
+  <div class="pay-note">Card fields open at launch — checkout runs on Stripe, and nothing is charged today.</div>
   <div class="trust-strip"><span><span class="gs">★</span> 4.9 on Google</span><span>✓ Free remake promise</span><span>✓ Your tailor finishes it — typically $40–90</span></div>
   <button class="btn" style="margin-top:10px;width:100%" onclick="confirmOrder()">Place order — $${spec.order.total}</button>
   <p style="font-size:.72rem;color:var(--ink-soft);text-align:center;margin-top:8px">Nothing is charged in this preview. Your suit stays saved either way.</p>`);
@@ -1759,6 +1779,7 @@ renderLoved();
 renderReviews();
 initSocial();
 refreshAccountNav();
+document.querySelectorAll('#topnav .navlink').forEach(b=>b.addEventListener('click',()=>document.getElementById('topnav').classList.remove('open')));
 
 if(KIOSK){
   document.body.classList.add('kiosk');
