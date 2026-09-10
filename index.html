@@ -183,6 +183,19 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .quick-add{border:1px dashed var(--thread);background:var(--thread-soft);border-radius:var(--r);padding:14px 16px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:.85rem}
 .trust-strip{display:flex;gap:16px;flex-wrap:wrap;font-size:.72rem;color:var(--ink-soft);margin:12px 0 4px;align-items:center}
 .trust-strip .gs{color:#fbbc05}
+/* inspect-before-checkout */
+.inspect-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin:12px 0;-webkit-overflow-scrolling:touch}
+.inspect-row .iv{flex:0 0 112px;text-align:center;font-size:.66rem;color:var(--ink-soft)}
+.inspect-row .iv .ivbox{border:1px solid var(--line);border-radius:var(--r);background:#fff;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:4px}
+.inspect-row .iv img{width:100%;height:100%;object-fit:cover}
+.inspect-row .iv svg{width:100%;height:100%}
+.agree{display:flex;gap:11px;align-items:flex-start;font-size:.82rem;margin:12px 0;cursor:pointer}
+.agree input{width:20px;height:20px;flex-shrink:0;margin-top:1px;accent-color:var(--ink);cursor:pointer}
+details.terms{font-size:.74rem;color:var(--ink-soft);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;margin:10px 0;background:#fff}
+details.terms summary{cursor:pointer;font-weight:600;color:var(--ink);font-size:.8rem}
+details.terms ol{margin:8px 0 2px 18px}
+details.terms li{margin:5px 0}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
 
 /* ---- mobile polish: one-line header, calm chrome, compact bottom bar ---- */
 @media(max-width:640px){
@@ -1145,7 +1158,7 @@ function navNext(){
     const e=document.getElementById('o-email');
     if(!e||!(e.value||'').trim()){alert('Add an email so we can send order updates.');return;}
     state.email=e.value.trim();
-    openCheckout();
+    openInspect();
     return;
   }
   if(cur.sub<NAV[cur.cat].subs.length-1)cur.sub++;
@@ -1424,9 +1437,62 @@ function printGuide(){
   w.document.close();
 }
 
+/* ---- inspect-before-checkout: every angle, then two explicit confirmations ---- */
+const AGREEMENT_VERSION='v1-2026-09';
+function inspectViewsHTML(){
+  const clothFill=CLOTHS[state.cloth]||'#243b55';
+  const texture=clothTexture();
+  const btnColor=BTNCOLORS[state.btnmat];
+  const front=photoSrc();
+  const views=[
+    ['Front', front?`<img src="${front}" alt="Front">`:jacketSVG({lapel:state.lapel,buttons:btnCount(),roll:isRoll(),db:isDB(),pockets:state.pockets,clothFill,texture,btnColor,liningFill:LININGS[state.lining]||null})],
+    ['Back', backSVG({vent:state.vents,clothFill,texture})],
+    ['Inside', insideSVG({clothFill,texture,liningFill:LININGS[state.lining],liningName:state.lining,monoStyle:state.monostyle,monoText:state.monoText,monoThread:state.monoThread,collarText:state.collar!=='None'?(state.collarText||'YOUR NAME'):null,photo:state.photo!=='None'})],
+    ['Trousers', trouserSVG({fit:state.legfit,pleats:state.pleats,cuff:state.hem.startsWith('Cuffed'),side:state.waistband==='Side adjusters',clothFill,texture})],
+  ];
+  return `<div class="inspect-row">${views.map(v=>`<div class="iv"><div class="ivbox">${v[1]}</div>${v[0]}</div>`).join('')}</div>`;
+}
+function inspectGate(){
+  const a=document.getElementById('ins-happy'), b=document.getElementById('ins-terms');
+  document.getElementById('ins-continue').disabled=!(a.checked&&b.checked);
+}
+function openInspect(){
+  const spec=buildSpec();
+  window._pendingSpec=spec;
+  openModal(`<h2>Inspect your suit</h2>
+  <p style="font-size:.85rem;color:var(--ink-soft)">Every angle, exactly as it will be made. Look closely — this is what our cutters receive.</p>
+  ${inspectViewsHTML()}
+  <table class="review-table" style="margin:6px 0 4px">
+    <tr><td>Cloth</td><td>${state.cloth}</td></tr>
+    <tr><td>Lapel · Front</td><td>${state.lapel} · ${state.frontbtn}</td></tr>
+    <tr><td>Lining</td><td>${state.lining}</td></tr>
+    ${state.monostyle!=='None'?`<tr><td>Monogram</td><td>"${(state.monoText||'')}" · ${state.monoThread}</td></tr>`:''}
+    ${state.collar!=='None'?`<tr><td>Collar name</td><td>"${(state.collarText||'')}"</td></tr>`:''}
+    <tr><td><b>Total</b></td><td><b>$${spec.order.total}</b></td></tr>
+  </table>
+  <label class="agree"><input type="checkbox" id="ins-happy" onchange="inspectGate()">
+    <span>I've inspected every detail above. This is exactly the suit I want made.</span></label>
+  <details class="terms">
+    <summary>Order Agreement (${AGREEMENT_VERSION})</summary>
+    <ol>
+      <li><b>Made to your order.</b> This garment is cut to the specifications and measurements you submitted. You are responsible for their accuracy.</li>
+      <li><b>It arrives unfinished — by design.</b> The suit ships with deliberate extra allowance and is not wearable as delivered. Final alterations by a tailor of your choosing are <b>required</b> and are at your own cost (typically $40–90). Alteration costs are never reimbursed.</li>
+      <li><b>What we are not responsible for:</b> errors in measurements or closet references you supplied; the work, cost, or outcome of any third-party tailor; fit changes due to changes in your body; ordinary variation in fabric dye lots and weave; and print quality of photo-lining images below our stated resolution guidance.</li>
+      <li><b>Your remedy.</b> Your sole and exclusive remedy is one free remake per order, available when a professional tailor certifies in writing that the garment cannot reasonably be altered to fit. Customized goods are not eligible for cash refunds except where the law requires.</li>
+      <li><b>Liability cap.</b> To the maximum extent permitted by law, our total liability for any order is limited to the price you paid for it, and we are not liable for indirect or consequential losses.</li>
+      <li><b>What this doesn't change.</b> Nothing in this agreement limits liability that cannot be limited by law — including where we are clearly liable under non-waivable statutory consumer rights, or for gross negligence or willful misconduct.</li>
+    </ol>
+  </details>
+  <label class="agree"><input type="checkbox" id="ins-terms" onchange="inspectGate()">
+    <span>I've read and accept the Order Agreement. I understand this suit <b>requires tailoring at my own cost</b> before it's finished.</span></label>
+  <button class="btn" id="ins-continue" style="width:100%;margin-top:6px" disabled onclick="window._pendingSpec.agreement={version:AGREEMENT_VERSION,acceptedAt:new Date().toISOString(),inspected:true};openCheckout()">Continue to checkout</button>
+  <p style="font-size:.72rem;color:var(--ink-soft);text-align:center;margin-top:8px"><button class="alt-link" onclick="closeModal()">Go back and change something</button></p>`);
+}
+
 /* ---- checkout (front-end seam; Stripe wires in later) ---- */
 function openCheckout(){
-  const spec=buildSpec();
+  // keep the inspected + agreed spec; only rebuild when arriving without one
+  const spec=(window._pendingSpec&&window._pendingSpec.agreement)?window._pendingSpec:buildSpec();
   window._pendingSpec=spec;
   const up=spec.order.upcharges;
   openModal(`<h2>Checkout</h2>
@@ -1596,7 +1662,7 @@ function openPrintView(spec){
   ${section('Fit — '+(f.method==='tailor'?'tailor measurements (inches)':'closet references'),fitRows)}
   ${section('Cutting allowances — jacket',Object.keys(al.jacket).map(k=>row(k,al.jacket[k])).join(''))}
   ${section('Cutting allowances — trouser',Object.keys(al.trouser).map(k=>row(k,al.trouser[k])).join(''))}
-  ${section('Order',row('Email',spec.order.email)+row('Base','$'+spec.order.basePrice)+
+  ${section('Order',row('Agreement',spec.agreement?spec.agreement.version+' accepted '+spec.agreement.acceptedAt.slice(0,10)+' (inspection confirmed)':'NOT ACCEPTED — hold order')+row('Email',spec.order.email)+row('Base','$'+spec.order.basePrice)+
     Object.keys(spec.order.upcharges).map(k=>row('+ '+k,'$'+spec.order.upcharges[k])).join('')+row('Total','$'+spec.order.total))}
   <script>window.onload=()=>window.print()<\/script>
   </body></html>`);
