@@ -211,8 +211,8 @@ details.terms li{margin:5px 0}
 
 /* ---- mobile polish: one-line header, calm chrome, compact bottom bar ---- */
 @media(max-width:640px){
-  .top-inner{padding:9px 0;align-items:center}
-  .wordmark{font-size:1.12rem;white-space:nowrap}
+  .top-inner{padding:6px 0;align-items:center}
+  .wordmark{font-size:1.08rem;white-space:nowrap}
   .topnav{gap:0}
   .navlink{font-size:.72rem;padding:10px 6px;white-space:nowrap}
   .cat{padding:11px 13px;font-size:.86rem}
@@ -220,17 +220,18 @@ details.terms li{margin:5px 0}
   .hero-facts{gap:20px;margin-top:24px}
   .sec{padding:36px 0}
   .sec .lead{margin-bottom:18px}
-  .prog{margin:10px 0 2px}
+  .prog{margin:6px 0 0}
+  .prog-track{height:4px}
   .prog-lbl{font-size:.64rem;gap:10px;white-space:nowrap}
   .prog-lbl span{overflow:hidden;text-overflow:ellipsis}
   .group-title{margin:16px 0 10px}
-  .pv-dots{gap:5px}
-  .pv-dot{font-size:.64rem;padding:6px 9px}
-  .bbar-inner{padding:10px 14px;gap:8px}
+  .pv-dots{gap:4px;margin-top:4px}
+  .pv-dot{font-size:.62rem;padding:5px 8px}
+  .bbar-inner{padding:8px 12px;gap:8px}
   .bbar .sum{font-size:.72rem;line-height:1.3;white-space:nowrap}
   .bbar .sum strong{font-size:1.25rem;margin-left:6px}
   .bbar .anchor{display:none}
-  .bbar .btn,.bbar .btn.ghost{padding:11px 18px;font-size:.85rem}
+  .bbar .btn,.bbar .btn.ghost{padding:10px 16px;font-size:.84rem}
   body{padding-bottom:70px}
   .modal{padding:20px 16px 18px}
   .value-box{padding:13px 14px}
@@ -241,17 +242,17 @@ details.terms li{margin:5px 0}
   footer.site{padding:24px 0 96px}
   /* configurator decrowding */
   .workspace{padding-top:0}
-  .subtabs{gap:8px;margin:12px 0 4px}
-  .subtab{padding:8px 14px;font-size:.8rem}
+  .subtabs{gap:6px;margin:6px 0 2px}
+  .subtab{padding:7px 12px;font-size:.76rem}
   /* options are a swipeable carousel on mobile, not a stacked deck */
-  .opt-grid{display:flex;overflow-x:auto;gap:10px;scroll-snap-type:x mandatory;padding-bottom:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .opt-grid{display:flex;overflow-x:auto;gap:8px;scroll-snap-type:x mandatory;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .opt-grid::-webkit-scrollbar{display:none}
-  .optcard{flex:0 0 56vw;scroll-snap-align:center;padding:10px 8px 10px}
+  .optcard{flex:0 0 47vw;scroll-snap-align:center;padding:7px 6px 8px}
   .optcard:has(.swatch){flex-basis:38vw}
   .optcard .nm{font-size:.78rem}
   .optcard .std{font-size:.66rem}
   .optcard .pr{font-size:.7rem}
-  .optcard .thumb-photo{max-width:100%}
+  .optcard .thumb-photo{max-width:100%;margin-bottom:5px}
   .optcard .swatch{width:52px;height:52px}
   .optcard .pop{font-size:.54rem;padding:2px 6px}
   .mob-preview{margin:10px 0 6px}
@@ -259,15 +260,15 @@ details.terms li{margin:5px 0}
   .mob-preview .pv-stage svg{max-width:190px}
   /* option steps fill one screen: the suit takes all free height, options swipe under it,
      Continue is pinned below — no dead space */
-  #workspace.opts-step{display:flex;flex-direction:column;padding:0 0 4px;min-height:calc(100svh - 184px)}
+  #workspace.opts-step{display:flex;flex-direction:column;padding:0 0 2px;min-height:calc(100svh - 158px)}
   #workspace.opts-step #main-col{display:flex;flex-direction:column;flex:1;min-height:0}
-  #workspace.opts-step .mob-preview{flex:1;min-height:180px;display:flex;flex-direction:column;margin:4px 0 6px}
+  #workspace.opts-step .mob-preview{flex:1;min-height:170px;display:flex;flex-direction:column;margin:2px 0 4px}
   #workspace.opts-step .pv{flex:1;display:flex;flex-direction:column;min-height:0}
   #workspace.opts-step .pv-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
   #workspace.opts-step .pv-stage img.preview-photo{width:auto;max-width:80vw;max-height:100%;margin:0 auto}
   #workspace.opts-step .pv-stage svg{max-height:100%;width:auto;max-width:60vw}
-  #workspace.opts-step .prog{margin:8px 0 0}
-  .pv-arr{width:34px;height:34px;top:36%}
+  #workspace.opts-step .prog{margin:5px 0 0}
+  .pv-arr{width:30px;height:30px;top:36%;font-size:1rem}
   .field{margin-bottom:12px}
   .grid2,.grid3{gap:10px}
   .method-pick{gap:10px;margin:12px 0 16px}
@@ -288,8 +289,8 @@ header.top .top-inner{padding-left:max(6px,env(safe-area-inset-left))}
   .cats{display:none!important}
   .bbar-steps{display:flex;overflow-x:auto;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);scrollbar-width:none}
   .bbar-steps::-webkit-scrollbar{display:none}
-  .bbar-steps .cat{padding:12px 12px;font-size:.84rem}
-  body{padding-bottom:120px}
+  .bbar-steps .cat{padding:10px 10px;font-size:.8rem}
+  body{padding-bottom:108px}
   footer.site{padding-bottom:150px}
 }
 .suitcard .info{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
