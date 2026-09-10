@@ -137,9 +137,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .hero-facts div{font-size:.8rem;color:rgba(251,250,246,.75)}
 .hero-facts strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--chalk);font-weight:700}
 @media(max-width:640px){
-  /* mobile: the full frame — whole car, no crop, no fill */
-  .hero-bleed{height:auto;min-height:0;aspect-ratio:1600/914;background:url('suit-images/hero-wide.jpg') center/cover no-repeat}
-  .hero-plate{padding-top:16px}
+  /* (mobile hero rules live at the end of the sheet so they win the cascade) */
 }
 .hidden{display:none!important}
 
@@ -675,6 +673,11 @@ body::-webkit-scrollbar-thumb:hover{background:rgba(20,31,51,.5);background-clip
 @media (prefers-reduced-motion: reduce){
   .hero-inner>*{animation:none;opacity:1;transform:none}
   #bb-total.tick{animation:none}
+}
+/* mobile hero: the FULL frame — whole car, true aspect, no crop (must win the cascade) */
+@media(max-width:640px){
+  .hero-bleed{height:auto;min-height:0;aspect-ratio:1600/914;background:url('suit-images/hero-wide.jpg') center/cover no-repeat}
+  .hero-plate{padding-top:16px}
 }
 </style>
 </head>
