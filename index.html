@@ -120,6 +120,61 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 .hero-facts div{font-size:.82rem;color:var(--ink-soft)}
 .hero-facts strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--ink);font-weight:700}
 .hidden{display:none!important}
+
+/* ---- storefront ---- */
+.topnav{display:flex;gap:8px;align-items:center}
+.navlink{background:none;border:none;font:inherit;font-size:.82rem;font-weight:500;color:var(--ink);cursor:pointer;padding:10px 10px;min-height:44px}
+.navlink:hover{color:var(--thread)}
+.sec{padding:56px 0}
+.sec h2{font-size:clamp(1.7rem,4vw,2.4rem);margin-bottom:6px}
+.sec .lead{color:var(--ink-soft);max-width:60ch;margin-bottom:26px}
+.carousel-wrap{position:relative}
+.suit-row{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.suit-row::-webkit-scrollbar{display:none}
+.car-btn{position:absolute;top:34%;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:1.2rem;color:var(--ink);z-index:5;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(27,42,65,.12)}
+.car-btn:hover{border-color:var(--ink)}
+.car-prev{left:-8px}.car-next{right:-8px}
+@media(max-width:640px){.car-btn{display:none}}
+.suitcard{flex:0 0 262px;scroll-snap-align:start;border:1px solid var(--line);background:#fff;border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+@media(max-width:640px){.suitcard{flex-basis:76vw}}
+.suitcard .stage{background:linear-gradient(170deg,var(--paper),#e9e5d9);text-align:center}
+.suitcard .stage svg{max-width:150px;width:100%;padding:22px 12px 8px}
+.suitcard .stage img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+.preview-photo{width:100%;max-width:250px;border-radius:var(--r);display:block;margin:0 auto}
+.mob-preview .preview-photo{max-width:220px}
+.suitcard .info{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.suitcard .info h3{font-size:1.25rem}
+.suitcard .info p{font-size:.8rem;color:var(--ink-soft);flex:1}
+.suitcard .pricing{font-weight:600;color:var(--thread)}
+.suitcard .btn{width:100%;text-align:center;margin-top:4px}
+.tagpill{display:inline-block;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-red);font-weight:600}
+.reviews{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.review{border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:18px}
+.review .stars{color:var(--thread);letter-spacing:2px;margin-bottom:6px}
+.review p{font-size:.85rem;margin-bottom:10px}
+.review .who{font-size:.75rem;color:var(--ink-soft);font-weight:600}
+.trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.trust div{border-top:2px solid var(--ink);padding-top:12px}
+.trust strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:4px}
+.trust p{font-size:.82rem;color:var(--ink-soft)}
+footer.site{border-top:1px solid var(--line);margin-top:40px;padding:30px 0 110px;font-size:.78rem;color:var(--ink-soft)}
+footer.site .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-between}
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(27,42,65,.45);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto}
+.modal{background:var(--chalk);border-radius:var(--r);max-width:560px;width:100%;padding:26px 26px 22px;position:relative;margin:auto 0}
+.modal h2{font-size:1.6rem;margin-bottom:8px}
+.modal .x{position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--ink-soft);width:44px;height:44px}
+.guide-step{display:flex;gap:12px;margin:14px 0;font-size:.88rem}
+.guide-step .n{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--chalk);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:600}
+.mlist{margin:8px 0 0 0;padding:0;list-style:none;font-size:.84rem}
+.mlist li{padding:7px 0;border-bottom:1px dotted var(--line);display:flex;justify-content:space-between;gap:14px}
+.mlist li b{white-space:nowrap}
+.mlist li span{color:var(--ink-soft);text-align:right}
+.order-card{border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:14px 16px;margin-bottom:12px;font-size:.85rem}
+.status-line{display:flex;gap:4px;margin-top:10px}
+.status-line span{flex:1;height:5px;background:var(--line);border-radius:3px}
+.status-line span.on{background:var(--good)}
+.pay-note{font-size:.75rem;color:var(--ink-soft);border:1px dashed var(--line);padding:10px 12px;border-radius:var(--r);margin-top:12px}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
 </style>
 </head>
@@ -128,22 +183,66 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
 <header class="top">
   <div class="shell top-inner">
     <div class="wordmark">Chalk <em>&amp;</em> Thread</div>
-    <div class="top-note">Customized suits, finished by your own tailor.</div>
+    <nav class="topnav">
+      <button class="navlink" onclick="openGuide()">Tailor guide</button>
+      <button class="navlink" onclick="openOrders()">My orders</button>
+      <button class="navlink" id="nav-account" onclick="openAccount()">Sign in</button>
+    </nav>
   </div>
   <nav class="shell cats hidden" id="cats" aria-label="Configuration sections"></nav>
 </header>
 
+<div id="landing">
 <section class="shell hero" id="hero">
+  <p class="tagpill">Welcome to Chalk &amp; Thread</p>
   <h1>Build your suit in five minutes. <em>Finish it</em> at your tailor.</h1>
   <p>Every detail is yours — lapel, buttons, lining, your name under the collar, a photo inside the jacket. We cut it with deliberate extra allowance and ship it to your door.</p>
   <p>Your local tailor takes it the final inch. You control the fit budget; we handle everything else.</p>
-  <button class="btn" style="margin-top:14px" onclick="startConfig()">Start assembling — from $250</button>
+  <button class="btn" style="margin-top:14px" onclick="startConfig()">Design my own suit — from $300</button>
   <div class="hero-facts">
-    <div><strong>$250</strong>base suit, delivered</div>
+    <div><strong>$300</strong>base suit, delivered</div>
     <div><strong>5 min</strong>to assemble</div>
     <div><strong>Your tailor</strong>does the finishing</div>
   </div>
 </section>
+
+<section class="shell sec" id="loved">
+  <h2>Browse our most loved suits</h2>
+  <p class="lead">Five house favorites, fully styled by our cutters. Take one as-is, or use it as a starting point and make it yours.</p>
+  <div class="carousel-wrap">
+    <button class="car-btn car-prev" onclick="scrollLoved(-1)" aria-label="Previous suits">‹</button>
+    <div class="suit-row" id="suit-row"></div>
+    <button class="car-btn car-next" onclick="scrollLoved(1)" aria-label="More suits">›</button>
+  </div>
+</section>
+
+<section class="shell sec" style="background:none">
+  <h2>Or design your own — starting at $300</h2>
+  <p class="lead">Lapel, cloth, buttons, vents, pockets, trouser, lining, monogram, collar name, even a photo printed inside the jacket. Every choice is priced as you go.</p>
+  <button class="btn" onclick="startConfig()">Start designing</button>
+</section>
+
+<section class="shell sec" id="reviews">
+  <h2>What owners say</h2>
+  <div class="reviews">
+    <div class="review"><div class="stars">★★★★★</div><p>"My tailor charged $55 to finish it. Total came to under $400 for a suit people assume was $1,500. The monogram sold me."</p><div class="who">Daniel R. — Brooklyn, NY</div></div>
+    <div class="review"><div class="stars">★★★★★</div><p>"I used two jackets from my closet as references. It arrived close enough that my dry cleaner only touched the sleeves and hem."</p><div class="who">Marcus T. — Chicago, IL</div></div>
+    <div class="review"><div class="stars">★★★★☆</div><p>"Be honest with yourself: it really does arrive unfinished at the hems. That's the deal. Once altered, it's the best value I own."</p><div class="who">Avi S. — Teaneck, NJ</div></div>
+    <div class="review"><div class="stars">★★★★★</div><p>"Put a photo of my kids in the lining of my wedding suit. Nobody sees it but me. Worth every dollar."</p><div class="who">James L. — Austin, TX</div></div>
+  </div>
+</section>
+
+<section class="shell sec" id="how">
+  <h2>Why you can trust the fit</h2>
+  <div class="trust">
+    <div><strong>Cut with allowance</strong><p>Every suit ships with deliberate extra fabric in the waist, seat, and sleeve — so your tailor can fit it to you, not almost-you.</p></div>
+    <div><strong>Your tailor finishes it</strong><p>Any alterations shop can do it: typically $40–90, about a week. We tell you exactly what to ask for.</p></div>
+    <div><strong>Honest pricing</strong><p>$300 base, every upcharge shown before you pick it. No checkout surprises.</p></div>
+    <div><strong>Remake promise</strong><p>If your tailor says it can't be altered to fit, send us their note and we recut it free. One remake per order, no argument.</p></div>
+  </div>
+  <p style="margin-top:22px"><button class="btn ghost" onclick="openGuide()">What to ask your tailor — first-timer's guide</button></p>
+</section>
+</div><!-- /landing -->
 
 <div class="shell workspace hidden" id="workspace">
   <main id="main-col">
@@ -159,6 +258,17 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thread);border-c
     </div>
   </aside>
 </div>
+
+<footer class="site" id="site-footer">
+  <div class="shell cols">
+    <div><div class="wordmark" style="font-size:1.1rem">Chalk <em>&amp;</em> Thread</div>Customized suits, finished by your own tailor.<br>hello@chalkandthread.example</div>
+    <div><b>Help</b><br><button class="navlink" style="padding:2px 0;min-height:0" onclick="openGuide()">Tailor guide</button><br><button class="navlink" style="padding:2px 0;min-height:0" onclick="openOrders()">Track my order</button></div>
+    <div><b>The promise</b><br>Cut with allowance · finished locally<br>One free remake per order</div>
+    <div>© 2026 Chalk &amp; Thread<br>Prototype build — payments not yet live</div>
+  </div>
+</footer>
+
+<div id="modal-root"></div>
 
 <div class="bbar hidden" id="bbar">
   <div class="bbar-inner">
@@ -326,7 +436,7 @@ function trouserSVG(o){
 /* ================================================================
    STATE + CATALOG
 ================================================================ */
-const BASE=250;
+const BASE=300;
 const state={
   method:'tailor',
   meas:{}, height:'', weight:'', refs:[], email:'',
@@ -510,6 +620,17 @@ function renderContent(){
     b.onclick=()=>{state[b.dataset.g==='mono'?'monostyle':OPTGROUPS[b.dataset.g].key]=b.dataset.n;renderAll();};
   });
 }
+/* photorealistic preview: keyed on the two most visible choices (cloth + lapel);
+   every other pick stays in the spec list. SVG line drawing is the fallback. */
+const PHOTO_CLOTH={'Navy wool blend':'navy','Charcoal herringbone':'herringbone','Black twill':'black','Midnight blue sharkskin':'sharkskin'};
+window._noPhoto={};
+function previewPhotoSrc(){
+  const c=PHOTO_CLOTH[state.cloth];
+  if(!c) return null;
+  const src='suit-images/'+c+'-'+state.lapel.toLowerCase()+'.png';
+  return window._noPhoto[src]?null:src;
+}
+function photoFailed(el){window._noPhoto[el.getAttribute('src')]=1;renderPreview();}
 function renderPreview(){
   const clothName=state.cloth.toLowerCase();
   const opts = {
@@ -519,9 +640,16 @@ function renderPreview(){
     texture:clothName.includes('herringbone')?'herringbone':clothName.includes('sharkskin')?'sharkskin':null,
     liningFill:LININGS[state.lining]||null,
   };
-  // build each copy separately so the texture <pattern> ids stay unique per SVG
-  document.getElementById('live-preview').innerHTML=jacketSVG(opts);
-  const mp=document.getElementById('mob-preview'); if(mp) mp.innerHTML=jacketSVG(opts);
+  const photo=previewPhotoSrc();
+  if(photo){
+    const img=`<img class="preview-photo" src="${photo}" alt="Your suit — ${state.cloth}, ${state.lapel} lapel" onerror="photoFailed(this)">`;
+    document.getElementById('live-preview').innerHTML=img;
+    const mp=document.getElementById('mob-preview'); if(mp) mp.innerHTML=img;
+  } else {
+    // build each copy separately so the texture <pattern> ids stay unique per SVG
+    document.getElementById('live-preview').innerHTML=jacketSVG(opts);
+    const mp=document.getElementById('mob-preview'); if(mp) mp.innerHTML=jacketSVG(opts);
+  }
   const lines=[
     ['Cloth',state.cloth],['Lapel',state.lapel],['Front',state.frontbtn],
     ['Vents',state.vents],['Pockets',state.pockets],
@@ -552,6 +680,7 @@ function renderAll(){
 function fitHTML(){return `
   <h2 style="font-size:1.8rem;margin-top:14px">How should we size you?</h2>
   <p style="color:var(--ink-soft);max-width:56ch;margin:6px 0 4px">A tailor's measurement sheet is most accurate. No sheet? Reference clothes from your own closet that already fit well.</p>
+  <p style="margin:4px 0 0"><button class="alt-link" onclick="openGuide()">First time? Here's exactly what to ask your tailor →</button></p>
   <div class="method-pick" role="radiogroup" aria-label="Sizing method">
     <button class="method ${state.method==='tailor'?'sel':''}" id="m-tailor"><h3>I have my measurements</h3><p>From a tailor's fitting — like a prescription from your optometrist.</p></button>
     <button class="method ${state.method==='closet'?'sel':''}" id="m-closet"><h3>Reference my closet</h3><p>Tell us 2–3 garments that fit well. Our sizing engine estimates from there.</p></button>
@@ -691,10 +820,7 @@ function navNext(){
     const e=document.getElementById('o-email');
     if(!e||!(e.value||'').trim()){alert('Add an email so we can send order updates.');return;}
     state.email=e.value.trim();
-    const spec=buildSpec();
-    downloadSpec(spec);
-    openPrintView(spec);
-    alert('Order '+spec.order.number+' placed — $'+spec.order.total+'.\nSpec sheet downloaded + print view opened.\n\n(Prototype: in production this posts the spec to the manufacturer API and charges via Stripe.)');
+    openCheckout();
     return;
   }
   if(cur.sub<NAV[cur.cat].subs.length-1)cur.sub++;
@@ -713,6 +839,177 @@ function leaveStyling(){
   cur={cat:NAV.length-1,sub:0};
   renderAll();
 }
+/* ================================================================
+   STOREFRONT: most-loved presets, account, orders, checkout, guide
+================================================================ */
+const MOSTLOVED=[
+ {name:'The Midnight',tag:'Sleek black',img:'loved-midnight.png',desc:'A razor-clean black suit. One button, peak lapel, jetted pockets — nothing that doesn’t need to be there.',
+  patch:{cloth:'Black twill',lapel:'Peak',frontbtn:'1 button',pockets:'Jetted (no flap)',vents:'Double vent',lining:'Tone-on-tone',legfit:'Slim'}},
+ {name:'The Black Tie',tag:'Tuxedo',img:'loved-blacktie.png',desc:'Shawl lapel, single button, deep black. Your name under the collar, because a tuxedo should be nobody else’s.',
+  patch:{cloth:'Black twill',lapel:'Shawl',frontbtn:'1 button',pockets:'Jetted (no flap)',vents:'No vent',lining:'Deep burgundy',collar:'Embroidered collar name'}},
+ {name:'The First Suit',tag:'Navy classic',img:'loved-firstsuit.png',desc:'The navy suit every closet starts with. Notch lapel, two buttons, wears everywhere from interviews to weddings.',
+  patch:{cloth:'Navy wool blend',lapel:'Notch',frontbtn:'2 buttons',pockets:'Straight flap',lining:'Deep burgundy'}},
+ {name:'The Chairman',tag:'Double-breasted',img:'loved-chairman.png',desc:'Charcoal herringbone, 6x2 double-breasted, peak lapel. Walks into the room slightly before you do.',
+  patch:{cloth:'Charcoal herringbone',lapel:'Peak',frontbtn:'Double-breasted 6x2',pockets:'Straight flap',lining:'Royal purple',waistband:'Side adjusters'}},
+ {name:'The Evening Blue',tag:'Midnight sharkskin',img:'loved-eveningblue.png',desc:'Midnight blue sharkskin with a gold paisley lining. Reads black in the dark, glows blue in the light.',
+  patch:{cloth:'Midnight blue sharkskin',lapel:'Peak',frontbtn:'2 buttons',pockets:'Slanted flap',lining:'Gold paisley'}},
+];
+function presetPrice(p){
+  let t=BASE;
+  Object.values(p.patch).forEach(v=>{if(PRICES[v])t+=PRICES[v];});
+  return t;
+}
+function presetSVG(p){
+  const cn=(p.patch.cloth||'').toLowerCase();
+  return jacketSVG({lapel:p.patch.lapel||'Notch',
+    buttons:{'1 button':1,'2 buttons':2}[p.patch.frontbtn]||(p.patch.frontbtn&&p.patch.frontbtn.startsWith('Double')?6:2),
+    db:(p.patch.frontbtn||'').startsWith('Double'),
+    pockets:p.patch.pockets||'Straight flap',
+    clothFill:CLOTHS[p.patch.cloth]||'#243b55',
+    texture:cn.includes('herringbone')?'herringbone':cn.includes('sharkskin')?'sharkskin':null,
+    liningFill:LININGS[p.patch.lining]||null});
+}
+function renderLoved(){
+  document.getElementById('suit-row').innerHTML=MOSTLOVED.map((p,i)=>`<div class="suitcard">
+    <div class="stage"><img src="suit-images/${p.img}" alt="${p.name} — ${p.tag}" loading="lazy" onerror="swapPresetSVG(this,${i})"></div>
+    <div class="info">
+      <span class="tagpill">${p.tag}</span>
+      <h3>${p.name}</h3>
+      <p>${p.desc}</p>
+      <div class="pricing">$${presetPrice(p)} as styled</div>
+      <button class="btn" onclick="applyPreset(${i})">Take it &amp; make it yours</button>
+    </div>
+  </div>`).join('');
+}
+function swapPresetSVG(el,i){el.outerHTML=presetSVG(MOSTLOVED[i]);}
+function scrollLoved(dir){
+  const row=document.getElementById('suit-row');
+  row.scrollBy({left:dir*(row.querySelector('.suitcard').offsetWidth+16),behavior:'smooth'});
+}
+function applyPreset(i){
+  const keep={meas:state.meas,refs:state.refs,email:state.email,height:state.height,weight:state.weight,method:state.method};
+  Object.assign(state,DEFAULTS,keep,MOSTLOVED[i].patch);
+  startConfig();
+}
+
+/* ---- account (front-end only; localStorage) ---- */
+const LS_USER='ct-user', LS_ORDERS='ct-orders';
+function getUser(){try{return JSON.parse(localStorage.getItem(LS_USER))}catch(e){return null}}
+function getOrders(){try{return JSON.parse(localStorage.getItem(LS_ORDERS))||[]}catch(e){return []}}
+function refreshAccountNav(){
+  const u=getUser();
+  document.getElementById('nav-account').textContent=u?u.name.split(' ')[0]+' · Sign out':'Sign in';
+}
+function openModal(html){
+  document.getElementById('modal-root').innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="x" onclick="closeModal()" aria-label="Close">×</button>${html}</div></div>`;
+}
+function closeModal(){document.getElementById('modal-root').innerHTML='';}
+function openAccount(){
+  const u=getUser();
+  if(u){localStorage.removeItem(LS_USER);refreshAccountNav();return;}
+  openModal(`<h2>Sign in</h2>
+    <p style="font-size:.85rem;color:var(--ink-soft);margin-bottom:14px">Track orders, save configurations, claim alteration credits. No password in this preview build — accounts get real authentication at launch.</p>
+    <div class="field"><label for="ac-name">Your name</label><input type="text" id="ac-name" placeholder="Full name"></div>
+    <div class="field"><label for="ac-email">Email</label><input type="email" id="ac-email" placeholder="you@example.com"></div>
+    <button class="btn" onclick="doSignIn()">Sign in</button>`);
+}
+function doSignIn(){
+  const n=document.getElementById('ac-name').value.trim(), e=document.getElementById('ac-email').value.trim();
+  if(!n||!e){alert('Name and email, please.');return;}
+  localStorage.setItem(LS_USER,JSON.stringify({name:n,email:e}));
+  state.email=state.email||e;
+  refreshAccountNav();closeModal();
+}
+const STAGES=['Received','Cutting','Sewing & QC','Shipped','Delivered'];
+function orderStage(o){
+  const days=(Date.now()-new Date(o.placedAt).getTime())/86400000;
+  return days<1?0:days<4?1:days<11?2:days<18?3:4;
+}
+function openOrders(){
+  const orders=getOrders();
+  openModal(`<h2>My orders</h2>`+(orders.length?orders.map(o=>{
+    const s=orderStage(o);
+    return `<div class="order-card"><b>${o.number}</b> · ${o.placedAt.slice(0,10)} · $${o.total}<br>
+      <span style="color:var(--ink-soft)">${o.summary}</span>
+      <div class="status-line">${STAGES.map((_,i)=>`<span class="${i<=s?'on':''}"></span>`).join('')}</div>
+      <div style="font-size:.75rem;margin-top:4px;color:var(--good);font-weight:600">${STAGES[s]}</div></div>`;
+  }).join(''):`<p style="font-size:.9rem;color:var(--ink-soft)">No orders yet on this device. When you place one, it appears here with live status.</p>`));
+}
+
+/* ---- first-timer's tailor guide ---- */
+function openGuide(){
+  openModal(`<h2>What to ask your tailor</h2>
+  <p style="font-size:.85rem;color:var(--ink-soft)">First time? This takes one visit, about ten minutes, usually free or a few dollars. Any tailor or dry cleaner with an alterations service can do it.</p>
+  <div class="guide-step"><div class="n">1</div><div><b>Find any alterations shop.</b> Search "tailor near me" or "dry cleaner alterations." You do not need a bespoke tailor — a hemming-and-zippers shop is perfect.</div></div>
+  <div class="guide-step"><div class="n">2</div><div><b>Say this exactly:</b> "I'm ordering a made-to-measure suit online. Can you take my measurements? I need the nine on this list, in inches."</div></div>
+  <div class="guide-step"><div class="n">3</div><div><b>Have them measure these nine things:</b>
+    <ul class="mlist">
+      <li><b>Chest</b><span>around the fullest part, tape snug not tight</span></li>
+      <li><b>Shoulder</b><span>seam to seam across the back</span></li>
+      <li><b>Sleeve</b><span>shoulder seam to wrist bone</span></li>
+      <li><b>Jacket length</b><span>base of collar to mid-thumb</span></li>
+      <li><b>Waist</b><span>where trousers actually sit</span></li>
+      <li><b>Hip / seat</b><span>around the fullest part</span></li>
+      <li><b>Inseam</b><span>crotch to shoe top</span></li>
+      <li><b>Thigh</b><span>around the fullest part of one thigh</span></li>
+      <li><b>Height</b><span>total, in inches</span></li>
+    </ul></div></div>
+  <div class="guide-step"><div class="n">4</div><div><b>Type them into the Fit step here.</b> That's it. When your suit arrives, go back to the same shop for final alterations — typically $40–90.</div></div>
+  <div class="guide-step"><div class="n">5</div><div><b>No tailor nearby?</b> Use "Reference my closet" instead — measure clothes that already fit you well, laid flat.</div></div>
+  <button class="btn ghost" onclick="printGuide()">Print this list to bring along</button>`);
+}
+function printGuide(){
+  const w=window.open('','_blank');
+  if(!w){alert('Pop-up blocked — allow pop-ups to print the guide.');return;}
+  w.document.write(`<!DOCTYPE html><html><head><title>Chalk & Thread — Measurement list</title><style>body{font-family:Georgia,serif;max-width:480px;margin:30px auto;color:#1b2a41}h1{font-size:1.2rem}li{margin:8px 0}small{color:#555}</style></head><body>
+  <h1>Chalk &amp; Thread — measurements I need (inches)</h1>
+  <p><small>"I'm ordering a made-to-measure suit online. Can you take these nine measurements?"</small></p>
+  <ol><li>Chest — fullest part, snug</li><li>Shoulder — seam to seam, across the back</li><li>Sleeve — shoulder seam to wrist bone</li><li>Jacket length — base of collar to mid-thumb</li><li>Waist — where trousers sit</li><li>Hip / seat — fullest part</li><li>Inseam — crotch to shoe top</li><li>Thigh — fullest part of one thigh</li><li>Height — total</li></ol>
+  <script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.close();
+}
+
+/* ---- checkout (front-end seam; Stripe wires in later) ---- */
+function openCheckout(){
+  const spec=buildSpec();
+  window._pendingSpec=spec;
+  const up=spec.order.upcharges;
+  openModal(`<h2>Checkout</h2>
+  <table class="review-table">
+    <tr><td>Base suit</td><td>$${spec.order.basePrice}</td></tr>
+    ${Object.keys(up).map(k=>`<tr><td>${k}</td><td>+ $${up[k]}</td></tr>`).join('')}
+    <tr><td><b>Total</b></td><td><b>$${spec.order.total}</b></td></tr>
+  </table>
+  <div class="group-title">Shipping</div>
+  <div class="field"><label for="sh-name">Full name</label><input type="text" id="sh-name" value="${(getUser()||{}).name||''}"></div>
+  <div class="field"><label for="sh-addr">Address</label><input type="text" id="sh-addr" placeholder="Street, city, state, ZIP"></div>
+  <div class="group-title">Payment</div>
+  <div class="field"><label for="pay-card">Card number</label><input type="text" id="pay-card" inputmode="numeric" placeholder="•••• •••• •••• ••••" disabled></div>
+  <div class="grid2">
+    <div class="field"><label for="pay-exp">Expiry</label><input type="text" id="pay-exp" placeholder="MM/YY" disabled></div>
+    <div class="field"><label for="pay-cvc">CVC</label><input type="text" id="pay-cvc" placeholder="•••" disabled></div>
+  </div>
+  <div class="pay-note">Preview build: payment fields are disabled. At launch this is a secure Stripe checkout — no card details ever touch our servers.</div>
+  <button class="btn" style="margin-top:14px;width:100%" onclick="confirmOrder()">Place order — $${spec.order.total}</button>`);
+}
+function confirmOrder(){
+  const nm=document.getElementById('sh-name').value.trim(), ad=document.getElementById('sh-addr').value.trim();
+  if(!nm||!ad){alert('Name and shipping address, please.');return;}
+  const spec=window._pendingSpec;
+  spec.shipping={name:nm,address:ad};
+  const orders=getOrders();
+  orders.unshift({number:spec.order.number,placedAt:spec.order.placedAt,total:spec.order.total,
+    summary:[spec.garment.cloth,spec.garment.lapel+' lapel',spec.garment.frontButtons].join(' · '),spec});
+  localStorage.setItem(LS_ORDERS,JSON.stringify(orders));
+  openModal(`<h2>Order placed — thank you</h2>
+  <p style="font-size:.9rem">Order <b>${spec.order.number}</b> · $${spec.order.total}. A confirmation goes to <b>${spec.order.email||state.email||'your email'}</b>. Track it any time under <b>My orders</b>.</p>
+  <p style="font-size:.85rem;color:var(--ink-soft);margin-top:8px">Your factory spec sheet is ready — the exact instructions our cutters receive:</p>
+  <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+    <button class="btn ghost" onclick="downloadSpec(window._pendingSpec)">Download spec (JSON)</button>
+    <button class="btn ghost" onclick="openPrintView(window._pendingSpec)">Printable spec sheet</button>
+  </div>`);
+}
+
 /* ================================================================
    MANUFACTURER SPEC EXPORT (Phase 2)
    JSON for the factory system + printable HTML for humans.
@@ -848,12 +1145,16 @@ function openPrintView(spec){
 }
 
 function startConfig(){
-  document.getElementById('hero').classList.add('hidden');
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('site-footer').classList.add('hidden');
   document.getElementById('workspace').classList.remove('hidden');
   document.getElementById('cats').classList.remove('hidden');
   document.getElementById('bbar').classList.remove('hidden');
   renderAll();
 }
+
+renderLoved();
+refreshAccountNav();
 </script>
 </body>
 </html>
