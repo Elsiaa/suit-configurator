@@ -506,18 +506,8 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
   </div>
 </section>
 
-<section class="shell sec" id="loved">
-  <h2>Browse our most loved suits</h2>
-
-  <div class="carousel-wrap">
-    <button class="car-btn car-prev" onclick="scrollRow('suit-row',-1)" aria-label="Previous suits">‹</button>
-    <div class="suit-row" id="suit-row"></div>
-    <button class="car-btn car-next" onclick="scrollRow('suit-row',1)" aria-label="More suits">›</button>
-  </div>
-</section>
-
 <section class="shell sec" id="design-cta">
-  <h2>Or design your own — from $300</h2>
+  <h2>Design your own — from $300</h2>
   <div class="cloth-strip" onclick="startConfig()" role="button" aria-label="Start designing">
     <img src="suit-images/navy-notch.jpg" alt="Navy wool">
     <img src="suit-images/herringbone-peak.jpg" alt="Charcoal herringbone">
@@ -526,6 +516,16 @@ input[type=text],input[type=number],input[type=email],select,textarea{background
     <img src="suit-images/green-notch.jpg" alt="Forest green">
   </div>
   <button class="btn" style="margin-top:16px" onclick="startConfig()">Start designing</button>
+</section>
+
+<section class="shell sec" id="loved">
+  <h2>Or browse our most loved suits</h2>
+
+  <div class="carousel-wrap">
+    <button class="car-btn car-prev" onclick="scrollRow('suit-row',-1)" aria-label="Previous suits">‹</button>
+    <div class="suit-row" id="suit-row"></div>
+    <button class="car-btn car-next" onclick="scrollRow('suit-row',1)" aria-label="More suits">›</button>
+  </div>
 </section>
 
 <section id="social">
