@@ -686,7 +686,9 @@ body::-webkit-scrollbar-thumb:hover{background:rgba(20,31,51,.5);background-clip
 .fold .hero-plate{flex:1;display:flex;flex-direction:column;justify-content:center}
 @media(min-width:641px){.fold .hero-bleed{flex:1;height:auto;min-height:320px}}
 /* locked-in scroll: no hover physics on touch, no sideways drift ever */
-body{overflow-x:hidden;min-height:100svh}
+html,body{max-width:100%;overflow-x:hidden}
+@supports(overflow:clip){html,body{overflow-x:clip}}
+body{min-height:100svh}
 @media(hover:none){
   .btn:hover,.btn.ghost:hover,.leave-link:hover,.subtab:hover,.pv-dot:hover,.suitcard:hover,
   .soc-btn:hover,.car-btn:hover,.pv-arr:hover,.hnav:hover,.greviews-cta:hover,.foot-social a:hover,
